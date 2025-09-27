@@ -15,10 +15,11 @@ url = "https://github.com/r-dandrea"
 [social.params]
 icon = "brand-github"
 
+
 [[social]]
-identifier = "twitter"
-name = "Twitter"
-url = "https://twitter.com"
+identifier = "telegram"
+name = "Telegram"
+url = "https://t.me/USERNAME"
 
 [social.params]
-icon = "brand-twitter"
+icon = "brand-telegram"
