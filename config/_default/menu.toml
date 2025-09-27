@@ -19,7 +19,7 @@ icon = "brand-github"
 [[social]]
 identifier = "telegram"
 name = "Telegram"
-url = "https://t.me/USERNAME"
+url = "https://t.me/Roberto_D_Andrea"
 
 [social.params]
 icon = "brand-telegram"
