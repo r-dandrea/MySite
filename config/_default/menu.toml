@@ -27,7 +27,7 @@ icon = "brand-telegram"
 [[social]]
 identifier = "email"
 name = "Email"
-url = "dandrea.ingegnereinformatico@gmail.com"
+url = "mailto:dandrea.ingegnereinformatico@gmail.com?body=Hi%20Roberto%2C"
 
 [social.params]
 icon = "brand-email"
