@@ -15,11 +15,14 @@ url = "https://github.com/r-dandrea"
 [social.params]
 icon = "brand-github"
 
-
 [[social]]
 identifier = "telegram"
 name = "Telegram"
 url = "https://t.me/Roberto_D_Andrea"
+
+[social.params]
+icon = "brand-telegram"
+
 
 [[social]]
 identifier = "email"
@@ -27,5 +30,4 @@ name = "Email"
 url = "dandrea.ingegnereinformatico@gmail.com"
 
 [social.params]
-icon = "brand-telegram"
 icon = "brand-email"
