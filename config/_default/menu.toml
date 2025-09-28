@@ -21,5 +21,13 @@ identifier = "telegram"
 name = "Telegram"
 url = "https://t.me/Roberto_D_Andrea"
 
+[[social]]
+identifier = "email"
+name = "Email"
+url = "dandrea.ingegnereinformatico@gmail.com"
+
 [social.params]
 icon = "brand-telegram"
+
+[social.params]
+icon = "brand-email"
