@@ -7,7 +7,7 @@ menu:
     main:
         weight: 2
         params: 
-            icon: archives
-    
-Ciao, sono Roberto Dandrea e ho 29 anni.
+            icon: archives 
 ---
+
+Ciao, sono Roberto Dandrea e ho 29 anni
