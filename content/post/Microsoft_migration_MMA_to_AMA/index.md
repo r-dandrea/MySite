@@ -2,7 +2,7 @@
 title: Migration from MMA to AMA and DCR configuration + Azure Policy
 description: Sentinel migration from MMA to AMA
 slug: Microsoft
-date: 2022-03-06 00:00:00+0000
+date: 2025-03-06
 image: cover.jpg
 categories:
     - Sentinel
