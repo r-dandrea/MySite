@@ -20,3 +20,6 @@ hasCJKLanguage = false
 
 [pagination]
 pagerSize = 5
+
+[outputs]
+home = ["HTML", "RSS", "SITEMAP", "ROBOTS"]
