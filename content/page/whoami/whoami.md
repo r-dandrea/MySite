@@ -5,7 +5,7 @@ layout: "whoami"
 slug: "whoami"
 menu:
     main:
-        weight: 2
+        weight: 1
         params: 
             icon: archives 
 ---
