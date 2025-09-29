@@ -1,13 +1,13 @@
 ---
 title: "whoami"
-date: 2022-03-06
+date: 2025-09-01
 layout: "whoami"
 slug: "whoami"
 menu:
     main:
         weight: 1
         params: 
-            icon: archives 
+            icon: whoami 
 ---
 
 Hi, i'm Roberto D'Andrea
