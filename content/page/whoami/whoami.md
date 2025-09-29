@@ -9,6 +9,10 @@ menu:
         params: 
             icon: whoami 
 comments: false
+hideMeta: true
+ShowDate: false
+ShowReadingTime: false
+ShowToc: false
 ---
 
 Hi, i'm Roberto D'Andrea
