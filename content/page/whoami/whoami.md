@@ -10,4 +10,4 @@ menu:
             icon: archives 
 ---
 
-Ciao, sono Roberto Dandrea e ho 29 anni
+Hi, i'm Roberto D'Andrea

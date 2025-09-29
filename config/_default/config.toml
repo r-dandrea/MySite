@@ -15,7 +15,8 @@ defaultContentLanguage = "en"
 hasCJKLanguage = false
 
 # Change it to your Disqus shortname before using
-disqusShortname = "hugo-theme-stack"
+## This is used to add comment below each post
+#disqusShortname = "hugo-theme-stack"
 
 [pagination]
 pagerSize = 5
