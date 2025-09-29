@@ -23,7 +23,6 @@ url = "https://t.me/Roberto_D_Andrea"
 [social.params]
 icon = "brand-telegram"
 
-
 [[social]]
 identifier = "email"
 name = "Email"
