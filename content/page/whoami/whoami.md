@@ -8,6 +8,7 @@ menu:
         weight: 1
         params: 
             icon: whoami 
+comments: false
 ---
 
 Hi, i'm Roberto D'Andrea

@@ -11,6 +11,7 @@ tags:
     - Sentinel
     - Configuration
 weight: 1       # You can add weight to some posts to override the default sorting (date descending)
+comments: false
 ---
 
 # Migration from MMA to AMA and DCR configuration + Azure Policy
