@@ -7,6 +7,47 @@
 #icon = "home"
 #newtab = true
 
+[[main]]
+identifier = "whoami"
+name = "whoami"
+url = "/whoami/"
+weight = 1
+[main.params]
+icon = "account"
+
+[[main]]
+identifier = "home"
+name = "Home"
+url = "/"
+weight = 2
+[main.params]
+icon = "home"
+
+[[main]]
+identifier = "search"
+name = "Search"
+url = "/search/"
+weight = 3
+[main.params]
+icon = "search"
+
+[[main]]
+identifier = "archives"
+name = "Archives"
+url = "/archives/"
+weight = 4
+[main.params]
+icon = "archive"
+
+[[main]]
+identifier = "links"
+name = "Links"
+url = "/links/"
+weight = 5
+[main.params]
+icon = "link"
+
+
 [[social]]
 identifier = "github"
 name = "GitHub"
