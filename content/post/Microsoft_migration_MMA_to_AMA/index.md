@@ -30,7 +30,7 @@ In this post, we’ll guide you through the migration process by showing you how
 
 **Content**
 
-1. AMA Migration Workbook
+1. [AMA Migration Workbook](#ama-migration-workbook)
 2. Agent Installation - Creation of DCR
 3. Azure Policy
 4. Conclusion
