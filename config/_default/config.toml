@@ -23,3 +23,8 @@ pagerSize = 5
 
 [outputs]
 home = ["HTML", "RSS", "SITEMAP", "ROBOTS"]
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true

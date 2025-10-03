@@ -47,9 +47,9 @@ Navigate over Monitor Service on Azure → Workbooks → AMA Migration Helper
 
 Here you can find the migration status, with all the machines to be migrated categorized by different resource types. The workbook highlights:
 
-- **In blue:** Agents that have both the old MMA/OMS agent and the new AMA agent.
-- **In red:** Agents that have only the old MMA/OMS agent.
-- **In green:** Agents that have only the new AMA agent.
+- <span style="color:blue"><strong>In blue:</strong></span> Agents with both agents.
+- <span style="color:red"><strong>In red:</strong></span> Agents with only MMA/OMS.
+- <span style="color:green"><strong>In green:</strong></span> Agents with only AMA.
 
 ![Untitled](Migration%20from%20MMA%20to%20AMA%20and%20DCR%20configuration%20+%20%20645c8d9e57314239a9fc5c73f681a0d0/Untitled%201.png)
 
