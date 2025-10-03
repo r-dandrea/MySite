@@ -1,0 +1,30 @@
+<div style="
+  background: #fff5f5;
+  border-left: 7px solid #ef4444;
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 6px;
+  color: #991b1b;
+">
+  <strong>🚨 {{ if .Get "title" }}{{ .Get "title" }}{{ else }}Alert{{ end }}</strong>
+  <div style="margin-top:6px;">
+    {{ .Inner | markdownify }}
+    {{ if .Get "image" }}
+      <div style="margin-top:16px;margin-bottom:4px;">
+        <img src="{{ .Get "image" }}" alt="" style="max-width:100%;border-radius:8px;border:1px solid #ef4444;">
+      </div>
+    {{ end }}
+  </div>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      div[style*='background: #fff5f5'] {
+        background: #2b1818 !important;
+        color: #fff5f5 !important;
+        border-left: 7px solid #fb7185 !important;
+      }
+      div[style*='background: #fff5f5'] strong {
+        color: #fde0e0 !important;
+      }
+    }
+  </style>
+</div>

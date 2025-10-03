@@ -101,26 +101,23 @@ To better understand what to ingest, here you can find **guides** that describe 
 - **Deep Dive on Linux event** → [How to debug Syslog ingestion](https://techcommunity.microsoft.com/t5/core-infrastructure-and-security/deep-dive-how-to-debug-syslog-ingestion-for-sentinel-and-log/ba-p/2007056)
 {{< /callout >}}
 
-![Untitled](Migration%20from%20MMA%20to%20AMA%20and%20DCR%20configuration%20+%20%20645c8d9e57314239a9fc5c73f681a0d0/Untitled%207.png)
+![DCR Collect](DCRCollect.png)
 
 After all click on Create and wait the creation of DCR and the deploy of AMA over VM and Azure ARC.
 
 - Evidence of DCR created over DCR services
 
-![Untitled](Migration%20from%20MMA%20to%20AMA%20and%20DCR%20configuration%20+%20%20645c8d9e57314239a9fc5c73f681a0d0/Untitled%208.png)
+![Data Collection Rule Evidence](DataCollectionRuleEvidence.png)
 
 - Evidence of AMA installation on VM
 
-![Navigate over VM → Extensions + application ](Migration%20from%20MMA%20to%20AMA%20and%20DCR%20configuration%20+%20%20645c8d9e57314239a9fc5c73f681a0d0/Untitled%209.png)
+![Navigate over VM → Extensions + application ](AMAAgentOnVM.png)
 
-Navigate over VM → Extensions + application 
+{{<redalert>}}
+**Remember to unistall the MMA agent**, as having it active could result in duplicate events within your workspace.
+![Unistall AMA Agent](UnistallAMAAgent.png)
+{{</redalert>}}
 
-<aside>
-🚨 **Remember to unistall the MMA agent**, as having it active could result in duplicate events within your workspace.
-
-![Untitled](Migration%20from%20MMA%20to%20AMA%20and%20DCR%20configuration%20+%20%20645c8d9e57314239a9fc5c73f681a0d0/Untitled%2010.png)
-
-</aside>
 
 ### 3. Azure Policy
 
