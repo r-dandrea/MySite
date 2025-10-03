@@ -19,10 +19,11 @@ comments: false
 Microsoft has announced the deprecation of the **Microsoft Monitoring Agent** (MMA), effective August 31. If you're still using MMA to collect and manage your monitoring data, now is the time to plan your transition to **Azure Monitor Agent** (AMA).
 
 
-> ⚠️ 
->
-> The **MMA** will officially be deprecated on **August 31**. Although MMA will continue to be active for logging purposes until 1 of February, it's important to note that Microsoft will not provide support for any issues encountered after August 31. 
-> Therefore, to ensure uninterrupted support and to take advantage of the latest features, you should complete your migration to AMA before the deprecation date.
+{{< alert color="warning" >}} 
+⚠️ 
+ The **MMA** will officially be deprecated on **August 31**. Although MMA will continue to be active for logging purposes until 1 of February, it's important to note that Microsoft will not provide support for any issues encountered after August 31. 
+ Therefore, to ensure uninterrupted support and to take advantage of the latest features, you should complete your migration to AMA before the deprecation date.
+{{< /alert >}}
 
 The Azure Monitor Agent represents a significant advancement in monitoring capabilities, offering enhanced performance, security, and flexibility. Microsoft recommends migrating to AMA to take advantage of these improvements and ensure continued support for your monitoring needs.
 
@@ -30,7 +31,7 @@ In this post, we’ll guide you through the migration process by showing you how
 
 **Content**
 
-1. [AMA Migration Workbook](#ama-migration-workbook)
+1. AMA Migration Workbook
 2. Agent Installation - Creation of DCR
 3. Azure Policy
 4. Conclusion
