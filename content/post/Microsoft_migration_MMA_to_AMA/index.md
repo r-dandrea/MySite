@@ -70,13 +70,13 @@ You need to create the DCR from Sentinel Connector
 
 *Naviga su Sentinel → Data Connector → Windows Security Events via AMA*
 
-[AMA Connector (Windows & Mac)](AMAConnector.png)
+![AMA Connector (Windows & Mac)](AMAConnector.png)
 
 Open connector page
-[Windows AMA Connector](WindowsAMAConnector.png)
+![Windows AMA Connector](WindowsAMAConnector.png)
 
 Here tou can create your DCR
-![Data Collection Rule creation](DCRCreation.png)
+!![Data Collection Rule creation](DCRCreation.png)
 
 {{<callout>}}
 What I recommend is creating separate Data Collection Rules for each type of host, such as Windows and Linux (use Syslog via AMA), and also **dividing the DCRs for other groups of machines**. This approach ensures that you have DCRs with specific events tailored to different types of hosts
