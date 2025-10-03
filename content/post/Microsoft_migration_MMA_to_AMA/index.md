@@ -32,12 +32,12 @@ In this post, we’ll guide you through the migration process by showing you how
 
 **Content**
 
-1. [AMA Migration Workbook](#ama-migration-workbook)
+1. AMA Migration Workbook
 2. Agent Installation - Creation of DCR
 3. Azure Policy
 4. Conclusion
 
-### 1. AMA Migration Workbook {#ama-migration-workboo}
+### 1. AMA Migration Workbook
 
 To get a comprehensive view of all the VMs, Azure Arc resources, and VMSS that need to be migrated to the new Azure Monitor Agent (AMA), you can use this workbook.
 
