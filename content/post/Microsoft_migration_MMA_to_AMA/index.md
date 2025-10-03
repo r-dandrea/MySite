@@ -254,7 +254,7 @@ Click on DCR Service and find click on JSON View
 Click on *Copy*
 
 ![](DCR2.png)
-{{<callout>}}
+{{</callout>}}
 
 
 ![](Policy12.png)
