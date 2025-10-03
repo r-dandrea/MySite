@@ -43,7 +43,7 @@ To get a comprehensive view of all the VMs, Azure Arc resources, and VMSS that n
 
 Navigate over Monitor Service on Azure → Workbooks → AMA Migration Helper
 
-![AMA Migration Helper - Workbook](Untitled.png)
+![AMA Migration Helper - Workbook](AMAMigrationHelper-Workbook.png)
 
 Here you can find the migration status, with all the machines to be migrated categorized by different resource types. The workbook highlights:
 
@@ -51,7 +51,7 @@ Here you can find the migration status, with all the machines to be migrated cat
 - <span style="color:red"><strong>In red:</strong></span> Agents with only MMA/OMS.
 - <span style="color:green"><strong>In green:</strong></span> Agents with only AMA.
 
-![Untitled](Migration%20from%20MMA%20to%20AMA%20and%20DCR%20configuration%20+%20%20645c8d9e57314239a9fc5c73f681a0d0/Untitled%201.png)
+![AMA Migration Helper - Workbook](AMAMigrationHelper-Workbook2.png)
 
 Within each tab, you can also see detailed status updates for agent installations on each VM, Azure ARC or VMSS highlighting the specific installation status.
 
