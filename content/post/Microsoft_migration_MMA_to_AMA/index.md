@@ -179,15 +179,15 @@ Create **user-assigned managed identity** in order to have a identity that have 
 
 Navigate over Managed Identities and click on Create
 
-![Managed Identity Setup](ManagedIdentity.png)
+![Managed Identity Setup](/images/ManagedIdentity.png)
 
 After creating it, remember to add the required permissions in the Azure Role Assignments section.
 
-![Role definition](RoleDefinition.png)
+![Role definition](/images/RoleDefinition.png)
 
 *Role example (here I add owner just for a test)*
 
-![](RoleMI.png)
+![](/images/RoleMI.png)
 {{</callout>}}
 
 {{<admonition>}}
@@ -218,11 +218,11 @@ Click on it you can see the real evidence of the policy status and the affected 
 {{<redalert>}}
 If the policy returns an error and is marked as non-compliant, use the Remediation Task tab to reapply the policy.
 
-![](Policy6.png)
+![](/images/Policy6.png)
 
 Within the Remediation tab, you can monitor the progress of the remediation.
 
-![](Policy7.png)
+![](/images/Policy7.png)
 {{</redalert>}}
 
 
@@ -245,15 +245,15 @@ Skip the Advanced tab
 In the Parameters tab insert the ID of the DCR created in the **Step 2**
 
 {{<callout>}}
-📌 How to find DCR ID?
+How to find DCR ID?
 
 Click on DCR Service and find click on JSON View
 
-![](DCR.png)
+![](/images/DCR.png)
 
 Click on *Copy*
 
-![](DCR2.png)
+![](/images/DCR2.png)
 {{</callout>}}
 
 
