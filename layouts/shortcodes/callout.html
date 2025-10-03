@@ -10,7 +10,7 @@
     💡 {{ if .Get "title" }}{{ .Get "title" }}{{ end }}
   </strong>
   <div style="margin-top:6px;">
-    {{ .Inner }}
+    {{ .Inner | markdownify }}
   </div>
   <style>
     @media (prefers-color-scheme: dark) {
