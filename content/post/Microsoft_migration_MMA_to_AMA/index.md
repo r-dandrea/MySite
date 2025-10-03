@@ -57,9 +57,8 @@ Within each tab, you can also see detailed status updates for agent installation
 
 ![Azure Virtual Machine](AzureVirtualMachine.png)
 
-<aside>
 {{<callout>}}
-💡 This workbook can be very useful as it provides detailed insights into the agent installations allowing you to view each installation in detail.
+This workbook can be very useful as it provides detailed insights into the agent installations allowing you to view each installation in detail.
 {{</callout>}}
 
 ### 2. Agent Installation - Creation of DCR (Windows)
