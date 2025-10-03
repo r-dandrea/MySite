@@ -63,10 +63,10 @@ This workbook can be very useful as it provides detailed insights into the agent
 
 ### 2. Agent Installation - Creation of DCR (Windows)
 
-<aside>
+{{< admonition>}}
 ⚠️ You need to create the DCR from Sentinel Connector
+{{< /admonition>}}
 
-</aside>
 
 Navigate to Sentinel → Data Connector → Windows Security Events via AMA
 
