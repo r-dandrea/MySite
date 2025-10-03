@@ -19,11 +19,12 @@ comments: false
 Microsoft has announced the deprecation of the **Microsoft Monitoring Agent** (MMA), effective August 31. If you're still using MMA to collect and manage your monitoring data, now is the time to plan your transition to **Azure Monitor Agent** (AMA).
 
 
-{{< alert color="warning" >}} 
-⚠️ 
- The **MMA** will officially be deprecated on **August 31**. Although MMA will continue to be active for logging purposes until 1 of February, it's important to note that Microsoft will not provide support for any issues encountered after August 31. 
- Therefore, to ensure uninterrupted support and to take advantage of the latest features, you should complete your migration to AMA before the deprecation date.
-{{< /alert >}}
+
+{{< admonition type=warning title="Attenzione" >}}
+The **MMA** will officially be deprecated on **August 31**. Although MMA will continue to be active for logging purposes until 1 of February, it’s important to note that Microsoft will not provide support for any issues encountered after August 31.
+
+Therefore, to ensure uninterrupted support and to take advantage of the latest features, you should complete your migration to AMA before the deprecation date.
+{{< /admonition >}}
 
 The Azure Monitor Agent represents a significant advancement in monitoring capabilities, offering enhanced performance, security, and flexibility. Microsoft recommends migrating to AMA to take advantage of these improvements and ensure continued support for your monitoring needs.
 
@@ -42,13 +43,13 @@ To get a comprehensive view of all the VMs, Azure Arc resources, and VMSS that n
 
 Navigate over Monitor Service on Azure → Workbooks → AMA Migration Helper
 
-![Untitled](Untitled.png)
+![AMA Migration Helper - Workbook](Untitled.png)
 
 Here you can find the migration status, with all the machines to be migrated categorized by different resource types. The workbook highlights:
 
-- <span style="color:blue"><strong>In blue:</strong></span> Agents that have both the old MMA/OMS agent and the new AMA agent.
-- <span style="color:red"><strong>In red:</strong></span> Agents that have only the old MMA/OMS agent.
-- <span style="color:green"><strong>In green:</strong></span> Agents that have only the new AMA agent.
+- **In blue:** Agents that have both the old MMA/OMS agent and the new AMA agent.
+- **In red:** Agents that have only the old MMA/OMS agent.
+- **In green:** Agents that have only the new AMA agent.
 
 ![Untitled](Migration%20from%20MMA%20to%20AMA%20and%20DCR%20configuration%20+%20%20645c8d9e57314239a9fc5c73f681a0d0/Untitled%201.png)
 
