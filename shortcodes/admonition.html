@@ -1,0 +1,12 @@
+<div style="
+  background: #fffbe5;
+  border-left: 7px solid #e9c46a;
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 6px;
+">
+  <strong>⚠️ {{ if .Get "title" }}{{ .Get "title" }}{{ else }}Warning{{ end }}</strong>
+  <div style="margin-top:6px;">
+    {{ .Inner }}
+  </div>
+</div>
