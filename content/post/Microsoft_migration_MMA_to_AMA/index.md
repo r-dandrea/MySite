@@ -94,13 +94,12 @@ In the Resources tab select all the VM and Azure Arc that you want to monitoring
 
 After all you need to select with kind of event you want to store.
 
-<aside>
-💡 To better understand what to ingest, here you can find **guides** that describe in detail what each tab represents.
-- **Windows** → https://learn.microsoft.com/en-us/azure/sentinel/windows-security-event-id-reference
-- **Linux** → https://learn.microsoft.com/en-us/azure/azure-monitor/agents/data-sources-syslog#configure-syslog-in-the-azure-portal
-- **Deep Dive on Linux event** → https://techcommunity.microsoft.com/t5/core-infrastructure-and-security/deep-dive-how-to-debug-syslog-ingestion-for-sentinel-and-log/ba-p/2007056
-
-</aside>
+{{<callout>}}
+To better understand what to ingest, here you can find **guides** that describe in detail what each tab represents.
+- **Windows** → [Windows Security Event Reference](https://learn.microsoft.com/en-us/azure/sentinel/windows-security-event-id-reference)
+- **Linux** → [Configure Syslog in Azure portal](https://learn.microsoft.com/en-us/azure/azure-monitor/agents/data-sources-syslog#configure-syslog-in-the-azure-portal)
+- **Deep Dive on Linux event** → [How to debug Syslog ingestion](https://techcommunity.microsoft.com/t5/core-infrastructure-and-security/deep-dive-how-to-debug-syslog-ingestion-for-sentinel-and-log/ba-p/2007056)
+{{< /callout >}}
 
 ![Untitled](Migration%20from%20MMA%20to%20AMA%20and%20DCR%20configuration%20+%20%20645c8d9e57314239a9fc5c73f681a0d0/Untitled%207.png)
 
