@@ -1,0 +1,27 @@
+<div style="
+  background: #fff;
+  border-left: 7px solid #ffe066;
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 6px;
+  color: #222;
+  ">
+  <strong>
+    💡 {{ if .Get "title" }}{{ .Get "title" }}{{ end }}
+  </strong>
+  <div style="margin-top:6px;">
+    {{ .Inner }}
+  </div>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      div[style*='background: #fff'][style*='border-left: 7px solid #ffe066'] {
+        background: #232323 !important;
+        color: #ffe066 !important;
+        border-left: 7px solid #ffe066 !important;
+      }
+      div[style*='background: #fff'][style*='border-left: 7px solid #ffe066'] strong {
+        color: #ffe066 !important;
+      }
+    }
+  </style>
+</div>

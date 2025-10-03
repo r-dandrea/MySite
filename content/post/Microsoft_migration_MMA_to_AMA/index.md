@@ -55,12 +55,12 @@ Here you can find the migration status, with all the machines to be migrated cat
 
 Within each tab, you can also see detailed status updates for agent installations on each VM, Azure ARC or VMSS highlighting the specific installation status.
 
-![Untitled](Migration%20from%20MMA%20to%20AMA%20and%20DCR%20configuration%20+%20%20645c8d9e57314239a9fc5c73f681a0d0/Untitled%202.png)
+![Azure Virtual Machine](AzureVirtualMachine.png)
 
 <aside>
+{{<tip>}}
 💡 This workbook can be very useful as it provides detailed insights into the agent installations allowing you to view each installation in detail.
-
-</aside>
+{{</tip>}}
 
 ### 2. Agent Installation - Creation of DCR (Windows)
 
