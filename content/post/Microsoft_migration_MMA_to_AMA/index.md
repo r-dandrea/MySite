@@ -18,9 +18,10 @@ comments: false
 
 Microsoft has announced the deprecation of the **Microsoft Monitoring Agent** (MMA), effective August 31. If you're still using MMA to collect and manage your monitoring data, now is the time to plan your transition to **Azure Monitor Agent** (AMA).
 
-<aside>
-⚠️ The **MMA** will officially be deprecated on **August 31**. Although MMA will continue to be active for logging purposes until 1 of February, it's important to note that Microsoft will not provide support for any issues encountered after August 31. 
-Therefore, to ensure uninterrupted support and to take advantage of the latest features, you should complete your migration to AMA before the deprecation date.
+
+> ⚠️ 
+> The **MMA** will officially be deprecated on **August 31**. Although MMA will continue to be active for logging purposes until 1 of February, it's important to note that Microsoft will not provide support for any issues encountered after August 31. 
+> Therefore, to ensure uninterrupted support and to take advantage of the latest features, you should complete your migration to AMA before the deprecation date.
 
 </aside>
 
