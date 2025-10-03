@@ -13,6 +13,15 @@
     {{ .Inner | markdownify }}
   </div>
   <style>
+    /* Light mode: links ben visibili */
+    div[style*='border-left: 7px'][style*='background'] a {
+      color: #2563eb !important;   /* Blu acceso */
+      text-decoration: underline;
+    }
+    div[style*='border-left: 7px'][style*='background'] a:hover {
+      color: #1d4ed8 !important;   /* Blu più scuro quando hover */
+    }
+
     @media (prefers-color-scheme: dark) {
       div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
         background: #232323 !important;
@@ -21,6 +30,14 @@
       }
       div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
         color: #eee !important;
+      }
+      /* Dark mode: links chiari e leggibili */
+      div[style*='border-left: 7px'][style*='background'] a {
+        color: #86b7fd !important;    /* Blu chiaro per dark mode */
+        text-decoration: underline;
+      }
+      div[style*='border-left: 7px'][style*='background'] a:hover {
+        color: #f9fafb !important;    /* Quasi bianco al passaggio mouse */
       }
     }
   </style>
