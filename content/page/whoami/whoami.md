@@ -1,6 +1,6 @@
 ---
 title: "whoami"
-date: 00-00-1996
+date: 1996-00-00
 layout: "whoami"
 slug: "whoami"
 menu:
