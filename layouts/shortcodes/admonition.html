@@ -4,9 +4,22 @@
   padding: 1em;
   margin: 1em 0;
   border-radius: 6px;
+  color: #222;
 ">
   <strong>⚠️ {{ if .Get "title" }}{{ .Get "title" }}{{ else }}Warning{{ end }}</strong>
   <div style="margin-top:6px;">
     {{ .Inner }}
   </div>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      div[style*='background: #fffbe5'] {
+        background: #322911 !important;     /* colore di fondo scuro, tema warning */
+        color: #f3e7be !important;           /* testo ben leggibile su scuro */
+        border-left: 7px solid #e9c46a !important;
+      }
+      div[style*='background: #fffbe5'] strong {
+        color: #ffe066 !important;
+      }
+    }
+  </style>
 </div>
