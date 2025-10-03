@@ -115,7 +115,7 @@ After all click on Create and wait the creation of DCR and the deploy of AMA ove
 
 {{<redalert>}}
 **Remember to unistall the MMA agent**, as having it active could result in duplicate events within your workspace.
-![Unistall AMA Agent](UnistallAMAAgent.png)
+![Unistall AMA Agent](/images/UnistallAMAAgent.png)
 {{</redalert>}}
 
 
