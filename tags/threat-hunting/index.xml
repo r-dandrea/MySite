@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Threat Hunting on Roberto D'Andrea</title><link>https://robertodandrea.com/tags/threat-hunting/</link><description>Recent content in Threat Hunting on Roberto D'Andrea</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 06 Aug 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://robertodandrea.com/tags/threat-hunting/index.xml" rel="self" type="application/rss+xml"/><item><title>Certified Threat Hunting Professional v2 (eCTHPv2) Review - INE</title><link>https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/</link><pubDate>Wed, 06 Aug 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/</guid><description>&lt;p&gt;The &lt;strong&gt;Certified Threat Hunting Professional v2 (eCTHPv2)&lt;/strong&gt; by INE is a certification designed for security professionals focused on threat hunting.&lt;/p&gt;
+&lt;p&gt;This certification is ideal for security analysts and threat hunters who wish to learn in-depth techniques for identifying malicious activities across network and endpoint environments. Priced at &lt;strong&gt;$399&lt;/strong&gt;, the certification includes a practical exam and requires a final report, to be completed within two days post-exam.
+This guide includes notes and an example of the exam I completed.&lt;/p&gt;
+&lt;p&gt;This certification is broken down into three main areas:&lt;/p&gt;
+&lt;h3 id="course-structure-and-certification-details"&gt;Course Structure and Certification Details
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Introduction to Threat Hunting&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;This section introduces core &lt;strong&gt;threat hunting&lt;/strong&gt; concepts, life cycles of threats, and detection methodologies. Key topics include identifying &lt;strong&gt;Indicators of Compromise (IoC)&lt;/strong&gt; and building threat-hunting hypotheses.&lt;/li&gt;
+&lt;li&gt;A crucial part is understanding threat behaviors and utilizing frameworks like &lt;strong&gt;MITRE ATT&amp;amp;CK&lt;/strong&gt; to create a structured approach.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Hunting the Network &amp;amp; Network Analysis&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;This part focuses on network traffic analysis and techniques for spotting suspicious patterns. Practical insights are given into monitoring network data using &lt;strong&gt;Splunk&lt;/strong&gt; and understanding packet analysis.&lt;/li&gt;
+&lt;li&gt;The module covers spotting lateral movement and data exfiltration signs.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Hunting the Endpoint &amp;amp; Endpoint Analysis&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Here, emphasis is on endpoint analysis, covering tools like &lt;strong&gt;Volatility&lt;/strong&gt; for memory analysis and &lt;strong&gt;ELK (Elastic)&lt;/strong&gt; for log analysis, focusing on detecting malware indicators and suspicious activity on endpoints.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡 Personal Notes on the Course Content
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;n this section, I’ve included some of my notes to help guide others studying for the eCTHPv2 certification.
+These notes summarize key takeaways from each module, covering essential techniques, tools, and strategies for threat hunting within networks and endpoints.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;eCTHPv2 Certification Notes&lt;/strong&gt; → &lt;a class="link" href="https://robertodandrea.notion.site/eCTHPv2-Notes-3feb4008746f4cb6b1b37acbebbc130a?pvs=74" target="_blank" rel="noopener"
+&gt;eCTHP Notes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="exam-details"&gt;Exam Details
+&lt;/h3&gt;&lt;p&gt;The eCTHPv2 exam consists of three &lt;strong&gt;hands-on labs&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Splunk&lt;/strong&gt;: For log monitoring and network traffic analysis.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Volatility&lt;/strong&gt;: For forensics and memory analysis.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ELK (Elastic)&lt;/strong&gt;: For system log management and analysis.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;After completing these labs, you have &lt;strong&gt;two days&lt;/strong&gt; to complete the exam and an additional &lt;strong&gt;two days&lt;/strong&gt; to submit the final report, which must detail your findings and conclusions from the hunting activities.&lt;/p&gt;
+&lt;h3 id="tips-for-success"&gt;Tips for Success
+&lt;/h3&gt;&lt;p&gt;Since you’re already familiar with &lt;strong&gt;Splunk&lt;/strong&gt; and &lt;strong&gt;ELK&lt;/strong&gt;, here are some focused tips:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Review the MITRE ATT&amp;amp;CK Framework&lt;/strong&gt;: Get well-acquainted with common attack techniques. This framework will support you in your report, especially when describing threat-hunting processes.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Maximize Tool Knowledge&lt;/strong&gt;: Even if you know Splunk and ELK well, delve deeper into filtering techniques, regex for complex queries, and setting up customized dashboards and alerts.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Thorough Documentation&lt;/strong&gt;: During the labs, take meticulous notes. The final report should detail not just results but also your methodologies to demonstrate a structured approach.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Time Management&lt;/strong&gt;: Plan each lab’s activities and reserve time for report review to meet the certification’s strict deadlines.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Practice with Real Scenarios&lt;/strong&gt;: Aside from course materials, practice with realistic case studies to solidify your knowledge, especially in network and endpoint analysis.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/eCTHP_DANDREA.png"
+width="1218"
+height="860"
+srcset="https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/eCTHP_DANDREA_hu_137bdc2ff3afc845.png 480w, https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/eCTHP_DANDREA_hu_3c6c74a728fa2bcd.png 1024w"
+loading="lazy"
+alt="eCTHP certification"
+class="gallery-image"
+data-flex-grow="141"
+data-flex-basis="339px"
+&gt;&lt;/p&gt;
+&lt;h3 id="conclusion"&gt;Conclusion
+&lt;/h3&gt;&lt;p&gt;INE&amp;rsquo;s eCTHPv2 provides significant hands-on experience in threat hunting, emphasizing proactive response to network and endpoint threats. By mastering tools like &lt;code&gt;Splunk&lt;/code&gt;, &lt;code&gt;Volatility&lt;/code&gt;, and &lt;code&gt;ELK&lt;/code&gt;, this certification enhances your ability to detect and analyze anomalies in an enterprise setting.
+The hands-on labs and structured threat-hunting techniques make it a comprehensive choice for anyone serious about advancing their skills in cybersecurity and threat detection.&lt;/p&gt;</description></item></channel></rss>

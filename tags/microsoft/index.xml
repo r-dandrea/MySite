@@ -1,0 +1,975 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Microsoft on Roberto D'Andrea</title><link>https://robertodandrea.com/tags/microsoft/</link><description>Recent content in Microsoft on Roberto D'Andrea</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 06 Mar 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://robertodandrea.com/tags/microsoft/index.xml" rel="self" type="application/rss+xml"/><item><title>Migration from MMA to AMA and DCR configuration + Azure Policy</title><link>https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/</link><pubDate>Thu, 06 Mar 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/</guid><description>&lt;h1 id="migration-from-mma-to-ama-and-dcr-configuration--azure-policy"&gt;Migration from MMA to AMA and DCR configuration + Azure Policy
+&lt;/h1&gt;&lt;p&gt;Microsoft has announced the deprecation of the &lt;strong&gt;Microsoft Monitoring Agent&lt;/strong&gt; (MMA), effective August 31. If you&amp;rsquo;re still using MMA to collect and manage your monitoring data, now is the time to plan your transition to &lt;strong&gt;Azure Monitor Agent&lt;/strong&gt; (AMA).&lt;/p&gt;
+&lt;div style="
+background: #fffbe5;
+border-left: 7px solid #e9c46a;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;⚠️ Warning&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;The &lt;strong&gt;MMA&lt;/strong&gt; will officially be deprecated on &lt;strong&gt;August 31&lt;/strong&gt;. Although MMA will continue to be active for logging purposes until 1 of February, it’s important to note that Microsoft will not provide support for any issues encountered after August 31.&lt;/p&gt;
+&lt;p&gt;Therefore, to ensure uninterrupted support and to take advantage of the latest features, you should complete your migration to AMA before the deprecation date.&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fffbe5'] {
+background: #322911 !important;
+color: #f3e7be !important;
+border-left: 7px solid #e9c46a !important;
+}
+div[style*='background: #fffbe5'] strong {
+color: #ffe066 !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;The Azure Monitor Agent represents a significant advancement in monitoring capabilities, offering enhanced performance, security, and flexibility. Microsoft recommends migrating to AMA to take advantage of these improvements and ensure continued support for your monitoring needs.&lt;/p&gt;
+&lt;p&gt;In this post, we’ll guide you through the migration process by showing you how to configure and install the new Azure Monitor Agent, set up &lt;strong&gt;Data Collection Rules&lt;/strong&gt; (DCR), and apply Azure policies to automate the deployment of both the AMA agent and DCR. This step-by-step guide will ensure a seamless transition and help you leverage the latest monitoring technology efficiently.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Content&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;AMA Migration Workbook&lt;/li&gt;
+&lt;li&gt;Agent Installation - Creation of DCR&lt;/li&gt;
+&lt;li&gt;Azure Policy&lt;/li&gt;
+&lt;li&gt;Conclusion&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="1-ama-migration-workbook"&gt;1. AMA Migration Workbook
+&lt;/h3&gt;&lt;p&gt;To get a comprehensive view of all the VMs, Azure Arc resources, and VMSS that need to be migrated to the new Azure Monitor Agent (AMA), you can use this workbook.&lt;/p&gt;
+&lt;p&gt;Navigate over Monitor Service on Azure → Workbooks → AMA Migration Helper&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAMigrationHelper-Workbook.png"
+width="1046"
+height="714"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAMigrationHelper-Workbook_hu_5f96a3c9fdf71ff.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAMigrationHelper-Workbook_hu_d09959ab620cabdd.png 1024w"
+loading="lazy"
+alt="AMA Migration Helper - Workbook"
+class="gallery-image"
+data-flex-grow="146"
+data-flex-basis="351px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Here you can find the migration status, with all the machines to be migrated categorized by different resource types. The workbook highlights:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span style="color:blue"&gt;&lt;strong&gt;In blue:&lt;/strong&gt;&lt;/span&gt; Agents with both agents.&lt;/li&gt;
+&lt;li&gt;&lt;span style="color:red"&gt;&lt;strong&gt;In red:&lt;/strong&gt;&lt;/span&gt; Agents with only MMA/OMS.&lt;/li&gt;
+&lt;li&gt;&lt;span style="color:green"&gt;&lt;strong&gt;In green:&lt;/strong&gt;&lt;/span&gt; Agents with only AMA.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAMigrationHelper-Workbook2.png"
+width="1898"
+height="857"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAMigrationHelper-Workbook2_hu_7eb0071b56ffed02.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAMigrationHelper-Workbook2_hu_b77ae6a5106bba5f.png 1024w"
+loading="lazy"
+alt="AMA Migration Helper - Workbook"
+class="gallery-image"
+data-flex-grow="221"
+data-flex-basis="531px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Within each tab, you can also see detailed status updates for agent installations on each VM, Azure ARC or VMSS highlighting the specific installation status.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AzureVirtualMachine.png"
+width="1633"
+height="470"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AzureVirtualMachine_hu_8f00c0552ecbd6e9.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AzureVirtualMachine_hu_c0490304fe381526.png 1024w"
+loading="lazy"
+alt="Azure Virtual Machine"
+class="gallery-image"
+data-flex-grow="347"
+data-flex-basis="833px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+This workbook can be very useful as it provides detailed insights into the agent installations allowing you to view each installation in detail.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="2-agent-installation---creation-of-dcr-windows"&gt;2. Agent Installation - Creation of DCR (Windows)
+&lt;/h3&gt;&lt;div style="
+background: #fffbe5;
+border-left: 7px solid #e9c46a;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;⚠️ Warning&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+You need to create the DCR from Sentinel Connector
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fffbe5'] {
+background: #322911 !important;
+color: #f3e7be !important;
+border-left: 7px solid #e9c46a !important;
+}
+div[style*='background: #fffbe5'] strong {
+color: #ffe066 !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;em&gt;Naviga su Sentinel → Data Connector → Windows Security Events via AMA&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAConnector.png"
+width="914"
+height="161"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAConnector_hu_3350083b759b266d.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAConnector_hu_da4174c65eba2296.png 1024w"
+loading="lazy"
+alt="AMA Connector (Windows &amp; Mac)"
+class="gallery-image"
+data-flex-grow="567"
+data-flex-basis="1362px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Open connector page&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/WindowsAMAConnector.png"
+width="438"
+height="705"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/WindowsAMAConnector_hu_741b0fc37ea528d6.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/WindowsAMAConnector_hu_f0f1ad3c11337e8a.png 1024w"
+loading="lazy"
+alt="Windows AMA Connector"
+class="gallery-image"
+data-flex-grow="62"
+data-flex-basis="149px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Here tou can create your DCR&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRCreation.png"
+width="742"
+height="503"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRCreation_hu_34e1cf042199d871.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRCreation_hu_a69feaa9e4edae69.png 1024w"
+loading="lazy"
+alt="Data Collection Rule creation"
+class="gallery-image"
+data-flex-grow="147"
+data-flex-basis="354px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+What I recommend is creating separate Data Collection Rules for each type of host, such as Windows and Linux (use Syslog via AMA), and also &lt;strong&gt;dividing the DCRs for other groups of machines&lt;/strong&gt;. This approach ensures that you have DCRs with specific events tailored to different types of hosts
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;Define Name for the DCR and Resource Group where is stored (default will be Sentinel)&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRName.png"
+width="799"
+height="337"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRName_hu_9a8f24fe159d046d.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRName_hu_fd8659eda35ca65.png 1024w"
+loading="lazy"
+alt="DCR Name"
+class="gallery-image"
+data-flex-grow="237"
+data-flex-basis="569px"
+&gt;&lt;/p&gt;
+&lt;p&gt;In the Resources tab select all the VM and Azure Arc that you want to monitoring.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRResource.png"
+width="793"
+height="522"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRResource_hu_90371a52a5d08a75.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRResource_hu_ac593d1b22071ecc.png 1024w"
+loading="lazy"
+alt="DCR Resource"
+class="gallery-image"
+data-flex-grow="151"
+data-flex-basis="364px"
+&gt;&lt;/p&gt;
+&lt;p&gt;After all you need to select with kind of event you want to store.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;To better understand what to ingest, here you can find &lt;strong&gt;guides&lt;/strong&gt; that describe in detail what each tab represents.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Windows&lt;/strong&gt; → &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/sentinel/windows-security-event-id-reference" target="_blank" rel="noopener"
+&gt;Windows Security Event Reference&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Linux&lt;/strong&gt; → &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/azure-monitor/agents/data-sources-syslog#configure-syslog-in-the-azure-portal" target="_blank" rel="noopener"
+&gt;Configure Syslog in Azure portal&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Deep Dive on Linux event&lt;/strong&gt; → &lt;a class="link" href="https://techcommunity.microsoft.com/t5/core-infrastructure-and-security/deep-dive-how-to-debug-syslog-ingestion-for-sentinel-and-log/ba-p/2007056" target="_blank" rel="noopener"
+&gt;How to debug Syslog ingestion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRCollect.png"
+width="414"
+height="192"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRCollect_hu_e8894c717defd127.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DCRCollect_hu_5b80fa7c6a127487.png 1024w"
+loading="lazy"
+alt="DCR Collect"
+class="gallery-image"
+data-flex-grow="215"
+data-flex-basis="517px"
+&gt;&lt;/p&gt;
+&lt;p&gt;After all click on Create and wait the creation of DCR and the deploy of AMA over VM and Azure ARC.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Evidence of DCR created over DCR services&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DataCollectionRuleEvidence.png"
+width="1818"
+height="452"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DataCollectionRuleEvidence_hu_a63b011b19f0d0a7.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/DataCollectionRuleEvidence_hu_3be2cfd7ea561a51.png 1024w"
+loading="lazy"
+alt="Data Collection Rule Evidence"
+class="gallery-image"
+data-flex-grow="402"
+data-flex-basis="965px"
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Evidence of AMA installation on VM&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAAgentOnVM.png"
+width="1902"
+height="647"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAAgentOnVM_hu_78976f2c155690f0.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAAgentOnVM_hu_9401de53f50c8727.png 1024w"
+loading="lazy"
+alt="Navigate over VM → Extensions &amp;#43; application "
+class="gallery-image"
+data-flex-grow="293"
+data-flex-basis="705px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff5f5;
+border-left: 7px solid #ef4444;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #991b1b;
+"&gt;
+&lt;strong&gt;🚨 Alert&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;strong&gt;Remember to unistall the MMA agent&lt;/strong&gt;, as having it active could result in duplicate events within your workspace.
+&lt;img src="https://robertodandrea.com/images/UnistallAMAAgent.png"
+loading="lazy"
+alt="Unistall AMA Agent"
+&gt;
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff5f5'] {
+background: #2b1818 !important;
+color: #fff5f5 !important;
+border-left: 7px solid #fb7185 !important;
+}
+div[style*='background: #fff5f5'] strong {
+color: #fde0e0 !important;
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #fb7185 !important;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #ef4444;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="3-azure-policy"&gt;3. Azure Policy
+&lt;/h3&gt;&lt;p&gt;Azure Policy can be used to deploy the Azure Monitor Agent. To achieve this, follow these steps:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Navigate to the Azure Policy Section:&lt;/strong&gt; Access the Azure portal and go to the &amp;ldquo;Policy&amp;rdquo; section from the left-hand menu.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Create a New Policy:&lt;/strong&gt; In the Azure Policy dashboard, select &amp;ldquo;Create Policy&amp;rdquo; to start the process of defining a new policy.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Configure the Policy:&lt;/strong&gt; Set up the policy parameters to deploy the Azure Monitor Agent. You can specify the conditions under which the agent should be installed and apply it to the appropriate scope, such as specific resource groups or subscriptions.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Assign the Policy:&lt;/strong&gt; Once configured, assign the policy to the desired resources. This will ensure that the Azure Monitor Agent is automatically installed on all resources that meet the policy criteria.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Here you can find &lt;strong&gt;guides&lt;/strong&gt; that describe in detail the Azure Policy.
+There are built-in policy initiatives for Windows and Linux virtual machines &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/azure-monitor/agents/azure-monitor-agent-policy#built-in-policy-initiatives" target="_blank" rel="noopener"
+&gt;Azure Policy&lt;/a&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/BuiltinPolicy.png"
+width="846"
+height="372"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/BuiltinPolicy_hu_3ebeacc5e995858d.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/BuiltinPolicy_hu_fd8f857d4066aeba.png 1024w"
+loading="lazy"
+alt="Built-in Policy"
+class="gallery-image"
+data-flex-grow="227"
+data-flex-basis="545px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Within these two rules, I recommend selecting exclusively the following two policies that are essential for installing the Azure Monitor Agent (AMA) and assigning the Data Collection Rule (DCR) to the VM:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Policy for Installing the Azure Monitor Agent (AMA):&lt;/strong&gt; This policy ensures that the AMA is automatically deployed on the targeted virtual machines. It simplifies the installation process by applying the agent configuration across your environment.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Policy for Assigning Data Collection Rules (DCRs):&lt;/strong&gt; This policy is responsible for applying the appropriate DCR to each VM. It guarantees that the data collection settings are consistently applied, enabling accurate and comprehensive monitoring.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy.png"
+width="1788"
+height="545"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy_hu_b5f7bf215da0586e.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy_hu_ad500edcb23701b2.png 1024w"
+loading="lazy"
+alt="Policy"
+class="gallery-image"
+data-flex-grow="328"
+data-flex-basis="787px"
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Policy for Installing the Azure Monitor Agent (AMA)&lt;/strong&gt;
+&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAPolicy.png"
+width="1755"
+height="536"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAPolicy_hu_3cc2a8d9fc2c4bfb.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AMAPolicy_hu_2ba8a11c4b4f5f17.png 1024w"
+loading="lazy"
+alt="AMA Policy"
+class="gallery-image"
+data-flex-grow="327"
+data-flex-basis="785px"
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Starting for the first one click on &lt;em&gt;Configure Windows virtual machines to run Azure Monitor Agent with user-assigned managed identity-based authentication&lt;/em&gt; and click on Assign&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AssignPolicy.png"
+width="1880"
+height="642"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AssignPolicy_hu_54caf177fbea1b49.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/AssignPolicy_hu_f70b85838a03adde.png 1024w"
+loading="lazy"
+alt="Assign Policy"
+class="gallery-image"
+data-flex-grow="292"
+data-flex-basis="702px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Here you need to select the Scope where the Policy will be executed.&lt;/p&gt;
+&lt;p&gt;For example you can also select all Subscption or even specific Resource Group.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Scope.png"
+width="1911"
+height="651"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Scope_hu_5d416883408b3859.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Scope_hu_b42b0b996bd499c1.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="293"
+data-flex-basis="704px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+You can also build an Exclusions path to ensure that you do not unintentionally apply the policy you are creating.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;Skip the Advances step&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy2.png"
+width="1332"
+height="647"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy2_hu_3bc069688bb548d9.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy2_hu_8a35f69c275a48a7.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="205"
+data-flex-basis="494px"
+&gt;&lt;/p&gt;
+&lt;p&gt;On Parameters step set Bring Your Own User-Assigned Managed Identity as True&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy3.png"
+width="1362"
+height="363"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy3_hu_10d5b0da8e11d18e.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy3_hu_efb4e1cd7e654dee.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="375"
+data-flex-basis="900px"
+&gt;&lt;/p&gt;
+&lt;p&gt;In the Remediation tab, enter a &lt;strong&gt;user-assigned managed identity&lt;/strong&gt; and check the box for &amp;ldquo;Create Remediation Task.&amp;rdquo; This will ensure that the policy uses the specified identity and sets up a remediation task if needed.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;Create &lt;strong&gt;user-assigned managed identity&lt;/strong&gt; in order to have a identity that have the correct permission to install AMA and also assign the DCR.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Required permissions:&lt;/strong&gt; &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-collection-rule-create-edit?tabs=portal#permissions" target="_blank" rel="noopener"
+&gt;Create and Edit DCR&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Navigate over Managed Identities and click on Create&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/ManagedIdentity.png"
+loading="lazy"
+alt="Managed Identity Setup"
+&gt;&lt;/p&gt;
+&lt;p&gt;After creating it, remember to add the required permissions in the Azure Role Assignments section.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/RoleDefinition.png"
+loading="lazy"
+alt="Role definition"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Role example (here I add owner just for a test)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/RoleMI.png"
+loading="lazy"
+&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;div style="
+background: #fffbe5;
+border-left: 7px solid #e9c46a;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;⚠️ Warning&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Remember that adding the Remediation tab allows the policy to be applied to existing VMs as well.
+Without this tab, the policy would only apply to new VMs created after the policy is implemented
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fffbe5'] {
+background: #322911 !important;
+color: #f3e7be !important;
+border-left: 7px solid #e9c46a !important;
+}
+div[style*='background: #fffbe5'] strong {
+color: #ffe066 !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Remediation.png"
+width="1385"
+height="726"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Remediation_hu_f592b0bf217ba3cf.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Remediation_hu_71aeb587a4397424.png 1024w"
+loading="lazy"
+alt="Remediation Step"
+class="gallery-image"
+data-flex-grow="190"
+data-flex-basis="457px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Here you can add a message if the policy will be non-compliante&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/NonComplianceMessage.png"
+width="1356"
+height="358"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/NonComplianceMessage_hu_d9ec01ec8d5c9f34.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/NonComplianceMessage_hu_edbfb61d7093e1f2.png 1024w"
+loading="lazy"
+alt="Non-Compliance Message"
+class="gallery-image"
+data-flex-grow="378"
+data-flex-basis="909px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Then in review + create tab click on &lt;strong&gt;Create&lt;/strong&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff5f5;
+border-left: 7px solid #ef4444;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #991b1b;
+"&gt;
+&lt;strong&gt;🚨 Alert&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Policy are not really fast so you need to wait 10-15 minute untill it will be applied.
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff5f5'] {
+background: #2b1818 !important;
+color: #fff5f5 !important;
+border-left: 7px solid #fb7185 !important;
+}
+div[style*='background: #fff5f5'] strong {
+color: #fde0e0 !important;
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #fb7185 !important;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #ef4444;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;Inside the Compliance tab you can monitoring the policy status and the non-compliance resources or non-compliant policies.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy4.png"
+width="1839"
+height="389"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy4_hu_4c56f08cc15e98ff.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy4_hu_ecb6914fa22ed8ec.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="472"
+data-flex-basis="1134px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Click on it you can see the real evidence of the policy status and the affected machine.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy5.png"
+width="1848"
+height="653"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy5_hu_7da4b670e6f578c3.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy5_hu_7bae851b790c6468.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="283"
+data-flex-basis="679px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff5f5;
+border-left: 7px solid #ef4444;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #991b1b;
+"&gt;
+&lt;strong&gt;🚨 Alert&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;If the policy returns an error and is marked as non-compliant, use the Remediation Task tab to reapply the policy.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/Policy6.png"
+loading="lazy"
+&gt;&lt;/p&gt;
+&lt;p&gt;Within the Remediation tab, you can monitor the progress of the remediation.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/Policy7.png"
+loading="lazy"
+&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff5f5'] {
+background: #2b1818 !important;
+color: #fff5f5 !important;
+border-left: 7px solid #fb7185 !important;
+}
+div[style*='background: #fff5f5'] strong {
+color: #fde0e0 !important;
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #fb7185 !important;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #ef4444;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;ol start="2"&gt;
+&lt;li&gt;&lt;strong&gt;Policy for Assigning Data Collection Rules (DCRs)&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy8.png"
+width="1823"
+height="530"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy8_hu_8bf8ccf92cc018c3.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy8_hu_52459ee8bae2d442.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="343"
+data-flex-basis="825px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Starting for the first one click on &lt;em&gt;Configure Windows Machines to be associated with a Data Collection Rule or a Data Collection Endpoint&lt;/em&gt; and click on assign&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy9.png"
+width="1882"
+height="552"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy9_hu_30227c84d88415.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy9_hu_d7785dd383fa4481.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="340"
+data-flex-basis="818px"
+&gt;&lt;/p&gt;
+&lt;p&gt;As previously done, configure the required sections.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy10.png"
+width="1909"
+height="663"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy10_hu_bd42b7b6c351d5df.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy10_hu_53a7b482d01fb05.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="287"
+data-flex-basis="691px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Skip the Advanced tab&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy11.png"
+width="1837"
+height="956"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy11_hu_6c85d74f87ab9a6a.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy11_hu_2e569f78162cebfb.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="192"
+data-flex-basis="461px"
+&gt;&lt;/p&gt;
+&lt;p&gt;In the Parameters tab insert the ID of the DCR created in the &lt;strong&gt;Step 2&lt;/strong&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;How to find DCR ID?&lt;/p&gt;
+&lt;p&gt;Click on DCR Service and find click on JSON View&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/DCR.png"
+loading="lazy"
+&gt;&lt;/p&gt;
+&lt;p&gt;Click on &lt;em&gt;Copy&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/images/DCR2.png"
+loading="lazy"
+&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy12.png"
+width="1185"
+height="378"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy12_hu_b8857c7609c1c5e9.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy12_hu_cc54fa9cfbabe129.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="313"
+data-flex-basis="752px"
+&gt;&lt;/p&gt;
+&lt;p&gt;As previously use the User Assigned managed Identity created before with all the role permission&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy13.png"
+width="1228"
+height="725"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy13_hu_933cdeaa1ffc2952.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy13_hu_6a6fa7fa95bc5d59.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="169"
+data-flex-basis="406px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Add comment if you want and click on create policy&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy14.png"
+width="1205"
+height="379"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy14_hu_8b3718214af0482a.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy14_hu_d1b971172f68b526.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="317"
+data-flex-basis="763px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff5f5;
+border-left: 7px solid #ef4444;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #991b1b;
+"&gt;
+&lt;strong&gt;🚨 Alert&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Policy are not really fast so you need to wait 10-15 minute untill it will be applied.
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff5f5'] {
+background: #2b1818 !important;
+color: #fff5f5 !important;
+border-left: 7px solid #fb7185 !important;
+}
+div[style*='background: #fff5f5'] strong {
+color: #fde0e0 !important;
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #fb7185 !important;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+}
+div[style*='background: #fff5f5'] img {
+border: 1px solid #ef4444;
+border-radius: 8px;
+margin-top: 10px;
+margin-bottom: 4px;
+max-width: 100%;
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;Inside the Compliance tab you can monitoring the policy status and the non-compliance resources or non-compliant policies.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy15.png"
+width="1827"
+height="395"
+srcset="https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy15_hu_c7bbfac27f43f4d5.png 480w, https://robertodandrea.com/post/microsoft/migration-from-mma-to-ama-and-dcr-configuration--azure-policy/Policy15_hu_ae345d8d9a7be9b8.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="462"
+data-flex-basis="1110px"
+&gt;&lt;/p&gt;
+&lt;h3 id="conclusion"&gt;Conclusion
+&lt;/h3&gt;&lt;p&gt;In conclusion, migrating from the Microsoft Monitoring Agent (MMA) to the Azure Monitor Agent (AMA) represents a significant upgrade to your monitoring infrastructure. By creating Data Collection Rules (DCRs) and leveraging Azure Policy for automated deployment, you can streamline the process and ensure consistent and comprehensive monitoring across your environment.&lt;/p&gt;
+&lt;p&gt;The migration involves several key steps: setting up the new AMA, defining and configuring DCRs to suit your specific monitoring needs, and applying Azure Policies to automate the deployment and assignment of both the AMA and DCRs. This approach not only simplifies the transition but also enhances the efficiency and effectiveness of your monitoring setup.&lt;/p&gt;
+&lt;p&gt;By following these guidelines, you will benefit from improved performance, increased flexibility, and better support for your monitoring requirements. Ensure that you complete the migration before the deprecation of MMA to avoid any disruptions and to fully leverage the advanced features and capabilities of AMA&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;If you have any questions or need further assistance, feel free to contact me via &lt;a class="link" href="https://www.linkedin.com/in/roberto-d-andrea-347164183/" target="_blank" rel="noopener"
+&gt;LinkedIn&lt;/a&gt;.
+I’m here to help with any queries you may have about the migration process.&lt;/p&gt;
+&lt;p&gt;Feel free to adjust the contact details or add any additional information as needed.&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;</description></item></channel></rss>
