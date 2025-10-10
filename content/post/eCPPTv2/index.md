@@ -1,7 +1,7 @@
 ---
 title: Certified Professional Penetration Tester (eCPPTv3) - INE 
 description: Review eCPPTv3 Certification
-slug: INE
+#slug: INE
 date: 2025-01-28
 #image: cover.jpg
 categories:
