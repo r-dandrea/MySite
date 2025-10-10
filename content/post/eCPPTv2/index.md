@@ -1,6 +1,6 @@
 ---
 title: Certified Professional Penetration Tester (eCPPTv3) - INE 
-description: eCPPTv3 Certification
+description: Review eCPPTv3 Certification
 slug: INE
 date: 2025-01-28
 #image: cover.jpg
@@ -9,7 +9,8 @@ categories:
 tags:
     - Certification
     - INE
-    - PenetrationTester
+    - Red Teaming
+
 #weight: 1       # You can add weight to some posts to override the default sorting (date descending)
 comments: false
 ---
@@ -23,8 +24,7 @@ The certification is priced at **400$** and includes a practical exam lasting **
 This review includes personal notes and an example of the methodologies applied during the exam.
 
 
-{{<callout>}}
-**Personal Notes on the Course Content**
+{{<callout title="Personal Notes oN the Course Content">}}
 In this section, I’ve included some of my notes to help guide others studying for the eCPPTv3 certification. 
 These notes summarize key takeaways from each module, covering essential techniques, tools, and strategies for threat hunting within networks and endpoints.
 - **eCPPT Notes** → [eCPPT Notes](https://robertodandrea.notion.site/eCPPT-Certification-a979ec3064e34ed6bb9690efd8ffd176?pvs=74)
@@ -89,13 +89,13 @@ https://orange-cyberdefense.github.io/ocd-mindmaps/
 {{</callout>}}
 
 ### Table of useful command
-| **Tool**          | **Uso / Descrizione**                                   | **Comandi Principali / Note**                                                                                                    |
+| **Tool**          | **Description**                                   | **cmd**                                                                                                    |
 |-------------------|--------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
 | `kerbrute`        | Enumerate / brute force / password spray                | **Enumeration:**<br>_kerbrute userenum -d example.local --dc 192.168.1.10 users.txt_<br>**BruteForce:**<br>_kerbrute bruteuser -d example.local --dc 192.168.1.10 administrator passwords.txt_<br>**User list file:**<br>_users.txt_ |
 | `crackmapexec`    | Enum hosts<br>Enum null session<br>Enum anonymous access| **Get password Policy:**<br>_cme <IP> -u ‘user’ -p ‘password’ --pass-pol_<br>**Username but NO pwd:**<br>_cme smb <dc_ip> -u user.txt -p password.txt --no-bruteforce_<br>**Valid Credential:**<br>_cme smb <IP> -u <user> -p '<password_from_before>' --users_<br>_cme smb <IP> -u <user> -p '<password_from_before>' --shares_<br>**Enumeration:**<br>_crackmapexec smb <IP>_<br>_crackmapexec smb <IP> -u 'a' -p ''_<br>**Lateral Movement:**<br>_crackmapexec smb <IP> -u <user> -p <password> -d <domain>_ |
 | `evil-winrm`      | Access to target machine                               | **Lateral Movement:**<br>_evil-winrm -i 192.168.1.100 -u Administrator -p 'Password123'_                                         |
 | `xfreerdp`        | Access to target machine                               | **Lateral Movement:**<br>_xfreerdp /v:192.168.1.100 /u:Administrator /p:'Password123'_                                            |
-| `smbclient`       | Accedere a risorse SMB/CIFS                            | **Lateral Movement:**<br>_smbclient.py <domain>/<user>:<Password123>@<IP>_<br>_smbclient -L //<dc_ip/_                           |
+| `smbclient`       | Access to SMB/CIFS resource                           | **Lateral Movement:**<br>_smbclient.py <domain>/<user>:<Password123>@<IP>_<br>_smbclient -L //<dc_ip/_                           |
 | `Enter-PSSession` | Start interactive session                              | _Enter-PSSession <domain>_<br>_Enter-PSSession seclogs.resesarch.security.local_                                                 |
 | `net`             | Useful for policy settings                             | _net accounts_<br>_net user administrator_                                                                                        |
 | `runas`           | Access to victim                                       | _runas.exe /user:administrator cmd_                                                                                              |
@@ -113,7 +113,7 @@ https://orange-cyberdefense.github.io/ocd-mindmaps/
 | `wpscan`          | Wordpress vuln                                         |                                                                                                                                |
 | `nmap`            | Port scanning                                          | _nmap -sC -sV -Pn -p- -oA output.txt <IP_addr> -vv_                                                                             |
 
-![eCPPTv3_DANDREA](eCPPT_DANDREA.png)
+![eCPPTv3 certification](eCPPT_DANDREA.png)
 
 ### Conclusion
 
