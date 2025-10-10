@@ -1,7 +1,7 @@
 ---
 title: Certified Threat Hunting Professional v2 (eCTHPv2) Review - INE 
 description: Review eCTHPv2 Certification
-s#lug: INE
+slug: INE
 date: 2025-08-06
 #image: cover.jpg
 categories:

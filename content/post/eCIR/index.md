@@ -1,7 +1,7 @@
 ---
 title: Certified Incident Responder eCIR Review - INE 
 description: Review eCIR Certification
-#slug: INE
+slug: INE
 date: 2025-08-30
 #image: cover.jpg
 categories:
