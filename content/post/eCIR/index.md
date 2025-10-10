@@ -64,8 +64,8 @@ From there, I built my understanding and followed up with targeted investigation
 
 ![eCIR certification](eCIR_DANDREA.png)
 
-[Letter of Engagement][eCIR_Letter_of_Engagement.pdf]
-[Pcap][scenario2-traffic-capture.pcap]
+[Letter of Engagement (PDF)](eCIR_Letter_of_Engagement.pdf)
+[Wireshark (PCAP)](scenario2-traffic-capture.pcap)
 
 
 ### Conclusion
