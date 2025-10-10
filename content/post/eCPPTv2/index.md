@@ -24,7 +24,7 @@ The certification is priced at **400$** and includes a practical exam lasting **
 This review includes personal notes and an example of the methodologies applied during the exam.
 
 
-{{<callout title="Personal Notes oN the Course Content">}}
+{{<callout title="Personal Notes on the Course Content">}}
 In this section, I’ve included some of my notes to help guide others studying for the eCPPTv3 certification. 
 These notes summarize key takeaways from each module, covering essential techniques, tools, and strategies for threat hunting within networks and endpoints.
 - **eCPPT Notes** → [eCPPT Notes](https://robertodandrea.notion.site/eCPPT-Certification-a979ec3064e34ed6bb9690efd8ffd176?pvs=74)
