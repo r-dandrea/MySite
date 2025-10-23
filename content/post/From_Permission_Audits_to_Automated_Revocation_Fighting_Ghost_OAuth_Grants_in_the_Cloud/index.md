@@ -20,15 +20,13 @@ comments: false
 
 🕑 *Reading time: 34 minutes*
 
-{{<callout> title="📢"}}
+{{<callout> title=""}}
 *In this guide, you will learn why OAuth app permissions and access tokens can outlive deleted users in Microsoft 365, the security risks of residual grants, and the best practices for identifying and revoking them through monitoring and automation.*
 {{</callout>}}
 
 📚
 **Skip the Theory?**
-
 If you want to jump straight to the practical steps and recommendations click [here]
-
 
 ### **⚠️ The Risk of Access Delegation in Azure AD Enterprise Applications**
 
