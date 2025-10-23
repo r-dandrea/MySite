@@ -1,5 +1,5 @@
 ---
-title: From Permission Audits to Automated Revocation: Fighting Ghost OAuth Grants in the Cloud
+title: From Permission Audits to Automated Revocation - Fighting Ghost OAuth Grants in the Cloud
 description: OAuth app permissions and access tokens can outlive deleted users in Microsoft 365, the security risks of residual grants, and the best practices for identifying and revoking them through monitoring and automation.
 slug: Microsoft
 date: 2025-09-03
