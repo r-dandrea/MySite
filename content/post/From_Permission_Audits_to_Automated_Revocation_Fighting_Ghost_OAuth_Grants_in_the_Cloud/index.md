@@ -90,7 +90,7 @@ In short, you empower your users to work efficiently with the tools they need, b
 {{<callout title="⚙">}}
 **Where to set permission classifications?**
 Navigate to *Permission classifications* to add or edit which permissions are “**low**”, “**medium**”, or “**high**” risk for your organization.
-![Consent and Permissions](Consent_Permission.png)
+![Consent and Permissions](/images/Consent_Permission.png)
 {{</callout>}}
 
 ### **👀 How Forgotten Permissions Create Security Blind Spots**
@@ -171,9 +171,7 @@ When you run the query in Microsoft Graph Explorer, you get a JSON response like
 | **Field** | **Meaning** |
 | --- | --- |
 | **`clientId`** | **Object ID of the application** that received the permission (the app’s unique identifier in Azure AD) |
-| **`consentType`** | **Type of consent granted:
--** **`AllPrincipals`**: consent granted for the entire organization
-- **`Principal`**: consent granted to a specific user |
+| **`consentType`** | **Type of consent granted: <br>-** **`AllPrincipals`**: consent granted for the entire organization <br>-**`Principal`**: consent granted to a specific user |
 | **`id`** | **Unique ID for this specific permission grant** (needed if you want to revoke it via DELETE request) |
 | **`principalId`** | **Object ID of the user** the consent was granted for (if consentType is **`Principal`**); **`null`** if for everyone |
 | **`resourceId`** | **Object ID of the resource/API being accessed** (for example, Microsoft Graph’s unique ID here) |
@@ -284,7 +282,7 @@ Instead of granting permissions manually, you can:
 
 {{<callout title="💡">}}
 **Using an automation workflow for permission requests helps you avoid the common scenario where a single user request results in permissions being granted to the entire company.**
-![](Permission_requested.png)
+![](/images/Permission_requested.png)
 Every request is reviewed and assigned only to the specific user or app that needs it - no more accidental tenant-wide assignments. 
 {{</callout>}}
 
