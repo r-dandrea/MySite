@@ -20,7 +20,7 @@ comments: false
 
 🕑 *Reading time: 34 minutes*
 
-{{<callout> title=""}}
+{{<callout title="📢">}}
 *In this guide, you will learn why OAuth app permissions and access tokens can outlive deleted users in Microsoft 365, the security risks of residual grants, and the best practices for identifying and revoking them through monitoring and automation.*
 {{</callout>}}
 
@@ -48,7 +48,7 @@ These applications act as trust relationships, enabling seamless SSO, automated 
 **Delegation** refers to the mechanism whereby these applications, once authorized, can act on behalf of users or the organization itself. 
 This happens through the granting of specific permissions (consents), allowing the app to perform actions such as reading emails, accessing files, or querying directory information - not just as itself, but impersonating a user or the whole directory, depending on the grant type (delegated vs. application permissions).
 
-{{<callout> title="👉"}}
+{{<callout title="👉">}}
 Understanding the fundamentals of how applications integrate with Azure AD, and how delegation works, is necessary groundwork before assessing the security impact of consent and permissions management.
 {{</callout>}}
 
@@ -69,7 +69,7 @@ The “***User consent settings***” area in Azure AD is crucial for managing h
     - **Security Perspective:** High risk. Any user can grant any app access to organizational data, regardless of publisher or permission scope. This opens the door for abuse via malicious apps, consent phishing, and unintentional data leaks.
     - **Operational Impact:** Fastest for end-users, but at the expense of opening broad attack vectors.
 
-{{<callout> title="👉"}}
+{{<callout title="👉">}}
 It’s important to emphasize that there’s no single “best” configuration for user consent settings that applies to every organization. The optimal choice depends greatly on the specific context of your tenant, your organizational risk appetite, use cases, and operational realities.
 {{</callout>}}
 
@@ -87,7 +87,7 @@ In short, you empower your users to work efficiently with the tools they need, b
 
 *This isn’t just Microsoft’s recommendation - it’s one of the most effective ways to enforce security results without putting up unnecessary roadblocks.*
 
-{{<callout> title="⚙"}}
+{{<callout title="⚙">}}
 **Where to set permission classifications?**
 Navigate to *Permission classifications* to add or edit which permissions are “**low**”, “**medium**”, or “**high**” risk for your organization.
 ![Consent and Permissions](/images/Consent_Permission.png)
@@ -110,7 +110,7 @@ Attackers often look for forgotten apps with excessive rights - they are less li
 
 ### **Minimizing Exposure with Continuous Governance**
 
-{{<callout> title="😬"}}
+{{<callout title="😬">}}
 *Worried about minimizing the impact of “ghost” permissions in your environment? 
 A proven solution is to implement regular governance and monitoring!*
 {{</callout>}}
@@ -183,7 +183,7 @@ When you run the query in Microsoft Graph Explorer, you get a JSON response like
 
 Now that you know how to read the JSON output, it’s time to actively mitigate possible risks by following these steps:
 
-{{<callout> title="📎"}}
+{{<callout title="📎">}}
 Here you can find the list of all permission
 [Microsoft Graph permissions reference  - Microsoft Graph](https://learn.microsoft.com/en-us/graph/permissions-reference)
 {{</callout>}}
@@ -281,7 +281,7 @@ Instead of granting permissions manually, you can:
 - When a user/app needs permission, they submit a request through this workflow.
 - You run automation (for instance, with Power Automate, Logic App, Azure Function, or PowerShell) to evaluate and POST the required grant to**`https://graph.microsoft.com/v1.0/oauth2PermissionGrants`**- with proper admin oversight.
 
-{{<callout> title="💡"}}
+{{<callout title="💡">}}
 **Using an automation workflow for permission requests helps you avoid the common scenario where a single user request results in permissions being granted to the entire company.**
 ![image.png](/images/Permission_requested.png)
 Every request is reviewed and assigned only to the specific user or app that needs it - no more accidental tenant-wide assignments. 
@@ -359,7 +359,7 @@ By integrating **Graph Explorer** into your security and governance practices, y
 
 Continual vigilance and automated, well-governed processes are essential for defending your enterprise against modern consent-based threats. Make regular reviews of permissions part of your security posture, and prioritize using approval workflows and automation to ensure permissions are granted only on a strict need-to-have basis - never by default or to “all users.”
 
-{{<callout> title="✅"}}
+{{<callout title="✅">}}
 **The risks around consent and permissions in Azure AD are real - but with the right tools and disciplined governance, they can be tackled head on. 
 By combining clear processes, practical automation, and advanced tools like Graph Explorer, you close the gaps that attackers seek and ensure your organization’s productivity and protection can go hand in hand.**
 {{</callout>}}
