@@ -90,7 +90,7 @@ In short, you empower your users to work efficiently with the tools they need, b
 {{<callout title="⚙">}}
 **Where to set permission classifications?**
 Navigate to *Permission classifications* to add or edit which permissions are “**low**”, “**medium**”, or “**high**” risk for your organization.
-![Consent and Permissions](/images/Consent_Permission.png)
+![Consent and Permissions](Consent_Permission.png)
 {{</callout>}}
 
 ### **👀 How Forgotten Permissions Create Security Blind Spots**
@@ -128,13 +128,13 @@ Unfortunately, Microsoft does not provide a built-in way to automatically remove
 
 *As shown in the screenshot below, if you go to Enterprise applications → <Your_application> → Permissions [Security], there is no obvious way to revoke or modify these permissions!!*
 
-![image.png](App_permissions.png)
+![](App_permissions.png)
 
 By clicking on **“*1 Total user(s)*”** you’ll quickly see that there are **no actionable options** available—such as deleting or revoking permissions for that user. 
 
 The interface only displays assignment details without giving you any way to address or remediate unused or excessive privileges.
 
-![image.png](User_permissions.png)
+![](User_permissions.png)
 
 This lack of native options leaves you with little control and can create lingering security risks, as unused or outdated access often remains active far longer than it should. 
 
@@ -162,7 +162,7 @@ Using Microsoft Graph Explorer is simple and doesn’t require any advanced setu
 
 1. Click “Run query” button
 
-![image.png](Microsoft_Graph_Explorer.png)
+![](Microsoft_Graph_Explorer.png)
 
 **🧐 What those this JSON mean?**
 
@@ -215,7 +215,7 @@ Use the ***GET*** request shown previously to list all existing permission grant
     - **`openid/profile/email`**: Low impact, needed for login, safe with verified apps.
     - **`offline_access`**: Medium risk. Only approve for apps you trust, and periodically review/remove unnecessary grants.
 
-![image.png](Consent_and_permission_setup.png.png)
+![](Consent_and_permission_setup.png)
 
 ### **3. Identify & Document High and Medium-Risk Scopes**
 
@@ -263,10 +263,11 @@ Still sensitive, but less dangerous than "write" or "impersonate all" scopes. Th
         https://graph.microsoft.com/v1.0/oauth2PermissionGrants?$filter=id eq '<id_string>'
         ```
         
-        ![image.png](Delete_graph_explorer.png)
+        ![](Delete_graph_explorer.png)
         
-        | GET | Retrieves a list of OAuth 2.0 permission grants, or details for a specific one | See all granted app consents in a tenant |
+        | Method | Description | Output |
         | --- | --- | --- |
+        | GET | Retrieves a list of OAuth 2.0 permission grants, or details for a specific one | See all granted app consents in a tenant |
         | POST | Creates a new OAuth 2.0 permission grant | Grant permissions programmatically |
         | PATCH | Updates specific properties of an existing permission grant (e.g., scope) | Change the permissions granted to an app |
         | DELETE | Deletes (revokes) a permission grant, removing app consent | Remove OAuth consent for an app from the tenant |
@@ -279,11 +280,11 @@ Instead of granting permissions manually, you can:
 
 - Build a request form, email, or approval flow.
 - When a user/app needs permission, they submit a request through this workflow.
-- You run automation (for instance, with Power Automate, Logic App, Azure Function, or PowerShell) to evaluate and POST the required grant to**`https://graph.microsoft.com/v1.0/oauth2PermissionGrants`**- with proper admin oversight.
+- You run automation (for instance, with Power Automate, Logic App, Azure Function, or PowerShell) to evaluate and POST the required grant to `https://graph.microsoft.com/v1.0/oauth2PermissionGrants` - with proper admin oversight.
 
 {{<callout title="💡">}}
 **Using an automation workflow for permission requests helps you avoid the common scenario where a single user request results in permissions being granted to the entire company.**
-![image.png](/images/Permission_requested.png)
+![](Permission_requested.png)
 Every request is reviewed and assigned only to the specific user or app that needs it - no more accidental tenant-wide assignments. 
 {{</callout>}}
 
