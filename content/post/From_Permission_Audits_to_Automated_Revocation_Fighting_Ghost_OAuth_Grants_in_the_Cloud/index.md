@@ -26,7 +26,7 @@ comments: false
 
 📚
 **Skip the Theory?**
-If you want to jump straight to the practical steps and recommendations click [here]
+If you want to jump straight to the practical steps and recommendations click [here](### **👀 How Forgotten Permissions Create Security Blind Spots**)
 
 ### **⚠️ The Risk of Access Delegation in Azure AD Enterprise Applications**
 
