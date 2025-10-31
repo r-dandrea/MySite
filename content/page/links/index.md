@@ -2,14 +2,17 @@
 title: Links
 links:
   - title: GitHub
-    description: GitHub is the world's largest software development platform.
+    description: 
     website: https://github.com
     image: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
   - title: Linkedin
-    description: Linkedin Profile
+    description: 
     website: https://www.linkedin.com/in/roberto-d-andrea96/
     image: https://cdn-icons-png.flaticon.com/512/174/174857.png
-
+  - title: Detections.ai
+    description: 
+    website: https://detections.ai/user/rdandrea
+    image: https://detection.ai/logo.png
 menu:
     main: 
         weight: 5
