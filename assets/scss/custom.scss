@@ -1,3 +1,11 @@
 /*
-    Dark Mode Nero Puro + Light Mode Bianco
 */
+:root {
+  --sidebar-background: #22c55e;
+  --card-background: #22c55e;
+}
+
+/* Modo scuro - se il tema supporta dark mode */
+[data-theme="dark"] {
+  --sidebar-background: #15803d;
+}
