@@ -1,6 +1,6 @@
 ---
 title: "whoami"
-mydate: "1996-xx-xx"
+mydate: "1996"
 layout: "whoami"
 slug: "whoami"
 menu:
@@ -10,7 +10,7 @@ menu:
             icon: whoami 
 comments: false
 hideMeta: true
-ShowDate: false
+ShowDate: true
 ShowReadingTime: false
 ShowToc: false
 ---
