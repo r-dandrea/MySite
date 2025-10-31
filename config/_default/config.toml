@@ -28,3 +28,14 @@ home = ["HTML", "RSS", "SITEMAP", "ROBOTS"]
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+
+[params]
+    colorScheme = "dark"  # oppure "light" o "auto"
+    
+# Se vuoi personalizzare i colori dark mode, aggiungi:
+[params.palette]
+    # Dark mode colors
+    [params.palette.dark]
+        primary = "#1f2937"
+        background = "#000000"  # Nero puro!
+        text = "#ffffff"
