@@ -20,3 +20,34 @@ h4, h5, h6 {
 strong, b {
   font-weight: 600;
 }
+
+
+// Sfondo nero puro
+body {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+// Se il tema ha un container principale
+main,
+.main-content,
+.content {
+  background-color: #000000;
+}
+
+// Sidebar (se presente)
+aside,
+.sidebar {
+  background-color: #1a1a1a;
+}
+
+// Links e accenti
+a {
+  color: #0ea5e9; /* azzurro chiaro per contrasto */
+}
+
+// Paragrafi e testo
+p {
+  color: #e5e5e5;
+}
+
