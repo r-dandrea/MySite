@@ -32,10 +32,6 @@ home = ["HTML", "RSS", "SITEMAP", "ROBOTS"]
 [params]
     colorScheme = "dark"  # oppure "light" o "auto"
     
-
-[params]
-    colorScheme = "dark"
-    
     # Stack theme palette (formato CORRETTO)
     [params.palette]
         dark = ["#121212", "#1e1e1e", "#ffffff"]
