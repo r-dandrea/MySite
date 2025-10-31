@@ -1,14 +1,50 @@
-// Font personalizzato (Inter/DM Sans)
+/*
+    Dark Mode Nero Puro + Light Mode Bianco
+*/
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
 
+/* ============ FONT ============ */
 body {
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-weight: 400;
-  letter-spacing: -0.5px;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-weight: 600;
-  letter-spacing: -1px;
+}
+
+/* ============ DARK MODE - NERO ASSOLUTO ============ */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+  
+  article, .article-box, .post {
+    background-color: #000000 !important;
+  }
+  
+  .container {
+    background-color: #000000 !important;
+  }
+  
+  /* Sidebar/ToC */
+  aside, .sidebar, .toc {
+    background-color: #0f0f0f !important;
+  }
+}
+
+/* ============ LIGHT MODE - BIANCO PURO ============ */
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  article, .article-box, .post {
+    background-color: #ffffff !important;
+  }
+  
+  .container {
+    background-color: #ffffff !important;
+  }
 }

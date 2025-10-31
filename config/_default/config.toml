@@ -30,4 +30,4 @@ home = ["HTML", "RSS", "SITEMAP", "ROBOTS"]
       unsafe = true
 
 [params]
-    colorScheme = "dark"  # oppure "light" o "auto"
+    colorScheme = "auto"  # oppure "light" o "auto"
