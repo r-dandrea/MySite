@@ -21,18 +21,47 @@ strong, b {
   font-weight: 600;
 }
 
-// Dark mode - Nero puro
-@media (prefers-color-scheme: dark) {
-    :root {
-        --color-background: #000000;
-        --color-surface: #0f0f0f;
-        --color-text-primary: #ffffff;
-        --color-text-secondary: #b0b0b0;
-    }
+/*
+    You can add your own custom styles here.
+*/
+
+// Sfondo principale nero
+body {
+  background-color: #000000 !important;
 }
 
-// Force dark mode always
-body[data-scheme="dark"] {
-    --color-background: #000000 !important;
-    --color-surface: #0f0f0f !important;
+// Articoli/Card grigie → Nero
+.article,
+.article-card,
+.post,
+.post-card {
+  background-color: #000000 !important;
+  border: 1px solid #1a1a1a !important;
 }
+
+// Sezioni article
+article {
+  background-color: #000000 !important;
+}
+
+// Sidebar/Table of Contents
+.sidebar,
+.toc,
+.table-of-contents {
+  background-color: #0f0f0f !important;
+  border-left: 3px solid #0ea5e9;
+}
+
+// Container principale
+.container,
+.main-container,
+.content-wrapper {
+  background-color: #000000 !important;
+}
+
+// Se sono div specifici di Stack
+.stack-article,
+[class*="article"] {
+  background-color: #000000 !important;
+}
+
