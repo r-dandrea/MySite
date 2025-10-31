@@ -1,5 +1,7 @@
 /*
 */
+/*
+*/
 :root {
   --sidebar-background: #22c55e;
   --card-background: #22c55e;
@@ -8,4 +10,22 @@
 /* Modo scuro - se il tema supporta dark mode */
 [data-theme="dark"] {
   --sidebar-background: #15803d;
+}
+
+/* AGGIUNGI QUESTO - Sovrascrive tutto indipendentemente dal tema */
+.sidebar,
+.header,
+.site-header {
+  background-color: #22c55e !important;
+}
+
+/* Per il tema bianco specificamente */
+[data-theme="light"],
+:not([data-theme]) {
+  .sidebar,
+  .header,
+  .site-header,
+  .navbar {
+    background-color: #22c55e !important;
+  }
 }
