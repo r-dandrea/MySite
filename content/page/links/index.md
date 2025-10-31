@@ -8,6 +8,8 @@ links:
   - title: Linkedin
     description: Linkedin Profile
     website: https://www.linkedin.com/in/roberto-d-andrea96/
+    image: https://cdn-icons-png.flaticon.com/512/174/174857.png
+
 menu:
     main: 
         weight: 5
