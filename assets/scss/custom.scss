@@ -20,3 +20,19 @@ h4, h5, h6 {
 strong, b {
   font-weight: 600;
 }
+
+// Dark mode - Nero puro
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #000000;
+        --color-surface: #0f0f0f;
+        --color-text-primary: #ffffff;
+        --color-text-secondary: #b0b0b0;
+    }
+}
+
+// Force dark mode always
+body[data-scheme="dark"] {
+    --color-background: #000000 !important;
+    --color-surface: #0f0f0f !important;
+}
