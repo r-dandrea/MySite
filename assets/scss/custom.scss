@@ -20,3 +20,38 @@ h4, h5, h6 {
 strong, b {
   font-weight: 600;
 }
+
+// Override COMPLETO delle variabili di Stack
+:root {
+    --article-background: #000000;
+    --article-text-color: #ffffff;
+    --body-background: #000000;
+    --surface-primary: #0f0f0f;
+    --surface-secondary: #1a1a1a;
+    --text-color-primary: #ffffff;
+    --text-color-secondary: #b0b0b0;
+}
+
+body {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+.container {
+    background-color: #000000 !important;
+}
+
+/* Tutti gli articoli */
+article,
+.article,
+.post {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+/* Sezioni grigie principali */
+.article-content,
+.post-content,
+.content {
+    background-color: #000000 !important;
+}
