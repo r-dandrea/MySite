@@ -42,7 +42,7 @@ My work revolves around three core pillars:
 I continuously scan cloud environments to spot vulnerabilities before they become real problems.
 
 **🛡️ Prevent Attacks**  
-I don't wait for cyber attacks to happen — I act proactively to stop them before they start.
+I don't wait for cyber attacks to happen - I act proactively to stop them before they start.
 
 **⚙️ Ensure Secure Operations**  
 I make sure cloud systems run smoothly and securely, without compromise.
@@ -51,4 +51,4 @@ I make sure cloud systems run smoothly and securely, without compromise.
 
 
 If you're looking for someone who combines **advanced technical expertise** with a **proactive cybersecurity mindset**, I'm your person! 
-I believe security shouldn't be complicated — it should be **approachable, scalable, and always one step ahead**.
+I believe security shouldn't be complicated - it should be **approachable, scalable, and always one step ahead**.
