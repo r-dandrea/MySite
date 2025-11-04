@@ -15,8 +15,6 @@ weight: 1       # You can add weight to some posts to override the default sorti
 comments: false
 ---
 
-# Microsoft Teams B2B Guest Chat: Prepare Your Organization Now
-
 ## **The New Microsoft Teams Vulnerability**
 
 Microsoft is introducing a powerful new feature in Microsoft Teams that enables users to start chats directly with **ANYONE who has an email address**, regardless of whether they use Teams or not. The recipient will receive an email invitation to join the chat session as a guest, enabling seamless communication and collaboration without friction.
@@ -44,15 +42,15 @@ Here are the real risks:
 
 Your team members are going to start getting chat invitations from people who look legitimate but aren't. An attacker can impersonate your CFO, a trusted vendor, a partner organization. Once they're in as a guest, they have access to your tenant. They can gather intelligence, pressure people into sharing confidential information, exfiltrate data through chat, or scout your infrastructure for weaknesses.
 
-1. **Governance goes out the window.**
+2. **Governance goes out the window.**
 
 If any member of your organization can invite guests, you lose control. Shadow collaboration happens. Unauthorized partners start accessing your systems. Audit trails become useless because you can't track who created which guest. And if you're in a regulated industry-finance, healthcare, legal-you've got compliance violations waiting to happen.
 
-1. **Insiders become a bigger threat.**
+3. **Insiders become a bigger threat.**
 
 A disgruntled employee or a compromised account can suddenly create multiple guest accounts from external domains they control, then coordinate attacks from both inside and outside your organization. They can share credentials, API keys, entire databases. They can set up persistent access for later exploitation.
 
-1. **Dead guest accounts pile up.**
+4. **Dead guest accounts pile up.**
 
 Without proper cleanup, your tenant fills with dormant guest accounts that nobody's using anymore. They're still there. Still have access. Still represent a security risk. All it takes is one of them to be reactivated by an attacker, and you have a breach.
 
@@ -178,7 +176,7 @@ Get-CsTeamsMessagingPolicy | Set-CsTeamsMessagingPolicy -UseB2BInvitesToAddExter
 
 ---
 
-## **5️⃣ Conditional Access Policy with MFA + Device Compliance - 🔴 HIGH PRIORITY**
+## **5️⃣ Conditional Access Policy with MFA - 🔴 HIGH PRIORITY**
 
 This is your final line of defense: even if a guest account exists, they need both MFA and a compliant device to access anything.
 
