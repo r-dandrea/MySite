@@ -38,19 +38,19 @@ I'm not trying to be alarmist here, but I've seen what happens when access contr
 
 Here are the real risks:
 
-1. **Phishing gets a lot easier.**
+1. **Phishing gets a lot easier**
 
 Your team members are going to start getting chat invitations from people who look legitimate but aren't. An attacker can impersonate your CFO, a trusted vendor, a partner organization. Once they're in as a guest, they have access to your tenant. They can gather intelligence, pressure people into sharing confidential information, exfiltrate data through chat, or scout your infrastructure for weaknesses.
 
-2. **Governance goes out the window.**
+2. **Governance goes out the window**
 
 If any member of your organization can invite guests, you lose control. Shadow collaboration happens. Unauthorized partners start accessing your systems. Audit trails become useless because you can't track who created which guest. And if you're in a regulated industry-finance, healthcare, legal-you've got compliance violations waiting to happen.
 
-3. **Insiders become a bigger threat.**
+3. **Insiders become a bigger threat**
 
 A disgruntled employee or a compromised account can suddenly create multiple guest accounts from external domains they control, then coordinate attacks from both inside and outside your organization. They can share credentials, API keys, entire databases. They can set up persistent access for later exploitation.
 
-4. **Dead guest accounts pile up.**
+4. **Dead guest accounts pile up**
 
 Without proper cleanup, your tenant fills with dormant guest accounts that nobody's using anymore. They're still there. Still have access. Still represent a security risk. All it takes is one of them to be reactivated by an attacker, and you have a breach.
 
