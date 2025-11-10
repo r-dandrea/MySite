@@ -14,6 +14,9 @@ defaultContentLanguage = "en"
 # This will make .Summary and .WordCount behave correctly for CJK languages.
 hasCJKLanguage = false
 
+# Enable robots.txt
+enableRobotsTXT = true
+
 # Change it to your Disqus shortname before using
 ## This is used to add comment below each post
 #disqusShortname = "hugo-theme-stack"
