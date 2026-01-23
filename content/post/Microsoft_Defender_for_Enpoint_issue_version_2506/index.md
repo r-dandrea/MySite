@@ -16,6 +16,8 @@ weight: 1       # You can add weight to some posts to override the default sorti
 comments: false
 ---
 
+![](banner_update_error.png)
+
 ## **Defender for Endpoint Upgrade Failure on macOS — What You Need to Know**
 
 **Are your Intune dashboards giving you a false sense of security?**
