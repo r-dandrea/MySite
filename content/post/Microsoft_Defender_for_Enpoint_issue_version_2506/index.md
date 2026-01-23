@@ -16,7 +16,7 @@ weight: 1       # You can add weight to some posts to override the default sorti
 comments: false
 ---
 
-![](banner_update_error.png)
+![](banner_update_error.jpeg)
 
 ## **Defender for Endpoint Upgrade Failure on macOS — What You Need to Know**
 
