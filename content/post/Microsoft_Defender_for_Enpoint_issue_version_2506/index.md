@@ -42,6 +42,9 @@ Through targeted audits, I confirmed that relying solely on Intune compliance in
 ## Detect - How I Identified the Issue
 
 My detection process started when users reported the Defender app icon showing a warning state.<br>
+
+![MDE warning state](Defender_icon_error.jpg)
+
 So, I decide to established a structured detection phase to identify machines not up to date with Microsoft Defender for Endpoint.
 
 To systematically assess the environment, I exported device inventory data from Intune and compared the Defender versions deployed across the macOS fleet. <br>
