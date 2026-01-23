@@ -1,5 +1,5 @@
 ---
-title: Microsoft Defender for Endpoint Upgrade failing from version 2506 on macOS
+title: Mac Secured? Not Really—When Defender for Endpoint Fails to Upgrade from Version 2506
 description: If you’re managing macOS devices with Intune, be aware—Defender for Endpoint upgrades from version 2506 can fail, leaving your endpoints exposed. Here’s exactly what goes wrong, how to fix it, and how to ensure your fleet stays protected.
 slug: Microsoft
 date: 2026-01-23
@@ -53,7 +53,8 @@ This allowed for a direct inventory of Defender versions on all macOS devices—
 
 Here the KQL Query:
 
-```DeviceTvmInfoGathering
+```
+DeviceTvmInfoGathering
 | where OSPlatform == @"macOS"
 | extend mde_version = parse_json(AdditionalFields)["AvPlatformVersion"]
 //if you want to identify all version comment next row
@@ -92,7 +93,7 @@ If you have the appropriate permissions, you can disable Tamper Protection centr
 2. Go to Settings and select Endpoint
 3. Find the Tamper Protection settings and toggle it Off
 
-![Tamper Protection settings on Defender](Tamper_protection_defender.jpg)
+<img src="Tamper_protection_defender.jpg" alt="Tamper Protection settings on Defender" style="max-width: 400px; margin: 12px 0;"/>
 
 ⚠️ Disabling Tamper Protection for all endpoints will reduce the security posture of your organization and can expose all devices to risks such as unauthorized changes to security features, including threat and virus protection.
 This action should be performed only when strictly necessary, for the shortest possible duration, and only by authorized personnel.
