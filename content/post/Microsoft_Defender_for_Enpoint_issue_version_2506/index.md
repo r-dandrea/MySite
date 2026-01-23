@@ -95,7 +95,7 @@ If you have the appropriate permissions, you can disable Tamper Protection centr
 2. Go to Settings and select Endpoint
 3. Find the Tamper Protection settings and toggle it Off
 
-<img src="Tamper_protection_defender.jpg" alt="Tamper Protection settings on Defender" style="max-width: 400px; margin: 12px 0;"/>
+<img src="Tamper_protection_defender.jpg" alt="Tamper Protection settings on Defender" style="max-width: 700px; margin: 18px auto;"/>
 
 ⚠️ Disabling Tamper Protection for all endpoints will reduce the security posture of your organization and can expose all devices to risks such as unauthorized changes to security features, including threat and virus protection.
 This action should be performed only when strictly necessary, for the shortest possible duration, and only by authorized personnel.
