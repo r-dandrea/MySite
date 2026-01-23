@@ -39,7 +39,7 @@ Through targeted audits, I confirmed that relying solely on Intune compliance in
 
 ---
 
-## DETECT - How I Identified the Issue
+## Detect - How I Identified the Issue
 
 My detection process started when users reported the Defender app icon showing a warning state. 
 So, I decide to established a structured detection phase to identify machines not up to date with Microsoft Defender for Endpoint.
