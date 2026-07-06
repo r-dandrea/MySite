@@ -20,35 +20,35 @@ tags:
 
 **📢**
 
-_In this guide you'll learn why the native Azure DevOps Audit Logs connector for Microsoft Sentinel is a governance problem waiting to happen, and how to replace it with a fully service-principal-based pipeline - no user sign-in, no fragile service account, and (after the final step) no secrets in clear text at all._
+_Short version: the native Azure DevOps Audit Logs connector for Microsoft Sentinel is a governance headache waiting to happen. Here's how I tossed it out and rolled my own pipeline that runs entirely on a service principal - no user sign-in, no sketchy service account, and by the end, no secrets sitting around in clear text either._
 
-📚 **Skip the theory?** Jump straight to [The Build](#-the-build-step-by-step).
+📚 **Not here for the theory?** Skip straight to [The Build](#-the-build-step-by-step).
 
 ---
 
 ## ⚠️ Why I Refused to Use the Connector's Account
 
-Microsoft Sentinel ships with a codeless connector called **Azure DevOps Audit Logs (via Codeless Connector Platform)**. It looks convenient, but the moment you click **Connect** it sends you through an **OAuth authorization-code** flow and asks you to **sign in with an account**. That account becomes the identity that reads your audit logs forever.
+Microsoft Sentinel ships with a codeless connector called **Azure DevOps Audit Logs (via Codeless Connector Platform)**. Looks handy on paper. But the second you hit **Connect**, it drags you through an **OAuth authorization-code** flow and makes you **sign in with an account**. Whatever account you pick becomes the identity that reads your audit logs. Forever.
 
-From a security and operations standpoint, every option Microsoft leaves you with is bad:
+And here's the thing - every option Microsoft leaves on the table is bad news from a security and ops point of view:
 
 | Option | Why it's a problem |
 | --- | --- |
-| **My own user account** | If I ever revoke my sessions, rotate my password, or leave the company, the refresh token dies and **you silently stop receiving logs**. Tying an org-wide security feed to one human is a single point of failure. |
-| **A shared service account** | Now I own a licensed user with a password, an MFA exclusion (to keep automation alive), and a long-lived refresh token. That's exactly the kind of standing credential attackers love. Service accounts are **not** a good answer in 2026. |
-| **App Client ID only** | Not supported by the connector - the authorization-code flow **requires** an interactive user login. You can't just hand it a client ID. |
+| **My own user account** | The day I revoke my sessions, rotate my password, or walk out the door, that refresh token dies and **your logs silently dry up**. Pinning an org-wide security feed to one human being is a single point of failure, full stop. |
+| **A shared service account** | Congrats, now you own a licensed user with a password, an MFA exclusion (because automation breaks otherwise), and a long-lived refresh token. That's exactly the kind of standing credential attackers dream about. Service accounts are **not** the move in 2026. |
+| **App Client ID only** | Not happening - the authorization-code flow **demands** an interactive user login. You can't just hand it a client ID and call it a day. |
 
-So I threw the connector away and built the pipeline **from scratch using a Service Principal (App Registration)**. The service principal authenticates non-interactively, its permissions are explicit and scoped, and in the last step I move its secret into **Key Vault** so nothing sensitive lives in clear text.
+So I ditched the connector entirely and built the whole pipeline **from scratch on a Service Principal (App Registration)**. It authenticates non-interactively, its permissions are spelled out and tightly scoped, and in the final step I shove its secret into **Key Vault** so nothing sensitive ever lives in plain sight.
 
 **👉**
 
-The end result: Azure DevOps audit events land in Sentinel through the **same custom table** the connector would have used (`ADOAuditLogs_CL`), but the identity behind it is a service principal I fully control - no human, no service account, no revocation surprises.
+Bottom line: Azure DevOps audit events still land in Sentinel through the **exact same custom table** the connector would've used (`ADOAuditLogs_CL`) - but the identity behind the wheel is a service principal I fully own. No human, no service account, no nasty revocation surprises down the road.
 
 ---
 
 ## 🧭 How the Pipeline Works
 
-Before the steps, here's the mental model. The Logic App is only the **he data actually enters Log Analytics through a **Data Collection Rule (DCR)**:
+Before we get our hands dirty, here's the mental model. The Logic App is just the orchestrator - it doesn't write anything itself. The data actually lands in Log Analytics through a **Data Collection Rule (DCR)**:
 
 ```
 Logic App (Service Principal auth)
@@ -63,14 +63,14 @@ Logic App (Service Principal auth)
    Data Collection Rule (transformKql) -> ADOAuditLogs_CL table -> Microsoft Sentinel
 ```
 
-Two different tokens, same service principal:
+Two different tokens, one service principal:
 
-* the **GET** asks for a token for **Azure DevOps** (resource ID `499b84ac-1321-427f-aa17-267ca6975798`),
-* the **POST** asks for a token for **`https://monitor.azure.com`** to write through the DCR.
+* the **GET** grabs a token for **Azure DevOps** (resource ID `499b84ac-1321-427f-aa17-267ca6975798`),
+* the **POST** grabs a token for **`https://monitor.azure.com`** to write through the DCR.
 
 **⚙**
 
-The DCR is **not optional**. You can't POST straight into a custom table - the Logs Ingestion API always writes *through* a DCR, which validates the incoming schema, runs an optional KQL transform, and routes rows  the destination table.
+The DCR is **not optional** - don't skip it. You can't POST straight into a custom table; the Logs Ingestion API always writes *through* a DCR, which checks the incoming schema, runs an optional KQL transform, and routes the rows into the destination table.
 
 ---
 
@@ -78,38 +78,40 @@ The DCR is **not optional**. You can't POST straight into a custom table - the L
 
 ### Prerequisites
 
-* Your Azure DevOps organization is backed by the **same Entra ID tenant** as your Azure subscription.
-* **Auditing is enabled** on the organization (`Organization Settings → Auditing`).
-* You have a **Log Analytics workspace** connected to Microsoft Sentinel.
-* Permissions: **Owner/Contributor** on the resource group, and **Project Collection Administrator** on Azure DevOps.
+* Your Azure DevOps organization sits on the **same Entra ID tenant** as your Azure subscription.
+* **Auditing is turned on** for the org (`Organization Settings → Auditing`).
+* You've got a **Log Analytics workspace** wired up to Microsoft Sentinel.
+* Permissions: **Owner/Contributor** on the resource group, plus **Project Collection Administrator** on Azure DevOps.
 
 ---
 
 ### 1️⃣ Create the App Registration
 
-1. **Entra ID → App registrations → New registration**. Give it a name like `AzureDevOpsSentinelLog`.
-2. Copy the **Application (client) ID** and the **Directory (tenant) ID** from the Overview blade.
-3. Go to **Certificates & secrets → New client secret**, and copy the **Value** (not the Secret ID - the value is only shown once).
+1. **Entra ID → App registrations → New registration**. Name it something obvious like `AzureDevOpsSentinelLog`.
+2. Grab the **Application (client) ID** and the **Directory (tenant) ID** off the Overview blade.
+3. Head to **Certificates & secrets → New client secret**, and copy the **Value** (the value, *not* the Secret ID - and copy it now, because you only get to see it once).
 
-**⚠️** Keep that secret somewhere safe for now; in **Step 6** we'll move it into Key Vault so it never lives in the workflow.
+**⚠️** Stash that secret somewhere safe for the moment. In **Step 6** we'll tuck it into Key Vault so it never lives inside the workflow.
 
 ---
 
-### 2️⃣ Add the Service Principare DevOps supports service principals and managed identities as first-class members of an organization, so we grant it access exactly like a user.
+### 2️⃣ Add the Service Principal to Azure DevOps
+
+Azure DevOps treats service principals and managed identities as first-class members of an organization, so we hand it access exactly like we would a regular user.
 
 1. `dev.azure.com/<your-org>` → **Organization Settings → Users → Add users**.
-2. Search for the app by **name** (`AzureDevOpsSentinelLog`) or by **Client ID**, set **Access level = Basic**.
-3. Grant it the ability to **read the audit log**. Auditing lives at the organization level, so add the service principal to a group that can read it (for example **Project Collection Administrators**).
+2. Search for the app by **name** (`AzureDevOpsSentinelLog`) or by **Client ID**, and set **Access level = Basic**.
+3. Give it the right to **read the audit log**. Auditing lives at the org level, so drop the service principal into a group that can read it (for example **Project Collection Administrators**).
 
-**💡** If you don't want to hand it PCA, create a **dedicated group** with only the audit-read capability and add the SP there - least privilege wins.
+**💡** Not thrilled about handing it PCA? Fair. Spin up a **dedicated group** with nothing but the audit-read capability and add the SP there instead - least privilege for the win.
 
 ---
 
 ### 3️⃣ Find the DCR & Copy the Log Ingestion Endpoint
 
-If you had previously tried the native connector, Sentinel already created a DCR (mine was tagged `createdBy: Sentinel`) that points to `ADOAuditLogs_CL`. You can **reuse it** or create your own dedicated one - either way you need three values.
+If you'd already given the native connector a shot, Sentinel has quietly created a DCR for you (mine was tagged `createdBy: Sentinel`) that points to `ADOAuditLogs_CL`. You can **reuse that one** or build your own dedicated DCR - either way, you need three values out of it.
 
-The DCR lared its input stream as **`Custom-ADOAuditLogs`** and did the field mapping itself in its `transformKql`:
+The DCR declares its input stream as **`Custom-ADOAuditLogs`** and handles the field mapping itself inside its `transformKql`:
 
 ```kql
 source
@@ -119,9 +121,9 @@ source
           IpAddress = ipAddress, ProjectName = projectName, ScopeType = scopeType /* ...etc... */
 ```
 
-**👉** This is a great shortcut: because the transform expectshe **raw lowercase fields** exactly as the Azure DevOps API returns them (`actionId`, `timestamp`, `data`...), you send the API payload **as-is** - no reshaping in the Logic App.
+**👉** This is a sweet shortcut: since the transform expects the **raw lowercase fields** exactly the way the Azure DevOps API spits them out (`actionId`, `timestamp`, `data`...), you just forward the API payload **as-is** - zero reshaping in the Logic App.
 
-Grab these three values (portal or CLI):
+Pull these three values (portal or CLI, your call):
 
 ```bash
 RG="<dcr-resource-group>"
@@ -138,20 +140,20 @@ DCE_ID=$(az monitor data-collection rule show -g "$RG" -n "$DCR" --query "dataCo
 az monitor data-collection endpoint show --ids "$DCE_ID" --query "logsIngestion.endpoint" -o tsv
 ```
 
-You now have: **DCE ingestion endpoint**, **DCR immutable ID**, and **stream name** (`Custom-ADOAuditLogs`).
+At this point you're holding: the **DCE ingestion endpoint**, the **DCR immutable ID**, and the **stream name** (`Custom-ADOAuditLogs`).
 
 ---
 
 ### 4️⃣ Assign the DCR Permission to the Service Principal
 
-The service principal must be allowed to write through the DCR. That role is **Monitoring Metrics Publisher**.
+The service principal has to be allowed to write through the DCR, and the role that unlocks that is **Monitoring Metrics Publisher**.
 
-Portal: open the DCR → **Access control (IAM) → Add role assignment → Monitoring Metrics Publisher →** select your app → **Review + assign**.
+Portal route: open the DCR → **Access control (IAM) → Add role assignment → Monitoring Metrics Publisher →** pick your app → **Review + assign**.
 
-Or CLI:
+Or, if you'd rather stay in the terminal:
 
 ```bash
-DCR_ID=$(az monection rule show -g "$RG" -n "$DCR" --query id -o tsv)
+DCR_ID=$(az monitor data-collection rule show -g "$RG" -n "$DCR" --query id -o tsv)
 
 az role assignment create \
   --assignee "<client-id>" \
@@ -159,32 +161,33 @@ az role assignment create \
   --scope "$DCR_ID"
 ```
 
-**⚠️** Role propagation can take **5-10 minutes**. If your first POST returns **403**, this is almost always why - wait and retry.
+**⚠️** Heads up: role propagation can drag on for **5-10 minutes**. If your first POST comes back **403**, nine times out of ten this is the culprit - grab a coffee and try again.
 
 ---
 
 ### 5️⃣ Build the Logic App
 
-Create a **Logic App**, then build this sequence in the designer.
+Create a **Logic App**, then wire up this sequence in the designer.
 
 **Trigger - Recurrence:** every `5` minutes.
 
 **Compose - `startTime`:**
-```tes(utcNow(), -10)
+```
+addMinutes(utcNow(), -10)
 ```
 **Compose - `endTime`:**
 ```
 utcNow()
 ```
 
-**⚙** I use a 10-minute window on a 5-minute schedule on purpose - a little overlap means events that land late in the Azure DevOps audit log are never missed. We de-duplicate later in KQL.
+**⚙** I run a 10-minute window on a 5-minute schedule on purpose. That little bit of overlap means events that show up late in the Azure DevOps audit log never slip through the cracks. We clean up the duplicates later in KQL.
 
 **HTTP - GET (read the audit log):**
 
 * **Method:** `GET`
 * **URI:**
 ```
-tps://auditservice.dev.azure.com/<your-org>/_apis/audit/auditlog?startTime=@{outputs('startTime')}&endTime=@{outputs('endTime')}&api-version=7.2-preview.1
+https://auditservice.dev.azure.com/<your-org>/_apis/audit/auditlog?startTime=@{outputs('startTime')}&endTime=@{outputs('endTime')}&api-version=7.2-preview.1
 ```
 * **Authentication → Active Directory OAuth:**
 
@@ -195,14 +198,14 @@ tps://auditservice.dev.azure.com/<your-org>/_apis/audit/auditlog?startTime=@{out
 | **Audience** | `499b84ac-1321-427f-aa17-267ca6975798` |
 | Client ID | `<client-id>` |
 | Credential type | `Secret` |
-| Secret | *(the client sect - replaced by Key Vault in Step 6)* |
+| Secret | *(the client secret - we swap this for Key Vault in Step 6)* |
 
-**Condition - only continue if there are events:**
+**Condition - only keep going if there are actually events:**
 ```
 length(body('HTTP_GET')?['decoratedAuditLogEntries'])   is greater than   0
 ```
 
-**HTTP - POST (send to Sentinel), inside the True branch:**
+**HTTP - POST (ship it to Sentinel), inside the True branch:**
 
 * **Method:** `POST`
 * **URI:**
@@ -214,78 +217,79 @@ length(body('HTTP_GET')?['decoratedAuditLogEntries'])   is greater than   0
 ```
 @body('HTTP_GET')?['decoratedAuditLogEntries']
 ```
-* **Authentication → Active Directory OAuth:** same as the GET, but change only the **Audience** to `https://monitor.azure.com`.
+* **Authentication → Active Directory OAuth:** same setup as the GET, just switch the **Audience** to `https://monitor.azure.com`.
 
 ---
 
 ### 6️⃣ Move the Secret into Key Vault
 
-Now kill the clear-text secret.
+Now let's kill that clear-text secret for good.
 
-1. Store the client secret in **Key Vault** as a secret (e.g. `ADOSentinel-LogicApp-Secret`Add a **Key Vault → Get secret** action at the top of the workflow.
+1. Store the client secret in **Key Vault** as a secret (e.g. `ADOSentinel-LogicApp-Secret`).
+2. Add a **Key Vault → Get secret** action right at the top of the workflow.
 3. In **both** HTTP actions, replace the `Secret` value with a reference to that action:
 ```
 @{body('Get_secret')?['value']}
 ```
 4. Give the Logic App's connection **Get** permission on the vault's secrets (Key Vault **Access policies** → the *Azure Logic Apps* connection → `Get`).
 
-**✅** From here on there is **no secret in the workflow definition** - the Logic App fetches it at runtime and Logic Apps marks that actiots/outputs as secured.
+**✅** From this point on there's **no secret anywhere in the workflow definition** - the Logic App fetches it at runtime, and Logic Apps flags that action's inputs/outputs as secured.
 
 ---
 
 ### 7️⃣ Verify Events Land in the SIEM
 
-Run the workflow. The POST should return **204 No Content**. Then, in **Sentinel → Logs**, remember that `TimeGenerated` equals the *original event time*, so query by ingestion time to avoid chasing your tail:
+Kick off the workflow. The POST should hand you back a **204 No Content**. Then jump into **Sentinel → Logs** - just remember `TimeGenerated` equals the *original event time*, so query by ingestion time unless you enjoy chasing your own tail:
 
 ```kql
 ADOAuditLogs_CL
-| where ingestion_time(o(30m)
+| where ingestion_time() > ago(30m)
 | sort by TimeGenerated desc
 ```
 
-Because of the intentional window overlap, de-duplicate by the unique event `Id`:
+And because of that intentional window overlap, dedupe on the unique event `Id`:
 
 ```kql
 ADOAuditLogs_CL
 | summarize arg_max(TimeGenerated, *) by Id
 ```
 
-**⏱** In under a minute after a successful POST (allow a little longer the very first time a custom table is written), your Azure DevOps audit events show up in Sentinel - gested by a service principal, with zero standing user credentials.
+**⏱** Within a minute of a clean POST (give it a touch longer the very first time a custom table gets written to), your Azure DevOps audit events pop up in Sentinel - pulled in by a service principal, with exactly zero standing user credentials behind them.
 
 ---
 
 ## 🐛 The Gotchas That Cost Me Time
 
-These are the exact traps I hit - documenting them so you don't.
+These are the exact traps I walked straight into - writing them down so you don't have to.
 
 | Symptom | Root cause | Fix |
 | --- | --- | --- |
-| **POST returns 204 but no rows appear** | The Body field was `body('HTTP_GET')?[...]` **without the leading `@`**, so the Logic App sent the *literal string* instead of the array. The ingestion API happily accepts it (204) and silently drops it. | Prefix the expression with **`@`** so it evaluates: `@body('HTTP_GET')?['decoratedAuditLogEntries']`. |
-| **`UnsupportedMediaType`** | Missing/incorrect content type. | Add header **`Content-Type: application/json`** to the POST. |
-| **GET 401 / 403** | Service principal not added to the Azure DevOps org, or lacking audit-read rights. | Revisit **Step 2**. |
-| **POST 403** | `Monitoring Metrics Publisher` not assigned (or not ppagated). | Revisit **Step 4**, wait a few minutes. |
-| **Empty result `decoratedAuditLogEntries: []`** | Genuinely no audit events in that time window - this is normal, not an error. | Widen the window for testing (`-120` minutes). |
-| **"I see nothing in the last 30 minutes"** | The Logs time picker filters on `TimeGenerated`, which is the *event* time, not the ingestion time. | Query with **`ingestion_time()`** and set the picker to a wide range. |
+| **POST returns 204 but nothing shows up** | The Body field was `body('HTTP_GET')?[...]` **without the leading `@`**, so the Logic App shipped the *literal string* instead of the array. The ingestion API cheerfully takes it (204) and quietly throws it away. | Slap a **`@`** in front so it actually evaluates: `@body('HTTP_GET')?['decoratedAuditLogEntries']`. |
+| **`UnsupportedMediaType`** | Missing or wrong content type. | Add the header **`Content-Type: application/json`** to the POST. |
+| **GET 401 / 403** | Service principal isn't in the Azure DevOps org, or it can't read the audit log. | Go back and redo **Step 2**. |
+| **POST 403** | `Monitoring Metrics Publisher` isn't assigned (or hasn't propagated yet). | Back to **Step 4** - wait a few minutes and retry. |
+| **Empty result `decoratedAuditLogEntries: []`** | There genuinely weren't any audit events in that window - totally normal, not an error. | Widen the window for testing (`-120` minutes). |
+| **"I see nothing in the last 30 minutes"** | The Logs time picker filters on `TimeGenerated`, which is the *event* time, not the ingestion time. | Query with **`ingestion_time()`** and open the picker up to a wide range. |
 
-**⚠️** `Parse JSON` is tempting but onal here - and its strict schema validation will **fail** on `null` values (many Azure DevOps system events have `null` `ipAddress`, `userAgent`, etc.). I removed it entirely and referenced the GET body directly. Fewer moving parts, no false failures.
+**⚠️** `Parse JSON` looks tempting, but honestly it's optional here - and worse, its strict schema validation will **choke** on `null` values (a ton of Azure DevOps system events carry `null` `ipAddress`, `userAgent`, etc.). I ripped it out entirely and just referenced the GET body directly. Fewer moving parts, no phantom failures.
 
 ---
 
 ## 🧠 Final Considerations
 
-The native connector isn't broken - it's jusbuilt around an authentication model that doesn't fit a security-conscious environment. Anchoring an organization-wide audit feed to a **human's refresh token** or a **standing service account** trades long-term risk for short-term convenience.
+The native connector isn't *broken* - it's just built around an authentication model that has no business being in a security-conscious environment. Chaining an org-wide audit feed to a **human's refresh token** or a **standing service account** is trading long-term risk for short-term convenience, and that's a deal I'm not taking.
 
-By rebuilding the pipeline around a **service principal**, an explicit **DCR**, and a **Key Vault**-backed secret, you get:
+Rebuild the pipeline around a **service principal**, an explicit **DCR**, and a **Key Vault**-backed secret, and here's what you walk away with:
 
-* **No interactive login** and no dependency on any single person.
-* **Explicit, scoped permissions** (audit-read on Azure DevOps, `Monitoring Metrics Publisher` on the DCR) that are trivial to audit and revoke.
-* **No secrets in clear text** once the value lives in Key Vault - and a clean path to swap it for a certificate or a managed identity later.
+* **No interactive login** and no dependency on any single person sticking around.
+* **Explicit, scoped permissions** (audit-read on Azure DevOps, `Monitoring Metrics Publisher` on the DCR) that are dead simple to audit and revoke.
+* **No secrets in clear text** once the value lives in Key Vault - plus a clean runway to swap it for a certificate or a managed identity later on.
 
 Same destination table, same Sentinel experience - but an identity you actually control. That's the whole point.
 
 **✅**
 
-**If the tool Microsoft gives you forces a weak identity model, don't accept it - rebuild the plumbing around a principal you can govern. A few Logic App actions are a smallrice for removing a standing credential from your attack surface.**
+**If the tool Microsoft hands you forces a weak identity model, don't just roll with it - rebuild the plumbing around a principal you can actually govern. A handful of Logic App actions is a tiny price to pay for pulling a standing credential off your attack surface.**
 
 ---
 
@@ -296,4 +300,3 @@ Same destination table, same Sentinel experience - but an identity you actually 
 * Data collection rules (DCR) overview: <https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-collection-rule-overview>
 * Service principals & managed identities in Azure DevOps: <https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity>
 * Authenticate Logic Apps with managed identity / OAuth: <https://learn.microsoft.com/en-us/azure/logic-apps/authenticate-with-managed-identity>
-
