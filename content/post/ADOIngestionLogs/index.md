@@ -173,14 +173,12 @@ Create a **Logic App**, then wire up this sequence in the designer.
 
 **Compose - `startTime`:**
 ```
-addMinutes(utcNow(), -10)
+addMinutes(utcNow(), -5)
 ```
 **Compose - `endTime`:**
 ```
 utcNow()
 ```
-
-**⚙** I run a 10-minute window on a 5-minute schedule on purpose. That little bit of overlap means events that show up late in the Azure DevOps audit log never slip through the cracks. We clean up the duplicates later in KQL.
 
 **HTTP - GET (read the audit log):**
 
