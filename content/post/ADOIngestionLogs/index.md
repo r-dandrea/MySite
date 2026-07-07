@@ -205,7 +205,7 @@ addMinutes(utcNow(), -5)
 utcNow()
 ```
 
-4. **Get Secret** from Key Vault
+4. **Get Secret** from Key Vault (next section)
 
 5. **HTTP - GET (read the audit log):**
 
