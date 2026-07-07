@@ -20,7 +20,8 @@ tags:
 
 🕑 *Reading time: ~10 minutes*
 
-{{}} *Short version: the native Azure DevOps Audit Logs connector for Microsoft Sentinel is a governance headache waiting to happen. Here's how I tossed it out and rolled my own pipeline that runs entirely on a service principal - no user sign-in, no sketchy service account, and by the end, no secrets sitting around in clear text either.* {{}}
+{{<callout title="📢">}} *Short version: the native Azure DevOps Audit Logs connector for Microsoft Sentinel is a governance headache waiting to happen. Here's how I tossed it out and rolled my own pipeline that runs entirely on a service principal - no user sign-in, no sketchy service account, and by the end, no secrets sitting around in clear text either.* 
+{{</callout>}}
 
 📚 **Not here for the theory?** Skip to [The Build](#the-build-step-by-step).
 
