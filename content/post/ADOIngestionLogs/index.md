@@ -158,8 +158,9 @@ DCE_ID=$(az monitor data-collection rule show -g "$RG" -n "$DCR" --query "dataCo
 az monitor data-collection endpoint show --ids "$DCE_ID" --query "logsIngestion.endpoint" -o tsv
 ```
 
+{{<callout title="👉">}}
 At this point you're holding: the **DCE ingestion endpoint**, the **DCR immutable ID**, and the **stream name** (`Custom-ADOAuditLogs`).
-
+{{</callout>}}
 ---
 
 
@@ -181,8 +182,9 @@ az role assignment create \
   --scope "$DCR_ID"
 ```
 
+{{<callout title="👉">}}
 Role propagation can drag on for **5-10 minutes**. If your first POST comes back **403**, nine times out of ten this is the culprit - grab a coffee and try again.
-
+{{</callout>}}
 ---
 
 
@@ -274,8 +276,9 @@ Now let's kill that clear-text secret for good.
 ⚠️ Give the Logic App's connection **Get** permission on the vault's secrets (Key Vault **Access policies** → the *Azure Logic Apps* connection → `Get`).
 ![Key Vault access policy](key_vault.jpg)
 
-{{}} From this point on there's **no secret anywhere in the workflow definition** - the Logic App fetches it at runtime, and Logic Apps flags that action's inputs/outputs as secured. {{}}
-
+{{<callout title="👉">}}
+From this point on there's **no secret anywhere in the workflow definition** - the Logic App fetches it at runtime, and Logic Apps flags that action's inputs/outputs as secured.
+{{</callout>}}
 ---
 
 
