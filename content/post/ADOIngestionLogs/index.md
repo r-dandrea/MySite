@@ -22,7 +22,7 @@ tags:
 
 {{}} *Short version: the native Azure DevOps Audit Logs connector for Microsoft Sentinel is a governance headache waiting to happen. Here's how I tossed it out and rolled my own pipeline that runs entirely on a service principal - no user sign-in, no sketchy service account, and by the end, no secrets sitting around in clear text either.* {{}}
 
-📚 **Not here for the theory?** Skip straight to [The Build](#-the-build-step-by-step).
+📚 **Not here for the theory?** Skip straight to [The Build](#the-build-step-by-step).
 
 ---
  
@@ -161,6 +161,7 @@ az monitor data-collection endpoint show --ids "$DCE_ID" --query "logsIngestion.
 {{<callout title="👉">}}
 At this point you're holding: the **DCE ingestion endpoint**, the **DCR immutable ID**, and the **stream name** (`Custom-ADOAuditLogs`).
 {{</callout>}}
+
 ---
 
 
@@ -279,6 +280,7 @@ Now let's kill that clear-text secret for good.
 {{<callout title="👉">}}
 From this point on there's **no secret anywhere in the workflow definition** - the Logic App fetches it at runtime, and Logic Apps flags that action's inputs/outputs as secured.
 {{</callout>}}
+
 ---
 
 
