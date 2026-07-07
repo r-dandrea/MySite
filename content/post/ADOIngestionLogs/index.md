@@ -1,19 +1,18 @@
 ---
 
-title: "No Account, No Problem - Ingesting Azure DevOps Audit Logs into Sentinel with a Service Principal"
-description: "Microsoft's Azure DevOps Audit Logs connector for Sentinel forces you to sign in with a user account. Here's how I ditched that requirement and built a secret-free, service-principal-based ingestion pipeline from scratch with a Logic App, a DCR, and Key Vault."
-date: 2026-07-06
-image: cover.png
-categories:
-    - Azure
-tags:
-    - Microsoft Sentinel
-    - Azure DevOps
-    - Logic Apps
-    - Data Collection Rule
-    - Service Principal
-
-- Key Vault
+title: "No Account, No Problem - Ingesting Azure DevOps Audit Logs into Sentinel with a Service Principal"  
+description: "Microsoft's Azure DevOps Audit Logs connector for Sentinel forces you to sign in with a user account. Here's how I ditched that requirement and built a secret-free, service-principal-based ingestion pipeline from scratch with a Logic App, a DCR, and Key Vault."  
+date: 2026-07-06  
+image: cover.png  
+categories:  
+    - Azure  
+tags:  
+    - Microsoft Sentinel  
+    - Azure DevOps  
+    - Logic Apps  
+    - Data Collection Rule  
+    - Service Principal  
+    - Key Vault
 
 ---
 
@@ -57,7 +56,7 @@ So I ditched the connector entirely and built the whole pipeline **from scratch 
 
 Before we get our hands dirty, here's the mental model. The Logic App is just the orchestrator - it doesn't write anything itself. The data actually lands in Log Analytics through a **Data Collection Rule (DCR)**:
 
-![Azure DevOps to Microsoft Sentinel ingestion pipeline built on a service principal: a Logic App reads audit logs via HTTP GET, checks whether events exist, then POSTs them through a Data Collection Endpoint and Data Collection Rule into the ADOAuditLogs_CL table in Microsoft Sentinel, with the secret stored in Key Vault](pipeline.svg)
+Azure DevOps to Microsoft Sentinel ingestion pipeline built on a service principal: a Logic App reads audit logs via HTTP GET, checks whether events exist, then POSTs them through a Data Collection Endpoint and Data Collection Rule into the ADOAuditLogs_CL table in Microsoft Sentinel, with the secret stored in Key Vault
 
 Two different tokens, one service principal:
 
