@@ -304,7 +304,7 @@ ADOAuditLogs_CL
 | summarize arg_max(TimeGenerated, *) by Id
 ```
 
-{{}} Within a minute of a clean POST (give it a touch longer the very first time a custom table gets written to), your Azure DevOps audit events pop up in Sentinel - pulled in by a service principal, with exactly zero standing user credentials behind them. {{}}
+Within a minute of a clean POST (give it a touch longer the very first time a custom table gets written to), your Azure DevOps audit events pop up in Sentinel - pulled in by a service principal, with exactly zero standing user credentials behind them.
 
 ---
 
