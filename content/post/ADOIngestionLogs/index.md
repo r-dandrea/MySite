@@ -308,7 +308,8 @@ ADOAuditLogs_CL
 
 ## Final Considerations
 
-The native connector isn't *broken* - it's just built around an authentication model that has no business being in a security-conscious environment. Chaining an org-wide audit feed to a **human's refresh token** or a **standing service account** is trading long-term risk for short-term convenience, and that's a deal I'm not taking.
+The native connector isn't *broken* - it's just built around an authentication model that has no business being in a security-conscious environment. 
+Chaining an org-wide audit feed to a **human's refresh token** or a **standing service account** is trading long-term risk for short-term convenience, and that's a deal I'm not taking.
 
 Rebuild the pipeline around a **service principal**, an explicit **DCR**, and a **Key Vault**-backed secret, and here's what you walk away with:
 
@@ -316,9 +317,12 @@ Rebuild the pipeline around a **service principal**, an explicit **DCR**, and a 
 - **Explicit, scoped permissions** (audit-read on Azure DevOps, `Monitoring Metrics Publisher` on the DCR) that are dead simple to audit and revoke.
 - **No secrets in clear text** once the value lives in Key Vault - plus a clean runway to swap it for a certificate or a managed identity later on.
 
-Same destination table, same Sentinel experience - but an identity you actually control. That's the whole point.
+Same destination table, same Sentinel experience - but an identity you actually control.
+That's the whole point!
 
-{{}} **If the tool Microsoft hands you forces a weak identity model, don't just roll with it - rebuild the plumbing around a principal you can actually govern. A handful of Logic App actions is a tiny price to pay for pulling a standing credential off your attack surface.** {{}}
+{{<callout title="🤝">}}
+**Running into trouble swapping the native connector for this pipeline?** Don't bang your head against it on your own - reach out to me on **[LinkedIn](https://www.linkedin.com/in/roberto-d-andrea/)** and I'll gladly give you a hand getting it wired up.
+{{</callout>}}
 
 ---
 
