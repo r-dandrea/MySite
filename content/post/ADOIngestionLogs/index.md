@@ -18,9 +18,9 @@ tags:
 
 🕑 _Reading time: ~10 minutes_
 
-**📢**
-
+{{<callout title="📢">}}
 _Short version: the native Azure DevOps Audit Logs connector for Microsoft Sentinel is a governance headache waiting to happen. Here's how I tossed it out and rolled my own pipeline that runs entirely on a service principal - no user sign-in, no sketchy service account, and by the end, no secrets sitting around in clear text either._
+{{</callout>}}
 
 📚 **Not here for the theory?** Skip straight to [The Build](#-the-build-step-by-step).
 
@@ -40,9 +40,9 @@ And here's the thing - every option Microsoft leaves on the table is bad news fr
 
 So I ditched the connector entirely and built the whole pipeline **from scratch on a Service Principal (App Registration)**. It authenticates non-interactively, its permissions are spelled out and tightly scoped, and in the final step I shove its secret into **Key Vault** so nothing sensitive ever lives in plain sight.
 
-**👉**
-
+{{<callout title="👉">}}
 Bottom line: Azure DevOps audit events still land in Sentinel through the **exact same custom table** the connector would've used (`ADOAuditLogs_CL`) - but the identity behind the wheel is a service principal I fully own. No human, no service account, no nasty revocation surprises down the road.
+{{</callout>}}
 
 ---
 
@@ -68,9 +68,9 @@ Two different tokens, one service principal:
 * the **GET** grabs a token for **Azure DevOps** (resource ID `499b84ac-1321-427f-aa17-267ca6975798`),
 * the **POST** grabs a token for **`https://monitor.azure.com`** to write through the DCR.
 
-**⚙**
-
+{{<callout title="⚙">}}
 The DCR is **not optional** - don't skip it. You can't POST straight into a custom table; the Logs Ingestion API always writes *through* a DCR, which checks the incoming schema, runs an optional KQL transform, and routes the rows into the destination table.
+{{</callout>}}
 
 ---
 
@@ -91,7 +91,9 @@ The DCR is **not optional** - don't skip it. You can't POST straight into a cust
 2. Grab the **Application (client) ID** and the **Directory (tenant) ID** off the Overview blade.
 3. Head to **Certificates & secrets → New client secret**, and copy the **Value** (the value, *not* the Secret ID - and copy it now, because you only get to see it once).
 
-**⚠️** Stash that secret somewhere safe for the moment. In **Step 6** we'll tuck it into Key Vault so it never lives inside the workflow.
+{{<callout title="⚠️">}}
+Stash that secret somewhere safe for the moment. In **Step 6** we'll tuck it into Key Vault so it never lives inside the workflow.
+{{</callout>}}
 
 ---
 
@@ -103,7 +105,9 @@ Azure DevOps treats service principals and managed identities as first-class mem
 2. Search for the app by **name** (`AzureDevOpsSentinelLog`) or by **Client ID**, and set **Access level = Basic**.
 3. Give it the right to **read the audit log**. Auditing lives at the org level, so drop the service principal into a group that can read it (for example **Project Collection Administrators**).
 
-**💡** Not thrilled about handing it PCA? Fair. Spin up a **dedicated group** with nothing but the audit-read capability and add the SP there instead - least privilege for the win.
+{{<callout title="💡">}}
+Not thrilled about handing it PCA? Fair. Spin up a **dedicated group** with nothing but the audit-read capability and add the SP there instead - least privilege for the win.
+{{</callout>}}
 
 ---
 
@@ -121,7 +125,9 @@ source
           IpAddress = ipAddress, ProjectName = projectName, ScopeType = scopeType /* ...etc... */
 ```
 
-**👉** This is a sweet shortcut: since the transform expects the **raw lowercase fields** exactly the way the Azure DevOps API spits them out (`actionId`, `timestamp`, `data`...), you just forward the API payload **as-is** - zero reshaping in the Logic App.
+{{<callout title="👉">}}
+This is a sweet shortcut: since the transform expects the **raw lowercase fields** exactly the way the Azure DevOps API spits them out (`actionId`, `timestamp`, `data`...), you just forward the API payload **as-is** - zero reshaping in the Logic App.
+{{</callout>}}
 
 Pull these three values (portal or CLI, your call):
 
@@ -161,7 +167,9 @@ az role assignment create \
   --scope "$DCR_ID"
 ```
 
-**⚠️** Heads up: role propagation can drag on for **5-10 minutes**. If your first POST comes back **403**, nine times out of ten this is the culprit - grab a coffee and try again.
+{{<callout title="⚠️">}}
+Heads up: role propagation can drag on for **5-10 minutes**. If your first POST comes back **403**, nine times out of ten this is the culprit - grab a coffee and try again.
+{{</callout>}}
 
 ---
 
@@ -231,7 +239,9 @@ Now let's kill that clear-text secret for good.
 ```
 4. Give the Logic App's connection **Get** permission on the vault's secrets (Key Vault **Access policies** → the *Azure Logic Apps* connection → `Get`).
 
-**✅** From this point on there's **no secret anywhere in the workflow definition** - the Logic App fetches it at runtime, and Logic Apps flags that action's inputs/outputs as secured.
+{{<callout title="✅">}}
+From this point on there's **no secret anywhere in the workflow definition** - the Logic App fetches it at runtime, and Logic Apps flags that action's inputs/outputs as secured.
+{{</callout>}}
 
 ---
 
@@ -252,7 +262,9 @@ ADOAuditLogs_CL
 | summarize arg_max(TimeGenerated, *) by Id
 ```
 
-**⏱** Within a minute of a clean POST (give it a touch longer the very first time a custom table gets written to), your Azure DevOps audit events pop up in Sentinel - pulled in by a service principal, with exactly zero standing user credentials behind them.
+{{<callout title="⏱">}}
+Within a minute of a clean POST (give it a touch longer the very first time a custom table gets written to), your Azure DevOps audit events pop up in Sentinel - pulled in by a service principal, with exactly zero standing user credentials behind them.
+{{</callout>}}
 
 ---
 
@@ -268,9 +280,9 @@ Rebuild the pipeline around a **service principal**, an explicit **DCR**, and a 
 
 Same destination table, same Sentinel experience - but an identity you actually control. That's the whole point.
 
-**✅**
-
+{{<callout title="✅">}}
 **If the tool Microsoft hands you forces a weak identity model, don't just roll with it - rebuild the plumbing around a principal you can actually govern. A handful of Logic App actions is a tiny price to pay for pulling a standing credential off your attack surface.**
+{{</callout>}}
 
 ---
 
