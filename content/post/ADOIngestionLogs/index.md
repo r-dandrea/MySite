@@ -126,8 +126,9 @@ Auditing lives at the organization level, so drop the service principal into a g
 
 ### Find the DCR & Copy the Log Ingestion Endpoint
 
-If you'd already given the native connector a shot, Sentinel has quietly created a DCR for you (mine was tagged `createdBy: Sentinel`) that points to `ADOAuditLogs_CL`. You can **reuse that one** or build your own dedicated DCR - either way, you need three values out of it.
-
+If you'd already given the native connector a shot, Sentinel has quietly created a DCR for you (mine was tagged `createdBy: Sentinel`) that points to `ADOAuditLogs_CL`. 
+You can **reuse that one** or build your own dedicated DCR - either way, you need three values out of it.
+![DCR_AzureDevOps](DCR.jpg)
 The DCR declares its input stream as `Custom-ADOAuditLogs` and handles the field mapping itself inside its `transformKql`:
 
 ```kql
@@ -138,7 +139,7 @@ source
           IpAddress = ipAddress, ProjectName = projectName, ScopeType = scopeType /* ...etc... */
 ```
 
-{{}} This is a sweet shortcut: since the transform expects the **raw lowercase fields** exactly the way the Azure DevOps API spits them out (`actionId`, `timestamp`, `data`...), you just forward the API payload **as-is** - zero reshaping in the Logic App. {{}}
+This is a sweet shortcut: since the transform expects the **raw lowercase fields** exactly the way the Azure DevOps API spits them out (`actionId`, `timestamp`, `data`...), you just forward the API payload **as-is** - zero reshaping in the Logic App.
 
 Pull these three values (portal or CLI, your call):
 
