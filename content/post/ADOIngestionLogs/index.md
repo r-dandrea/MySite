@@ -325,7 +325,8 @@ Same destination table, same Sentinel experience - but an identity you actually 
 That's the whole point!
 
 {{<callout title="🤝">}}
-**Running into trouble swapping the native connector for this pipeline?** Don't bang your head against it on your own - reach out to me on **[LinkedIn](https://www.linkedin.com/in/roberto-d-andrea/)** and I'll gladly give you a hand getting it wired up.
+**Running into trouble swapping the native connector for this pipeline?** 
+Don't bang your head against it on your own - reach out to me on **[LinkedIn](https://www.linkedin.com/in/roberto-d-andrea/)** and I'll gladly give you a hand getting it wired up.
 {{</callout>}}
 
 ---
