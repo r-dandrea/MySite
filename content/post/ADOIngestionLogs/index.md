@@ -1,6 +1,6 @@
 ---
 
-title: "No Account, No Problem - Ingesting Azure DevOps Audit Logs into Sentinel without a user sign-in"  
+title: "No Account, No Problem - Ingesting Azure DevOps Audit Logs into Sentinel with a Service Principal"  
 description: "Microsoft's Azure DevOps Audit Logs connector for Sentinel forces you to sign in with a user account. Here's how I ditched that requirement and built a secret-free, service-principal-based ingestion pipeline from scratch with a Logic App, a DCR, and Key Vault."  
 date: 2026-07-06  
 image: pipeline.png  
@@ -16,7 +16,7 @@ tags:
 
 ---
 
-# No Account, No Problem: Ingesting Azure DevOps Audit Logs into Sentinel without a user sign-in
+# No Account, No Problem: Ingesting Azure DevOps Audit Logs into Sentinel with a Service Principal
 
 🕑 *Reading time: ~10 minutes*
 
