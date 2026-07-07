@@ -271,7 +271,8 @@ Now let's kill that clear-text secret for good.
 @{body('Get_secret')?['value']}
 ```
 
-1. Give the Logic App's connection **Get** permission on the vault's secrets (Key Vault **Access policies** → the *Azure Logic Apps* connection → `Get`).
+⚠️ Give the Logic App's connection **Get** permission on the vault's secrets (Key Vault **Access policies** → the *Azure Logic Apps* connection → `Get`).
+![Key Vault access policy](key_vault.jpg)
 
 {{}} From this point on there's **no secret anywhere in the workflow definition** - the Logic App fetches it at runtime, and Logic Apps flags that action's inputs/outputs as secured. {{}}
 
