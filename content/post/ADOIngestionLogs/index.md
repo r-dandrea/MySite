@@ -92,11 +92,12 @@ Before starting building the process we need:
 
 ### Create the App Registration
 
-1. **Entra ID → App registrations → New registration**. Name it something obvious like `AzureDevOpsSentinelLog`.
-2. Grab the **Application (client) ID** and the **Directory (tenant) ID** off the Overview blade.
+1. **Entra ID → App registrations → New registration**. 
+Name it something obvious like `AzureDevOpsSentinelLog`.
+2. Copy the **Application (client) ID** and the **Directory (tenant) ID** 
 3. Head to **Certificates & secrets → New client secret**, and copy the **Value** (the value, *not* the Secret ID - and copy it now, because you only get to see it once).
 
-{{}} Stash that secret somewhere safe for the moment. In **Step 6** we'll tuck it into Key Vault so it never lives inside the workflow. {{}}
+💡 Stash that secret somewhere safe for the moment. In **Step 6** we'll tuck it into Key Vault so it never lives inside the workflow.
 
 ---
 
@@ -106,11 +107,10 @@ Before starting building the process we need:
 
 Azure DevOps treats service principals and managed identities as first-class members of an organization, so we hand it access exactly like we would a regular user.
 
-1. `dev.azure.com/<your-org>` → **Organization Settings → Users → Add users**.
+1. Navigate over `dev.azure.com/<your-org>` → **Organization Settings → Users → Add users**.
 2. Search for the app by **name** (`AzureDevOpsSentinelLog`) or by **Client ID**, and set **Access level = Basic**.
-3. Give it the right to **read the audit log**. Auditing lives at the org level, so drop the service principal into a group that can read it (for example **Project Collection Administrators**).
-
-{{}} Not thrilled about handing it PCA? Fair. Spin up a **dedicated group** with nothing but the audit-read capability and add the SP there instead - least privilege for the win. {{}}
+3. Give it the right to **read the audit log**. 
+Auditing lives at the organization level, so drop the service principal into a group that can read it (for example **Project Collection Administrators**).
 
 ---
 
