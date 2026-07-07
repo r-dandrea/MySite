@@ -106,7 +106,14 @@ Name it something obvious like `AzureDevOpsAuditLog`.
 
 ### Add the Service Principal to Azure DevOps
 
+
+
 Azure DevOps treats service principals and managed identities as first-class members of an organization, so we hand it access exactly like we would a regular user.
+
+{{<callout title="⚠️">}}
+Before you start, a heads-up on permissions: this step is **admin territory**. To add a member to the organization, set its access level, and manage group membership, you need to be a **Project Collection Administrator (PCA)** - or the **Organization Owner** - on the Azure DevOps org. 
+A regular user account can't do any of this. If you're not a PCA, you'll need someone who is to run these steps for you (or to grant you the role first).
+{{</callout>}}
 
 1. Navigate over `dev.azure.com/<your-org>` → **Organization Settings → Users → Add users**.
 2. Search for the app by **name** (`AzureDevOpsAuditLog`) or by **Client ID**, and set **Access level = Basic**.
