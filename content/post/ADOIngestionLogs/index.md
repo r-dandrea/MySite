@@ -31,7 +31,7 @@ tags:
 ## ⚠️ Why I Refused to Use the Connector's Account
 
 Microsoft Sentinel ships with a codeless connector called **Azure DevOps Audit Logs (via Codeless Connector Platform)**. 
-![AzureDevOps Audit Logs connector](azuredevops_connector.png)
+![AzureDevOps Audit Logs connector](azuredevops_connector.jpg)
 Looks handy on paper. But the second you hit **Connect**, it drags you through an **OAuth authorization-code** flow and makes you **sign in with an account**. Whatever account you pick becomes the identity that reads your audit logs. Forever.
 
 And here's the thing - every option Microsoft leaves on the table is bad news from a security and ops point of view:
