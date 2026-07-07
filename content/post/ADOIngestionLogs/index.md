@@ -16,7 +16,7 @@ tags:
 
 ---
 
-# No Account, No Problem: Ingesting Azure DevOps Audit Logs into Sentinel with a Service Principal
+# No Account, No Problem: Ingesting Azure DevOps Audit Logs into Sentinel without a user sign-in
 
 🕑 *Reading time: ~10 minutes*
 
