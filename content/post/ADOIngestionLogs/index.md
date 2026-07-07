@@ -25,13 +25,13 @@ tags:
 📚 **Not here for the theory?** Skip straight to [The Build](#-the-build-step-by-step).
 
 ---
-
+ 
 
 
 ## ⚠️ Why I Refused to Use the Connector's Account
 
 Microsoft Sentinel ships with a codeless connector called **Azure DevOps Audit Logs (via Codeless Connector Platform)**. 
-AzureDevOps Audit Logs connector
+![AzureDevOps Audit Logs connector](azuredevops_connector.png)
 Looks handy on paper. But the second you hit **Connect**, it drags you through an **OAuth authorization-code** flow and makes you **sign in with an account**. Whatever account you pick becomes the identity that reads your audit logs. Forever.
 
 And here's the thing - every option Microsoft leaves on the table is bad news from a security and ops point of view:
@@ -57,6 +57,7 @@ So I ditched the connector entirely and built the whole pipeline **from scratch 
 Before we get our hands dirty, here's the mental model. The Logic App is just the orchestrator - it doesn't write anything itself. The data actually lands in Log Analytics through a **Data Collection Rule (DCR)**:
 
 Azure DevOps to Microsoft Sentinel ingestion pipeline built on a service principal: a Logic App reads audit logs via HTTP GET, checks whether events exist, then POSTs them through a Data Collection Endpoint and Data Collection Rule into the ADOAuditLogs_CL table in Microsoft Sentinel, with the secret stored in Key Vault
+![Azure DevOps to Microsoft Sentinel ingestion pipeline](pipeline.svg)
 
 Two different tokens, one service principal:
 
