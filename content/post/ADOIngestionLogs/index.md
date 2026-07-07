@@ -256,23 +256,6 @@ ADOAuditLogs_CL
 
 ---
 
-## 🐛 The Gotchas That Cost Me Time
-
-These are the exact traps I walked straight into - writing them down so you don't have to.
-
-| Symptom | Root cause | Fix |
-| --- | --- | --- |
-| **POST returns 204 but nothing shows up** | The Body field was `body('HTTP_GET')?[...]` **without the leading `@`**, so the Logic App shipped the *literal string* instead of the array. The ingestion API cheerfully takes it (204) and quietly throws it away. | Slap a **`@`** in front so it actually evaluates: `@body('HTTP_GET')?['decoratedAuditLogEntries']`. |
-| **`UnsupportedMediaType`** | Missing or wrong content type. | Add the header **`Content-Type: application/json`** to the POST. |
-| **GET 401 / 403** | Service principal isn't in the Azure DevOps org, or it can't read the audit log. | Go back and redo **Step 2**. |
-| **POST 403** | `Monitoring Metrics Publisher` isn't assigned (or hasn't propagated yet). | Back to **Step 4** - wait a few minutes and retry. |
-| **Empty result `decoratedAuditLogEntries: []`** | There genuinely weren't any audit events in that window - totally normal, not an error. | Widen the window for testing (`-120` minutes). |
-| **"I see nothing in the last 30 minutes"** | The Logs time picker filters on `TimeGenerated`, which is the *event* time, not the ingestion time. | Query with **`ingestion_time()`** and open the picker up to a wide range. |
-
-**⚠️** `Parse JSON` looks tempting, but honestly it's optional here - and worse, its strict schema validation will **choke** on `null` values (a ton of Azure DevOps system events carry `null` `ipAddress`, `userAgent`, etc.). I ripped it out entirely and just referenced the GET body directly. Fewer moving parts, no phantom failures.
-
----
-
 ## 🧠 Final Considerations
 
 The native connector isn't *broken* - it's just built around an authentication model that has no business being in a security-conscious environment. Chaining an org-wide audit feed to a **human's refresh token** or a **standing service account** is trading long-term risk for short-term convenience, and that's a deal I'm not taking.
