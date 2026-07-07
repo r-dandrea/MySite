@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1660" height="600" viewBox="0 0 1660 600" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#6b7b8b"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1660" height="600" fill="#ffffff"/>
+
+  <text x="40" y="36" font-size="17" font-weight="700" fill="#0f3d61">Azure DevOps &#8594; Microsoft Sentinel ingestion pipeline (service-principal based)</text>
+
+  <!-- ============ LOGIC APP CONTAINER ============ -->
+  <rect x="30" y="55" width="300" height="340" rx="12" fill="#f4f8fd" stroke="#0078d4" stroke-width="1.5"/>
+  <!-- title icon: Logic Apps (official) -->
+  <g transform="translate(48,66) scale(1.6667)">
+    <defs><linearGradient id="la1" x1="9" y1="1.796" x2="9" y2="6.371" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#9cebff"/><stop offset="1" stop-color="#50e6ff"/></linearGradient><linearGradient id="la2" x1="3.374" y1="12.14" x2="3.374" y2="18.457" gradientUnits="userSpaceOnUse"><stop offset="0.001" stop-color="#b4ec36"/><stop offset="1" stop-color="#86d633"/></linearGradient><linearGradient id="la3" x1="14.626" y1="12.14" x2="14.626" y2="18.457" gradientTransform="translate(-0.02 29.273) rotate(-90)" gradientUnits="userSpaceOnUse"><stop offset="0.001" stop-color="#b4ec36"/><stop offset="1" stop-color="#86d633"/></linearGradient></defs>
+    <path d="M13.851,9.047H10.939A1.518,1.518,0,0,1,9.421,7.529V4.33H8.579v3.2A1.518,1.518,0,0,1,7.061,9.047H4.149a1.2,1.2,0,0,0-1.2,1.2v2.338h.841V10.244a.355.355,0,0,1,.356-.355H7.061A2.353,2.353,0,0,0,8.8,9.125a.278.278,0,0,1,.408,0,2.353,2.353,0,0,0,1.735.764h2.912a.354.354,0,0,1,.355.355v2.338h.841V10.244A1.2,1.2,0,0,0,13.851,9.047Z" fill="#0078d4"/><rect x="5.626" y="-0.02" width="6.747" height="6.747" rx="0.604" fill="url(#la1)"/><rect y="11.273" width="6.747" height="6.747" rx="0.604" fill="url(#la2)"/><rect x="11.253" y="11.273" width="6.747" height="6.747" rx="0.604" transform="translate(29.273 0.02) rotate(90)" fill="url(#la3)"/>
+  </g>
+  <text x="90" y="80" font-size="15" font-weight="700" fill="#0f3d61">Logic App</text>
+  <text x="90" y="96" font-size="10.5" fill="#5b7a99">(Service Principal auth)</text>
+
+  <!-- step 1 -->
+  <rect x="50" y="116" width="260" height="46" rx="8" fill="#ffffff" stroke="#cfe0f2" stroke-width="1"/>
+  <circle cx="70" cy="139" r="11" fill="#0078d4"/>
+  <text x="70" y="139" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central">1</text>
+  <text x="90" y="139" font-size="10.5" fill="#22303f" dominant-baseline="central">Recurrence trigger (every 5 min)</text>
+  <!-- step 2 -->
+  <rect x="50" y="172" width="260" height="46" rx="8" fill="#ffffff" stroke="#cfe0f2" stroke-width="1"/>
+  <circle cx="70" cy="195" r="11" fill="#0078d4"/>
+  <text x="70" y="195" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central">2</text>
+  <text x="90" y="195" font-size="10.5" fill="#22303f" dominant-baseline="central">Get secret from Key Vault</text>
+  <!-- step 3 -->
+  <rect x="50" y="228" width="260" height="46" rx="8" fill="#ffffff" stroke="#cfe0f2" stroke-width="1"/>
+  <circle cx="70" cy="251" r="11" fill="#0078d4"/>
+  <text x="70" y="251" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central">3</text>
+  <text x="90" y="251" font-size="10.5" fill="#22303f" dominant-baseline="central">Build startTime / endTime window</text>
+  <!-- step 4 -->
+  <rect x="50" y="284" width="260" height="46" rx="8" fill="#ffffff" stroke="#cfe0f2" stroke-width="1"/>
+  <circle cx="70" cy="307" r="11" fill="#0078d4"/>
+  <text x="70" y="307" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central">4</text>
+  <text x="90" y="307" font-size="10.5" fill="#22303f" dominant-baseline="central">HTTP GET &#8594; Azure DevOps API</text>
+
+  <!-- Key Vault (official) -->
+  <rect x="95" y="440" width="160" height="95" rx="10" fill="#ffffff" stroke="#d9a900" stroke-width="1.3"/>
+  <g transform="translate(154,452) scale(2.3333)">
+    <defs><radialGradient id="kv1" cx="9" cy="9" r="8.5" gradientUnits="userSpaceOnUse"><stop offset="0.18" stop-color="#5ea0ef"/><stop offset="0.56" stop-color="#5c9fee"/><stop offset="0.69" stop-color="#559ced"/><stop offset="0.78" stop-color="#4a97e9"/><stop offset="0.86" stop-color="#3990e4"/><stop offset="0.93" stop-color="#2387de"/><stop offset="0.99" stop-color="#087bd6"/><stop offset="1" stop-color="#0078d4"/></radialGradient><radialGradient id="kv2" cx="38.95" cy="182.07" r="9.88" gradientTransform="translate(-28.71 -163.24) scale(0.94 0.94)" gradientUnits="userSpaceOnUse"><stop offset="0.27" stop-color="#ffd70f"/><stop offset="0.49" stop-color="#ffcb12"/><stop offset="0.88" stop-color="#feac19"/><stop offset="1" stop-color="#fea11b"/></radialGradient></defs>
+    <path d="M9,.5A8.5,8.5,0,1,0,17.5,9,8.51,8.51,0,0,0,9,.5ZM9,16.34A7.34,7.34,0,1,1,16.34,9,7.34,7.34,0,0,1,9,16.34Z" fill="url(#kv1)"/><circle cx="9" cy="9" r="7.34" fill="#fff"/><g><path d="M13.44,7.33a1.84,1.84,0,0,0,0-2.59h0L10.29,1.58a1.83,1.83,0,0,0-2.58,0h0L4.56,4.74a1.84,1.84,0,0,0,0,2.59L7.18,10a.51.51,0,0,1,.15.36v4.88a.63.63,0,0,0,.18.44l1.2,1.2a.41.41,0,0,0,.58,0l1.16-1.16h0l.68-.68a.25.25,0,0,0,0-.34l-.49-.49a.27.27,0,0,1,0-.37l.49-.49a.25.25,0,0,0,0-.34l-.49-.49a.27.27,0,0,1,0-.37l.49-.49a.25.25,0,0,0,0-.34l-.68-.69v-.25ZM9,2.35A1,1,0,0,1,9,4.42,1,1,0,1,1,9,2.35Z" fill="url(#kv2)"/><path d="M8.18,15.3h0a.23.23,0,0,0,.38-.17v-4a.24.24,0,0,0-.11-.2h0a.22.22,0,0,0-.34.2v4A.28.28,0,0,0,8.18,15.3Z" fill="#ff9300" opacity="0.75"/><rect x="6.48" y="5.79" width="5.17" height="0.61" rx="0.28" fill="#ff9300" opacity="0.75"/><rect x="6.48" y="6.78" width="5.17" height="0.61" rx="0.28" fill="#ff9300" opacity="0.75"/></g>
+  </g>
+  <text x="175" y="522" font-size="12" font-weight="700" fill="#7a5c00" text-anchor="middle">Key Vault</text>
+  <line x1="175" y1="440" x2="175" y2="395" stroke="#8a8f98" stroke-width="1.3" stroke-dasharray="4 3"/>
+  <text x="182" y="420" font-size="9" fill="#8a8f98">secret</text>
+
+  <!-- ============ GET arrow ============ -->
+  <line x1="330" y1="225" x2="450" y2="225" stroke="#6b7b8b" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="392" y="205" font-size="10.5" font-weight="700" fill="#3d566e" text-anchor="middle">GET</text>
+  <text x="392" y="218" font-size="9.5" fill="#5b6b7b" text-anchor="middle">audience = Azure DevOps</text>
+
+  <!-- ============ AZURE DEVOPS API BOX ============ -->
+  <rect x="455" y="170" width="150" height="110" rx="10" fill="#ffffff" stroke="#b9d3ee" stroke-width="1.3"/>
+  <g transform="translate(510,182) scale(2.2222)">
+    <defs><linearGradient id="ado1" x1="9" y1="16.97" x2="9" y2="1.03" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0078d4"/><stop offset="0.16" stop-color="#1380da"/><stop offset="0.53" stop-color="#3c91e5"/><stop offset="0.82" stop-color="#559cec"/><stop offset="1" stop-color="#5ea0ef"/></linearGradient></defs>
+    <path d="M17,4v9.74l-4,3.28-6.2-2.26V17L3.29,12.41l10.23.8V4.44Zm-3.41.49L7.85,1V3.29L2.58,4.84,1,6.87v4.61l2.26,1V6.57Z" fill="url(#ado1)"/>
+  </g>
+  <text x="530" y="238" font-size="10.5" font-weight="600" fill="#1f2d3d" text-anchor="middle">Azure DevOps</text>
+  <text x="530" y="252" font-size="10.5" fill="#1f2d3d" text-anchor="middle">Audit Log API</text>
+
+  <!-- arrow to diamond -->
+  <line x1="605" y1="225" x2="632" y2="225" stroke="#6b7b8b" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- ============ DECISION DIAMOND ============ -->
+  <polygon points="690,177 748,225 690,273 632,225" fill="#fffaf0" stroke="#d9a900" stroke-width="1.3"/>
+  <text x="690" y="219" font-size="10.5" font-weight="600" fill="#7a5c00" text-anchor="middle">Events</text>
+  <text x="690" y="233" font-size="10.5" font-weight="600" fill="#7a5c00" text-anchor="middle">exist?</text>
+
+  <!-- POST arrow (diamond -> DCE) -->
+  <line x1="748" y1="225" x2="800" y2="225" stroke="#6b7b8b" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="768" y="216" font-size="10" font-weight="700" fill="#3a7d3a">Yes</text>
+  <text x="875" y="150" font-size="10.5" font-weight="700" fill="#3d566e" text-anchor="middle">POST</text>
+  <text x="875" y="163" font-size="9.5" fill="#5b6b7b" text-anchor="middle">audience = https://monitor.azure.com</text>
+
+  <!-- ============ DATA COLLECTION ENDPOINT (Monitor icon) ============ -->
+  <rect x="800" y="170" width="150" height="110" rx="10" fill="#ffffff" stroke="#b9d3ee" stroke-width="1.3"/>
+  <g transform="translate(855,182) scale(2.2222)">
+    <defs><radialGradient id="mon1" cx="5.72" cy="7.45" r="8.42" gradientTransform="translate(3.23 1.51) scale(1.01 1.01)" gradientUnits="userSpaceOnUse"><stop offset="0.18" stop-color="#5ea0ef"/><stop offset="0.56" stop-color="#5c9fee"/><stop offset="0.69" stop-color="#559ced"/><stop offset="0.78" stop-color="#4a97e9"/><stop offset="0.86" stop-color="#3990e4"/><stop offset="0.93" stop-color="#2387de"/><stop offset="0.99" stop-color="#087bd6"/><stop offset="1" stop-color="#0078d4"/></radialGradient><radialGradient id="mon2" cx="28.18" cy="202.29" r="2.7" gradientTransform="translate(-17.77 -185.01) scale(0.95)" gradientUnits="userSpaceOnUse"><stop offset="0.19" stop-color="#8c8e90"/><stop offset="0.35" stop-color="#848688"/><stop offset="0.6" stop-color="#6e7071"/><stop offset="0.91" stop-color="#4a4b4c"/><stop offset="1" stop-color="#3e3f3f"/></radialGradient></defs>
+    <ellipse cx="9" cy="9" rx="8.5" ry="8.47" fill="url(#mon1)"/><ellipse cx="9" cy="9" rx="7.4" ry="7.37" fill="#fff"/><path d="M2.72,9.44a6.24,6.24,0,0,0,1.82,4l2-2a3.53,3.53,0,0,1-1-2Z" fill="#9cebff"/><path d="M13.13,4.27A6.25,6.25,0,0,0,9.44,2.74V5.53a3.41,3.41,0,0,1,1.71.7Z" fill="#32bedd"/><path d="M4.87,4.27l2,2a3.41,3.41,0,0,1,1.71-.7V2.74A6.25,6.25,0,0,0,4.87,4.27Z" fill="#32bedd"/><path d="M11.78,6.85a3.6,3.6,0,0,1,.71,1.71h2.79a6.16,6.16,0,0,0-1.53-3.67Z" fill="#32bedd"/><path d="M6.22,6.85l-2-2A6.16,6.16,0,0,0,2.72,8.56H5.51A3.6,3.6,0,0,1,6.22,6.85Z" fill="#50e6ff"/><path d="M14.14,7a.45.45,0,0,0-.57-.25L9.45,8.41l.32.81,4.12-1.63A.44.44,0,0,0,14.14,7Z" fill="#f04049"/><ellipse cx="9" cy="9" rx="1.2" ry="1.2" fill="url(#mon2)"/>
+  </g>
+  <text x="875" y="238" font-size="10.5" font-weight="600" fill="#1f2d3d" text-anchor="middle">Data Collection</text>
+  <text x="875" y="252" font-size="9.5" fill="#1f2d3d" text-anchor="middle">Endpoint (Logs Ingestion)</text>
+
+  <!-- arrow DCE -> DCR -->
+  <line x1="950" y1="225" x2="1010" y2="225" stroke="#6b7b8b" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- ============ DATA COLLECTION RULE (official) ============ -->
+  <rect x="1010" y="170" width="150" height="110" rx="10" fill="#ffffff" stroke="#b9d3ee" stroke-width="1.3"/>
+  <g transform="translate(1065,182) scale(2.2222)">
+    <defs><linearGradient id="dcr1" x1="10.463" y1="15.888" x2="10.463" y2="-2.112" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0078d4"/><stop offset="1" stop-color="#5ea0ef"/></linearGradient><linearGradient id="dcr2" x1="7.179" y1="0.537" x2="7.179" y2="12.51" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#50e6ff"/><stop offset="1" stop-color="#32bedd"/></linearGradient></defs>
+    <rect x="3.113" width="14.7" height="18" rx="0.6" fill="url(#dcr1)"/><rect x="0.187" y="1.867" width="13.985" height="7.291" rx="0.541" fill="url(#dcr2)"/><path d="M11.887,4.423H5.069a.122.122,0,0,1-.124-.12V3.9a.123.123,0,0,1,.123-.123h6.818a.124.124,0,0,1,.124.123v.4a.122.122,0,0,1-.122.123Zm-7.9.291V3.488a.212.212,0,0,0-.212-.212H2.547a.212.212,0,0,0-.212.211h0V4.714a.211.211,0,0,0,.211.211H3.773a.211.211,0,0,0,.212-.211Z" fill="#fff"/><path d="M11.886,7.023H5.069A.124.124,0,0,1,4.945,6.9h0V6.494a.124.124,0,0,1,.124-.124h6.816a.125.125,0,0,1,.124.124v.4a.125.125,0,0,1-.123.125ZM3.68,6.194H2.657v1.02H3.68V6.194m.107-.321A.216.216,0,0,1,4,6.087V7.32a.214.214,0,0,1-.214.213H2.55a.213.213,0,0,1-.213-.213V6.083A.213.213,0,0,1,2.55,5.87Z" fill="#fff" opacity="0.8"/><path d="M13.382,11.108a.121.121,0,0,0-.084-.035.118.118,0,0,0-.117.119v1.365h0v.122H3.113v1.773H13.181v1.385a.118.118,0,0,0,.2.084L15.705,13.6l0,0a.117.117,0,0,0,0-.166Z" fill="#83b9f9"/>
+  </g>
+  <text x="1085" y="238" font-size="10.5" font-weight="600" fill="#1f2d3d" text-anchor="middle">Data Collection Rule</text>
+  <text x="1085" y="252" font-size="10" fill="#1f2d3d" text-anchor="middle">(transformKql)</text>
+
+  <!-- arrow DCR -> Log Analytics -->
+  <line x1="1160" y1="225" x2="1220" y2="225" stroke="#6b7b8b" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- ============ LOG ANALYTICS TABLE (official) ============ -->
+  <rect x="1220" y="170" width="150" height="110" rx="10" fill="#ffffff" stroke="#b9d3ee" stroke-width="1.3"/>
+  <g transform="translate(1275,182) scale(2.2222)">
+    <defs><linearGradient id="loga1" x1="5.23" y1="17.45" x2="5.23" y2="8.09" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1988d9"/><stop offset="0.9" stop-color="#54aef0"/></linearGradient><linearGradient id="loga2" x1="11.5" y1="12.45" x2="11.5" y2="0.55" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#198ab3"/><stop offset="0.01" stop-color="#198bb4"/><stop offset="0.44" stop-color="#27b2d7"/><stop offset="0.79" stop-color="#2fcbed"/><stop offset="1" stop-color="#32d4f5"/></linearGradient></defs>
+    <path d="M5.59,13.13H9.91v4.32H5.59ZM1.15,17.45H4.87V13.13H.55v3.72A.6.6,0,0,0,1.15,17.45Zm-.6-5H4.87V8.09H.55Z" fill="url(#loga1)"/><path d="M11.5.55a5.89,5.89,0,0,1,5.95,6,5.89,5.89,0,0,1-5.95,5.95H5.55V6.5A5.89,5.89,0,0,1,11.5.55Z" fill-rule="evenodd" fill="url(#loga2)"/><rect x="7.59" y="5.65" width="1.36" height="4.08" fill="#fff"/><rect x="10.31" y="7.01" width="1.36" height="2.72" fill="#fff"/><rect x="13.03" y="4.29" width="1.36" height="5.44" fill="#fff"/>
+  </g>
+  <text x="1295" y="238" font-size="10.5" font-weight="700" fill="#1f2d3d" text-anchor="middle">ADOAuditLogs_CL</text>
+  <text x="1295" y="252" font-size="9.5" fill="#5b6b7b" text-anchor="middle">(Log Analytics table)</text>
+
+  <!-- arrow Log Analytics -> Sentinel -->
+  <line x1="1370" y1="225" x2="1430" y2="225" stroke="#6b7b8b" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- ============ MICROSOFT SENTINEL (official) ============ -->
+  <rect x="1430" y="170" width="150" height="110" rx="10" fill="#f2f9ff" stroke="#1b93eb" stroke-width="1.4"/>
+  <g transform="translate(1485,182) scale(2.2222)">
+    <defs><linearGradient id="sen1" x1="9" y1="16.21" x2="9" y2="0.62" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1b93eb"/><stop offset="0.21" stop-color="#2095eb"/><stop offset="0.44" stop-color="#2e9ced"/><stop offset="0.69" stop-color="#45a7ef"/><stop offset="0.95" stop-color="#64b6f1"/><stop offset="1" stop-color="#6bb9f2"/></linearGradient></defs>
+    <path d="M16,8.44c0,4.57-5.53,8.25-6.73,9a.43.43,0,0,1-.46,0C7.57,16.69,2,13,2,8.44V2.94a.44.44,0,0,1,.43-.44C6.77,2.39,5.78.5,9,.5s2.23,1.89,6.53,2a.44.44,0,0,1,.43.44Z" fill="#1b93eb"/><path d="M15.38,8.48c0,4.2-5.07,7.57-6.17,8.25a.4.4,0,0,1-.42,0c-1.1-.68-6.17-4.05-6.17-8.25v-5A.41.41,0,0,1,3,3c3.94-.11,3-1.83,6-1.83S11.05,2.93,15,3a.41.41,0,0,1,.39.4Z" fill="url(#sen1)"/><path d="M9,6.53A2.88,2.88,0,0,1,11.84,9a.49.49,0,0,0,.49.4h1.4a.49.49,0,0,0,.5-.53,5.26,5.26,0,0,0-10.46,0,.49.49,0,0,0,.5.53h1.4A.49.49,0,0,0,6.16,9,2.88,2.88,0,0,1,9,6.53Z" fill="#c3f1ff"/><circle cx="9" cy="9.4" r="1.91" fill="#fff"/>
+  </g>
+  <text x="1505" y="238" font-size="10.5" font-weight="700" fill="#12456b" text-anchor="middle">Microsoft</text>
+  <text x="1505" y="252" font-size="10.5" font-weight="700" fill="#12456b" text-anchor="middle">Sentinel</text>
+
+  <!-- caption -->
+  <text x="830" y="575" font-size="11" fill="#5b6b7b" text-anchor="middle">Two tokens, one service principal &#8212; GET &#8594; Azure DevOps &#183; POST &#8594; monitor.azure.com (through the DCR). Icons: official Microsoft Azure architecture icons.</text>
+</svg>
