@@ -64,8 +64,8 @@ Two different tokens, one service principal:
 - the **GET** grabs a token for **Azure DevOps** (resource ID `499b84ac-1321-427f-aa17-267ca6975798`),
 - the **POST** grabs a token for `https://monitor.azure.com` to write through the DCR.
 
-{{}} The DCR is **not optional** - don't skip it. You can't POST straight into a custom table if you do not have a DCR.  
-The Logs Ingestion API always writes *through* a DCR, which checks the incoming schema, runs an optional KQL transform, and routes the rows into the destination table. {{}}
+🚨 The DCR is **not optional** - don't skip it. You can't POST straight into a custom table if you do not have a DCR.  
+The Logs Ingestion API always writes *through* a DCR, which checks the incoming schema, runs an optional KQL transform, and routes the rows into the destination table.
 
 ---
 
