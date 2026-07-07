@@ -168,7 +168,7 @@ At this point you're holding: the **DCE ingestion endpoint**, the **DCR immutabl
 
 The service principal has to be allowed to write through the DCR, and the role that unlocks that is **Monitoring Metrics Publisher**.
 
-Portal route: open the DCR → **Access control (IAM) → Add role assignment → Monitoring Metrics Publisher →** pick your app → **Review + assign**.
+Open the DCR → **Access control (IAM) → Add role assignment → Monitoring Metrics Publisher →** pick your app → **Review + assign**.
 
 Or, if you'd rather stay in the terminal:
 
@@ -181,7 +181,7 @@ az role assignment create \
   --scope "$DCR_ID"
 ```
 
-{{}} Heads up: role propagation can drag on for **5-10 minutes**. If your first POST comes back **403**, nine times out of ten this is the culprit - grab a coffee and try again. {{}}
+Role propagation can drag on for **5-10 minutes**. If your first POST comes back **403**, nine times out of ten this is the culprit - grab a coffee and try again.
 
 ---
 
@@ -191,21 +191,23 @@ az role assignment create \
 
 Create a **Logic App**, then wire up this sequence in the designer.
 
-**Trigger - Recurrence:** every `5` minutes.
+1. **Trigger - Recurrence:** every `5` minutes.
 
-**Compose -** `startTime`**:**
+2. **Compose -** `startTime`**:**
 
 ```
 addMinutes(utcNow(), -5)
 ```
 
-**Compose -** `endTime`**:**
+3. **Compose -** `endTime`**:**
 
 ```
 utcNow()
 ```
 
-**HTTP - GET (read the audit log):**
+4. **Get Secret** from Key Vault
+
+5. **HTTP - GET (read the audit log):**
 
 - **Method:** `GET`
 - **URI:**
@@ -227,13 +229,13 @@ https://auditservice.dev.azure.com/<your-org>/_apis/audit/auditlog?startTime=@{o
 | Secret          | *(the client secret - we swap this for Key Vault in Step 6)* |
 
 
-**Condition - only keep going if there are actually events:**
+6.**Condition - only keep going if there are actually events:**
 
 ```
 length(body('HTTP_GET')?['decoratedAuditLogEntries'])   is greater than   0
 ```
 
-**HTTP - POST (ship it to Sentinel), inside the True branch:**
+7. **HTTP - POST (ship it to Sentinel), inside the True branch:**
 
 - **Method:** `POST`
 - **URI:**
@@ -250,6 +252,8 @@ length(body('HTTP_GET')?['decoratedAuditLogEntries'])   is greater than   0
 ```
 
 - **Authentication → Active Directory OAuth:** same setup as the GET, just switch the **Audience** to `https://monitor.azure.com`.
+
+![LogicApp](logic_app.jpg)
 
 ---
 
