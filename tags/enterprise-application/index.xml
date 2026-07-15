@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Enterprise Application on Roberto D'Andrea</title><link>https://robertodandrea.com/tags/enterprise-application/</link><description>Recent content in Enterprise Application on Roberto D'Andrea</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 03 Sep 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://robertodandrea.com/tags/enterprise-application/index.xml" rel="self" type="application/rss+xml"/><item><title>From Permission Audits to Automated Revocation - Fighting Ghost OAuth Grants in the Cloud</title><link>https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/</link><pubDate>Wed, 03 Sep 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/</guid><description>&lt;h1 id="from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud"&gt;From Permission Audits to Automated Revocation: Fighting Ghost OAuth Grants in the Cloud
+&lt;/h1&gt;&lt;p&gt;🕑 &lt;em&gt;Reading time: 34 minutes&lt;/em&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+📢
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;em&gt;In this guide, you will learn why OAuth app permissions and access tokens can outlive deleted users in Microsoft 365, the security risks of residual grants, and the best practices for identifying and revoking them through monitoring and automation.&lt;/em&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;📚
+&lt;strong&gt;Skip the Theory?&lt;/strong&gt;
+If you want to jump straight to the practical steps and recommendations click [here](### &lt;strong&gt;👀 How Forgotten Permissions Create Security Blind Spots&lt;/strong&gt;)&lt;/p&gt;
+&lt;h3 id="the-risk-of-access-delegation-in-azure-ad-enterprise-applications"&gt;&lt;strong&gt;⚠️ The Risk of Access Delegation in Azure AD Enterprise Applications&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;From an advanced cybersecurity standpoint, the management of consent and permissions in Azure AD Enterprise Applications constitutes one of the most critical and frequently overlooked - attack surfaces within enterprise cloud environments.&lt;/p&gt;
+&lt;p&gt;Every granted consent, whether at the user or tenant level, potentially opens a backdoor through which data exfiltration and privilege escalation can occur. This risk is particularly acute with high-privilege permissions (such as &lt;em&gt;Mail.Read&lt;/em&gt;, &lt;em&gt;Directory.Read.All&lt;/em&gt;, etc.) commonly requested by third-party applications or internal developers.&lt;/p&gt;
+&lt;p&gt;Modern attacks &lt;strong&gt;no longer focus exclusively on credential theft&lt;/strong&gt;, instead, adversaries increasingly exploit previously granted consent grants to legitimize malicious access. This is often achieved through consent phishing (using social engineering to trick users into authorizing rogue apps), or through misconfigurations and a lack of ongoing permissions review.&lt;/p&gt;
+&lt;p&gt;Weak governance around consent and permissions can undermine even the strongest authentication and MFA controls, leaving organizations exposed to persistent and silent compromises.&lt;/p&gt;
+&lt;h3 id="recap-of-enterprise-applications--delegation-in-azure-ad"&gt;&lt;strong&gt;Recap of Enterprise Applications &amp;amp; Delegation in Azure AD&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;Before delving into the security concerns and mitigation strategies, it is essential to recap what Azure AD Enterprise Applications are, and what is meant by delegation in this context.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Enterprise Applications&lt;/strong&gt; in Azure Active Directory represent the actual instances of applications (both Microsoft and third-party) that have been registered or integrated to authenticate against your organization’s Azure AD tenant.
+These applications act as trust relationships, enabling seamless SSO, automated provisioning, and crucially access to enterprise resources.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Delegation&lt;/strong&gt; refers to the mechanism whereby these applications, once authorized, can act on behalf of users or the organization itself.
+This happens through the granting of specific permissions (consents), allowing the app to perform actions such as reading emails, accessing files, or querying directory information - not just as itself, but impersonating a user or the whole directory, depending on the grant type (delegated vs. application permissions).&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+👉
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Understanding the fundamentals of how applications integrate with Azure AD, and how delegation works, is necessary groundwork before assessing the security impact of consent and permissions management.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="user-consent-settings-on-azure-ad"&gt;User Consent Settings on Azure AD
+&lt;/h3&gt;&lt;p&gt;The “&lt;em&gt;&lt;strong&gt;User consent settings&lt;/strong&gt;&lt;/em&gt;” area in Azure AD is crucial for managing how and when users or group owners can grant applications the right to access your organization’s data - a pivotal control point for reducing lateral movement and data exfiltration risks.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/User_Consent_Settings.png"
+width="1231"
+height="533"
+srcset="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/User_Consent_Settings_hu_2575aa6478f539cf.png 480w, https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/User_Consent_Settings_hu_1b0a251f9f43b209.png 1024w"
+loading="lazy"
+alt="Home → Enterprise applications → Consent and permissions → User consent settings"
+class="gallery-image"
+data-flex-grow="230"
+data-flex-basis="554px"
+&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Do not allow user consent&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Security Perspective:&lt;/strong&gt; Strictest. All application permission requests must be reviewed and approved by an administrator. This setting greatly reduces the attack surface for consent phishing and for inadvertent exposure through unvetted apps.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Operational Impact:&lt;/strong&gt; Can slow down user productivity and app onboarding because every app integration request is bottlenecked through IT/security.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Allow user consent for apps from verified publishers, for selected permissions (Recommended)&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Security Perspective:&lt;/strong&gt; Balanced. Users can only grant consent for apps published by a verified source (Microsoft-certified or tenant-registered) and only for permissions classified as “low impact.” This setting allows flexibility for productivity with significantly reduced risk.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Operational Impact:&lt;/strong&gt; Minimizes friction for adopting trusted, low-risk apps while keeping potentially harmful requests under admin control.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Allow user consent for apps&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Security Perspective:&lt;/strong&gt; High risk. Any user can grant any app access to organizational data, regardless of publisher or permission scope. This opens the door for abuse via malicious apps, consent phishing, and unintentional data leaks.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Operational Impact:&lt;/strong&gt; Fastest for end-users, but at the expense of opening broad attack vectors.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+👉
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+It’s important to emphasize that there’s no single “best” configuration for user consent settings that applies to every organization. The optimal choice depends greatly on the specific context of your tenant, your organizational risk appetite, use cases, and operational realities.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="microsoft-recommends-the-verified-publishers--low-permission-model"&gt;&lt;strong&gt;Microsoft Recommends the “Verified Publishers &amp;amp; Low Permission” Model&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Microsoft&lt;/strong&gt; strongly recommends configuring the second option, “&lt;em&gt;Allow user consent for apps from verified publishers, for selected permissions (Recommended)&lt;/em&gt;”&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;real advantage&lt;/strong&gt; of this setting is that it gives security teams precise control without blocking productivity. Using permission classification, you can define exactly which permissions are considered “low risk” in your environment. Whenever a user or group owner wants to consent to an app, they can do so instantly - but only if the app comes from a trusted, verified publisher and only if it’s requesting one of the &lt;strong&gt;low-impact&lt;/strong&gt; permissions you’ve approved.&lt;/p&gt;
+&lt;p&gt;This approach shrinks your attack surface considerably. Users can adopt helpful, safe apps on their own, with no need to wait for admin approval or get slowed down by bureaucracy.
+At the same time, high-risk permission requests or apps from unknown publishers are automatically flagged for administrator review - so your critical data never gets exposed by accident or through a phishing attempt.&lt;/p&gt;
+&lt;p&gt;In short, you empower your users to work efficiently with the tools they need, but you keep tight control over anything that could cause harm.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;This isn’t just Microsoft’s recommendation - it’s one of the most effective ways to enforce security results without putting up unnecessary roadblocks.&lt;/em&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+⚙
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;strong&gt;Where to set permission classifications?&lt;/strong&gt;
+Navigate to &lt;em&gt;Permission classifications&lt;/em&gt; to add or edit which permissions are “&lt;strong&gt;low&lt;/strong&gt;”, “&lt;strong&gt;medium&lt;/strong&gt;”, or “&lt;strong&gt;high&lt;/strong&gt;” risk for your organization.
+&lt;img src="https://robertodandrea.com/images/Consent_Permission.png"
+loading="lazy"
+alt="Consent and Permissions"
+&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="how-forgotten-permissions-create-security-blind-spots"&gt;&lt;strong&gt;👀 How Forgotten Permissions Create Security Blind Spots&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;After outlining clear policies for how user consent and permissions are managed, it’s essential from a security standpoint to implement continuous monitoring and strong governance of app permissions within your Azure AD environment.
+Without oversight, seemingly “harmless” permissions can become &lt;strong&gt;“ghost permissions” -&lt;/strong&gt; lingering, forgotten access rights that often lead to serious security blind spots.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Real-world security risks include&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Decommissioned apps&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;Old or abandoned applications can retain high levels of privilege. If compromised, these apps provide attackers with a stealthy way to move laterally or exfiltrate sensitive data, since no one is actively watching those access paths&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Disabled user accounts&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;If an employee leaves and their account is disabled, but the consents they granted aren’t revoked, certain applications could still retain privileged access through those now-orphaned permissions&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Privilege creep&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;When users or owners grant access independently and no one reviews it, over time the environment accumulates unnecessary or excessive permissions that are rarely tracked or audited&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;🚨 From a security expert’s point of view&lt;/strong&gt;, these “ghost permissions” are prime targets for advanced threats such as &lt;strong&gt;phishing, privilege escalation, or data leakage&lt;/strong&gt;.
+Attackers often look for forgotten apps with excessive rights - they are less likely to be detected and more likely to offer high-reward access.&lt;/p&gt;
+&lt;h3 id="minimizing-exposure-with-continuous-governance"&gt;&lt;strong&gt;Minimizing Exposure with Continuous Governance&lt;/strong&gt;
+&lt;/h3&gt;&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+😬
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;em&gt;Worried about minimizing the impact of “ghost” permissions in your environment?
+A proven solution is to implement regular governance and monitoring!&lt;/em&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;Regular governance and monitoring enable organizations to quickly identify and remove permissions that are no longer needed, reducing unnecessary exposure. They also make it possible to detect “ghost” applications - those that remain authorized even though they are not actively used - allowing security teams to revoke outdated access.&lt;/p&gt;
+&lt;p&gt;By continuously reviewing and managing privileges, you ensure that only truly necessary permissions remain in place.
+This approach effectively shrinks the attack surface and minimizes the risk of unauthorized access within your environment.&lt;/p&gt;
+&lt;h3 id="what-microsoft-doesnt-provide-your-practical-guide-to-removing-ghost-permissions"&gt;&lt;strong&gt;🚨 What Microsoft Doesn’t Provide: Your Practical Guide to Removing Ghost Permissions&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;Unfortunately, Microsoft does not provide a built-in way to automatically remove these unused or “ghost” permissions simply by accessing the Enterprise Applications section in the Azure portal. Even if you manually review your list of applications, there is no out-of-the-box feature that detects and revokes outdated or orphaned permissions for you.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;For example&lt;/strong&gt;, even if you have full admin rights, accessing a specific application in the Azure portal and navigating to its permissions reveals a major limitation: you are simply &lt;strong&gt;unable to directly modify or remove certain permissions&lt;/strong&gt;. There is &lt;strong&gt;no button, no menu, and no feature&lt;/strong&gt; available in the standard Enterprise Applications interface to clean up or revoke these &amp;ldquo;ghost&amp;rdquo; permissions.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;As shown in the screenshot below, if you go to Enterprise applications → &amp;lt;Your_application&amp;gt; → Permissions [Security], there is no obvious way to revoke or modify these permissions!!&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/App_permissions.png"
+width="1668"
+height="907"
+srcset="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/App_permissions_hu_38991d8024e58257.png 480w, https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/App_permissions_hu_d93e462ee43c5d58.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="183"
+data-flex-basis="441px"
+&gt;&lt;/p&gt;
+&lt;p&gt;By clicking on &lt;strong&gt;“&lt;em&gt;1 Total user(s)&lt;/em&gt;”&lt;/strong&gt; you’ll quickly see that there are &lt;strong&gt;no actionable options&lt;/strong&gt; available—such as deleting or revoking permissions for that user.&lt;/p&gt;
+&lt;p&gt;The interface only displays assignment details without giving you any way to address or remediate unused or excessive privileges.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/User_permissions.png"
+width="1675"
+height="631"
+srcset="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/User_permissions_hu_9a8c91ac68153cc6.png 480w, https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/User_permissions_hu_8b0164a3a39b58f6.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="265"
+data-flex-basis="637px"
+&gt;&lt;/p&gt;
+&lt;p&gt;This lack of native options leaves you with little control and can create lingering security risks, as unused or outdated access often remains active far longer than it should.&lt;/p&gt;
+&lt;p&gt;Ultimately, Microsoft’s tools stop short - forcing you to look for alternative methods just to maintain a secure, well-governed environment.&lt;/p&gt;
+&lt;h3 id="whats-the-solution-take-control-with-microsoft-graph-explorer"&gt;&lt;strong&gt;✅ What’s the Solution? Take Control with Microsoft Graph Explorer&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;The answer is simple: use &lt;a class="link" href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank" rel="noopener"
+&gt;Microsoft Graph Explorer&lt;/a&gt;. This powerful tool offered by Microsoft, designed specifically to let you interact directly with the &lt;em&gt;Microsoft Graph API&lt;/em&gt;.
+Unlike the Azure portal, which can be limited or restrictive in managing certain permissions, Graph Explorer allows you to access the full breadth of your Azure AD environment at a programmatic level.&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank" rel="noopener"
+&gt;Graph Explorer | Try Microsoft Graph APIs - Microsoft Graph&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;How to use Microsoft Graph Explorer for oauth2Permission?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Using Microsoft Graph Explorer is simple and doesn’t require any advanced setup.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Go to &lt;a class="link" href="https://aka.ms/ge" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;Microsoft Graph Explorer&lt;/strong&gt;&lt;/a&gt; website&lt;/li&gt;
+&lt;li&gt;Sign-in with your account&lt;/li&gt;
+&lt;li&gt;Run query with &lt;strong&gt;GET&lt;/strong&gt; method&lt;/li&gt;
+&lt;li&gt;Enter the endpoint&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="p"&gt;//&lt;/span&gt;&lt;span class="n"&gt;graph&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;microsoft&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;v1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;0&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;oauth2PermissionGrants&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="p"&gt;//&lt;/span&gt;&lt;span class="n"&gt;graph&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;microsoft&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;v1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;0&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;oauth2PermissionGrants&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol&gt;
+&lt;li&gt;Click “Run query” button&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Microsoft_Graph_Explorer.png"
+width="1629"
+height="878"
+srcset="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Microsoft_Graph_Explorer_hu_4531496d3fa1f8b2.png 480w, https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Microsoft_Graph_Explorer_hu_23dc5caa5daa4fc9.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="185"
+data-flex-basis="445px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;🧐 What those this JSON mean?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;When you run the query in Microsoft Graph Explorer, you get a JSON response like the one shown in the screenshot above. It’s easy to get lost in all these IDs and fields, but understanding the key properties is straightforward with the right mapping:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Field&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Meaning&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;clientId&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Object ID of the application&lt;/strong&gt; that received the permission (the app’s unique identifier in Azure AD)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;consentType&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Type of consent granted: &lt;br&gt;-&lt;/strong&gt; &lt;strong&gt;&lt;code&gt;AllPrincipals&lt;/code&gt;&lt;/strong&gt;: consent granted for the entire organization &lt;br&gt;-&lt;strong&gt;&lt;code&gt;Principal&lt;/code&gt;&lt;/strong&gt;: consent granted to a specific user&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;id&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Unique ID for this specific permission grant&lt;/strong&gt; (needed if you want to revoke it via DELETE request)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;principalId&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Object ID of the user&lt;/strong&gt; the consent was granted for (if consentType is &lt;strong&gt;&lt;code&gt;Principal&lt;/code&gt;&lt;/strong&gt;); &lt;strong&gt;&lt;code&gt;null&lt;/code&gt;&lt;/strong&gt; if for everyone&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;resourceId&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Object ID of the resource/API being accessed&lt;/strong&gt; (for example, Microsoft Graph’s unique ID here)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;scope&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Permissions granted&lt;/strong&gt; (what the app or user can actually do — e.g., read user profile, access mailbox, etc.)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="step-by-step-how-to-mitigate-highmedium-risk-permissions"&gt;&lt;strong&gt;🕸️ Step-by-Step: How to Mitigate High/Medium-Risk Permissions&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;Now that you know how to read the JSON output, it’s time to actively mitigate possible risks by following these steps:&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+📎
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Here you can find the list of all permission
+&lt;a class="link" href="https://learn.microsoft.com/en-us/graph/permissions-reference" target="_blank" rel="noopener"
+&gt;Microsoft Graph permissions reference - Microsoft Graph&lt;/a&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;What I strongly suggest is:&lt;/p&gt;
+&lt;h3 id="1-review-permissions-already-granted"&gt;&lt;strong&gt;1. Review Permissions Already Granted&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;Before changing anything, check what permissions are already assigned to users and applications.&lt;/p&gt;
+&lt;p&gt;Use the &lt;em&gt;&lt;strong&gt;GET&lt;/strong&gt;&lt;/em&gt; request shown previously to list all existing permission grants.&lt;/p&gt;
+&lt;h3 id="2-adjust-consent-and-permissions-settings"&gt;&lt;strong&gt;2. Adjust Consent and Permissions Settings&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;S&lt;/strong&gt;et the user Consent &amp;amp; permissions settings to &lt;strong&gt;Recommended&lt;/strong&gt; (&lt;em&gt;Allow user consent only for verified publishers and selected low-impact permissions&lt;/em&gt;)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Go to &lt;strong&gt;Azure Active Directory → Enterprise applications → Consent and permissions&lt;/strong&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Under &lt;strong&gt;User consent settings&lt;/strong&gt;, set it to:&lt;em&gt;“Allow user consent for apps from verified publishers, for selected permissions (Recommended)”&lt;/em&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;This means only low-impact permissions (like those Microsoft classifies as “low”) can be self-approved, and only for trusted apps (verified publishers or registered in your tenant).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="adjust-permission-classifications"&gt;&lt;strong&gt;Adjust Permission Classifications&lt;/strong&gt;
+&lt;/h3&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In &lt;strong&gt;Permission classifications&lt;/strong&gt;, add more &amp;ldquo;Low&amp;rdquo; permissions as suggested by Microsoft.Common low permissions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;User.Read&lt;/code&gt;&lt;/strong&gt; (read basic user profile)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;offline_access&lt;/code&gt;&lt;/strong&gt; (refresh token, can operate offline)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;openid&lt;/code&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;code&gt;profile&lt;/code&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;code&gt;email&lt;/code&gt;&lt;/strong&gt; (basic identity/auth info)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Impact and Mitigation Summary:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;User.Read&lt;/code&gt;&lt;/strong&gt;: Safe for most apps, limit to verified publishers.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;openid/profile/email&lt;/code&gt;&lt;/strong&gt;: Low impact, needed for login, safe with verified apps.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;offline_access&lt;/code&gt;&lt;/strong&gt;: Medium risk. Only approve for apps you trust, and periodically review/remove unnecessary grants.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Consent_and_permission_setup.png"
+width="994"
+height="649"
+srcset="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Consent_and_permission_setup_hu_b49b9e315ae5496b.png 480w, https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Consent_and_permission_setup_hu_e5f99db36d9570fe.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="153"
+data-flex-basis="367px"
+&gt;&lt;/p&gt;
+&lt;h3 id="3-identify--document-high-and-medium-risk-scopes"&gt;&lt;strong&gt;3. Identify &amp;amp; Document High and Medium-Risk Scopes&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;When reviewing OAuth2 permission grants, it’s critical to classify the scope of permissions - some are far more sensitive and represent a genuine risk to data and tenant security.
+Here’s a breakdown, with concrete examples and security reasoning:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;📕 HIGH-RISK PERMISSIONS&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;These permissions grant broad or deep access, usually across the whole tenant, and can enable exfiltration or tampering of sensitive data.&lt;/p&gt;
+&lt;div style="
+background: #fffbe5;
+border-left: 7px solid #e9c46a;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;⚠️ ⚠️&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;strong&gt;These should be very closely audited and, wherever possible, not granted unless strictly necessary to a highly trusted application.&lt;/strong&gt;
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fffbe5'] {
+background: #322911 !important;
+color: #f3e7be !important;
+border-left: 7px solid #e9c46a !important;
+}
+div[style*='background: #fffbe5'] strong {
+color: #ffe066 !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Permission&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Why High Risk / What to Watch For&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Directory.ReadWrite.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Grants full read/write over all Azure AD. Attacker can create, modify, or delete users, groups, and directory objects.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Directory.AccessAsUser.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Lets an app act as ANY user. Can impersonate users across the entire org - full lateral movement risk.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;User.ReadWrite.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Allows editing all user profiles. Can change properties, reset MFA, etc.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Files.ReadWrite.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Grants access to all files in OneDrive/SharePoint. Possible mass data exfiltration or deletion.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Mail.ReadWrite&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Full access to read and modify all user mailboxes. Can be used for bulk mailbox compromise or data loss.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Mail.Send&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Send mail as any user. Attackers can launch convincing phishing campaigns internally or externally.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Calendars.ReadWrite&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Full modification rights over all calendars- potential business disruption.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Contacts.ReadWrite&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Exfiltrate or tamper with the whole org&amp;rsquo;s contact book - can aid phishing/social engineering.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;full_access_as_user&lt;/code&gt;&lt;/strong&gt; / &lt;strong&gt;&lt;code&gt;user_impersonation&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;App can act as the signed-in user for all actions - potentially bypasses all normal role-based controls.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;📙 &lt;strong&gt;MEDIUM-RISK PERMISSIONS&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Still sensitive, but less dangerous than &amp;ldquo;write&amp;rdquo; or &amp;ldquo;impersonate all&amp;rdquo; scopes. These typically allow read access to org-wide resource&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Permission&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Why Medium Risk / What to Watch For&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;User.Read.All&lt;/code&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;code&gt;User.ReadBasic.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Read the details (sometimes PII) of all users. Useful for reconnaissance in a breach.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Files.Read.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;App can read all files in OneDrive/SharePoint, but cannot modify. Still a risk for data leak.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Mail.Read&lt;/code&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;code&gt;Calendars.Read&lt;/code&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;code&gt;Contacts.Read&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Read access to sensitive comms/calendar/org structure. Still significant privacy/data loss risk.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Group.Read.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;View membership and info of all Azure AD groups - could help in privilege escalation attempts.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Sites.Read.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Read all SharePoint sites; sensitive info exposure possible.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Actions for High/Medium Privilege Grants&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Review&lt;/strong&gt; which users and applications have these permissions. If access is not strictly needed, revoke it immediately.
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Once identify the id of the permission granted, use DELETE method on Graph Explorer to delete only this specific permission.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="p"&gt;//&lt;/span&gt;&lt;span class="n"&gt;graph&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;microsoft&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;v1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;0&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;oauth2PermissionGrants&lt;/span&gt;&lt;span class="p"&gt;?&lt;/span&gt;&lt;span class="nv"&gt;$filter&lt;/span&gt;&lt;span class="p"&gt;=&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="n"&gt;eq&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;id_string&amp;gt;&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Delete_graph_explorer.png"
+width="1646"
+height="220"
+srcset="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Delete_graph_explorer_hu_76e84d4ba57c0dab.png 480w, https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Delete_graph_explorer_hu_5540c9bbb0a51349.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="748"
+data-flex-basis="1795px"
+&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Method&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Output&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;GET&lt;/td&gt;
+&lt;td&gt;Retrieves a list of OAuth 2.0 permission grants, or details for a specific one&lt;/td&gt;
+&lt;td&gt;See all granted app consents in a tenant&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;POST&lt;/td&gt;
+&lt;td&gt;Creates a new OAuth 2.0 permission grant&lt;/td&gt;
+&lt;td&gt;Grant permissions programmatically&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;PATCH&lt;/td&gt;
+&lt;td&gt;Updates specific properties of an existing permission grant (e.g., scope)&lt;/td&gt;
+&lt;td&gt;Change the permissions granted to an app&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DELETE&lt;/td&gt;
+&lt;td&gt;Deletes (revokes) a permission grant, removing app consent&lt;/td&gt;
+&lt;td&gt;Remove OAuth consent for an app from the tenant&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Grant permissions&lt;/strong&gt; only to trusted, verified apps and users that have a clear and essential business need.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Repeat this process regularly&lt;/strong&gt; to ensure permissions stay up to date.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="4-create-an-automation-workflow-for-permission-requests"&gt;&lt;strong&gt;4. Create an Automation Workflow For Permission Requests&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;Instead of granting permissions manually, you can:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Build a request form, email, or approval flow.&lt;/li&gt;
+&lt;li&gt;When a user/app needs permission, they submit a request through this workflow.&lt;/li&gt;
+&lt;li&gt;You run automation (for instance, with Power Automate, Logic App, Azure Function, or PowerShell) to evaluate and POST the required grant to &lt;code&gt;https://graph.microsoft.com/v1.0/oauth2PermissionGrants&lt;/code&gt; - with proper admin oversight.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;strong&gt;Using an automation workflow for permission requests helps you avoid the common scenario where a single user request results in permissions being granted to the entire company.&lt;/strong&gt;
+&lt;img src="https://robertodandrea.com/images/Permission_requested.png"
+loading="lazy"
+&gt;
+Every request is reviewed and assigned only to the specific user or app that needs it - no more accidental tenant-wide assignments.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="sentinel-kql-detection-query"&gt;Sentinel KQL Detection Query
+&lt;/h3&gt;&lt;p&gt;This KQL query identifies when users or apps are granted consent and permissions in Azure AD&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-c" data-lang="c"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;//KQL query to monitor consent and permission granted to users
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;AuditLogs&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="n"&gt;Category&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;ApplicationManagement&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="n"&gt;OperationName&lt;/span&gt; &lt;span class="n"&gt;contains&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;Consent&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;or&lt;/span&gt; &lt;span class="n"&gt;OperationName&lt;/span&gt; &lt;span class="n"&gt;contains&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;Add app role assignment&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;Permission_granted&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;extract&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="err"&gt;@&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Scope:\s*([^,\]]+)&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse_json&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse_json&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TargetResources&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="n"&gt;modifiedProperties&lt;/span&gt;&lt;span class="p"&gt;))[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="n"&gt;newValue&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;AppName&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TargetResources&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="n"&gt;displayName&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;AppId&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TargetResources&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;UserPrincipalName&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse_json&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;InitiatedBy&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;)).&lt;/span&gt;&lt;span class="n"&gt;userPrincipalName&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;Permissions&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse_json&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;AdditionalDetails&lt;/span&gt;&lt;span class="p"&gt;)[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;project&lt;/span&gt; &lt;span class="n"&gt;TimeGenerated&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;AppName&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;AppId&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;OperationName&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UserPrincipalName&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Permission_granted&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;sort&lt;/span&gt; &lt;span class="n"&gt;by&lt;/span&gt; &lt;span class="n"&gt;TimeGenerated&lt;/span&gt; &lt;span class="n"&gt;desc&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This KQL query focuses on detecting &lt;strong&gt;high-risk&lt;/strong&gt; permissions granted to applications, filtering out &lt;strong&gt;low-risk&lt;/strong&gt; or default user permissions.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;span class="lnt"&gt;36
+&lt;/span&gt;&lt;span class="lnt"&gt;37
+&lt;/span&gt;&lt;span class="lnt"&gt;38
+&lt;/span&gt;&lt;span class="lnt"&gt;39
+&lt;/span&gt;&lt;span class="lnt"&gt;40
+&lt;/span&gt;&lt;span class="lnt"&gt;41
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-c" data-lang="c"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;//KQL query focused on high-risk permission
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;//Filter out low-risk permissions
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;let&lt;/span&gt; &lt;span class="n"&gt;highRiskPermissions&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;dynamic&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Mail.ReadWrite&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Mail.Send&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;MailboxSettings.ReadWrite&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Calendars.ReadWrite&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Contacts.ReadWrite&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Files.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Directory.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;User.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Group.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Application.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;DelegatedPermissionGrant.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;AppRoleAssignment.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Policy.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;RoleManagement.ReadWrite.Directory&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// FP Mitigation: Add the display names of legitimate applications that require high-risk permissions to this list.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;let&lt;/span&gt; &lt;span class="n"&gt;approvedApps&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;dynamic&lt;/span&gt;&lt;span class="p"&gt;([]);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;AuditLogs&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Filter for successful application consent events in Azure AD.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="n"&gt;Category&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;ApplicationManagement&amp;#34;&lt;/span&gt; &lt;span class="n"&gt;and&lt;/span&gt; &lt;span class="n"&gt;OperationName&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;Consent to application&amp;#34;&lt;/span&gt; &lt;span class="n"&gt;and&lt;/span&gt; &lt;span class="n"&gt;Result&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;success&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Parse the TargetResources to extract application and permission details.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;TargetResource&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;TargetResources&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;AppDisplayName&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TargetResource&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;displayName&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;ModifiedProperties&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;TargetResource&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;modifiedProperties&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;mv&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;expand&lt;/span&gt; &lt;span class="n"&gt;ModifiedProperties&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="n"&gt;ModifiedProperties&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;displayName&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;ConsentAction.Permissions&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Extract the granted permissions string.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;GrantedPermissions&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse_json&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ModifiedProperties&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;newValue&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Exclude known and approved applications to reduce false positives.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="nf"&gt;not&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;AppDisplayName&lt;/span&gt; &lt;span class="nf"&gt;in&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;approvedApps&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Check if any of the granted permissions are in our high-risk list.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="n"&gt;GrantedPermissions&lt;/span&gt; &lt;span class="nf"&gt;has_any&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;highRiskPermissions&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Extract user details.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;UserPrincipalName&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;InitiatedBy&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;userPrincipalName&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;IpAddress&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;InitiatedBy&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ipAddress&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Summarize the findings for alerting.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;summarize&lt;/span&gt; &lt;span class="n"&gt;StartTime&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;min&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TimeGenerated&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;EndTime&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TimeGenerated&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;GrantedPermissions&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;make_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;GrantedPermissions&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;by&lt;/span&gt; &lt;span class="n"&gt;AppDisplayName&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UserPrincipalName&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;IpAddress&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;OperationName&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;timestamp&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;StartTime&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="final-consideration"&gt;Final Consideration
+&lt;/h3&gt;&lt;p&gt;By integrating &lt;strong&gt;Graph Explorer&lt;/strong&gt; into your security and governance practices, your IT or security team can move beyond the limitations of the portal. You not only track down and remediate excessive privileges swiftly and precisely, but also ensure continuous compliance and lower the risk of unauthorized access. Ultimately, Microsoft Graph Explorer empowers you to maintain a safer, more manageable Azure AD environment- enabling true granular management and responding proactively to security concerns that would otherwise be hard or impossible to tackle with native tools alone.&lt;/p&gt;
+&lt;p&gt;Continual vigilance and automated, well-governed processes are essential for defending your enterprise against modern consent-based threats. Make regular reviews of permissions part of your security posture, and prioritize using approval workflows and automation to ensure permissions are granted only on a strict need-to-have basis - never by default or to “all users.”&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+✅
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;strong&gt;The risks around consent and permissions in Azure AD are real - but with the right tools and disciplined governance, they can be tackled head on.
+By combining clear processes, practical automation, and advanced tools like Graph Explorer, you close the gaps that attackers seek and ensure your organization’s productivity and protection can go hand in hand.&lt;/strong&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;</description></item></channel></rss>

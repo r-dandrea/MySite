@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pages on Roberto D'Andrea</title><link>https://robertodandrea.com/page/</link><description>Recent content in Pages on Roberto D'Andrea</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 06 Mar 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://robertodandrea.com/page/index.xml" rel="self" type="application/rss+xml"/><item><title>Archives</title><link>https://robertodandrea.com/archives/</link><pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/archives/</guid><description/></item><item><title>Links</title><link>https://robertodandrea.com/links/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/links/</guid><description>&lt;!--To use this feature, add `links` section to frontmatter.
+This page's frontmatter:
+```yaml
+links:
+- title: GitHub
+description: GitHub is the world's largest software development platform.
+website: https://github.com
+image: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+- title: TypeScript
+description: TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.
+website: https://www.typescriptlang.org
+image: ts-logo-128.jpg
+```
+`image` field accepts both local and external images.
+--&gt;</description></item><item><title>Search</title><link>https://robertodandrea.com/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/search/</guid><description/></item><item><title>Tools</title><link>https://robertodandrea.com/tool/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/tool/</guid><description>&lt;p&gt;Security tooling I build and host here. Each tool runs &lt;strong&gt;entirely client-side&lt;/strong&gt; in
+your browser — data is fetched via delegated Microsoft Graph and never sent to any
+backend. Pick a tool below.&lt;/p&gt;</description></item><item><title>whoami</title><link>https://robertodandrea.com/whoami/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/whoami/</guid><description>&lt;h2 id="whoami"&gt;whoami
+&lt;/h2&gt;&lt;p&gt;I&amp;rsquo;m &lt;strong&gt;Roberto D&amp;rsquo;Andrea&lt;/strong&gt;, a passionate cybersecurity professional with hands-on expertise in &lt;strong&gt;securing cloud environments&lt;/strong&gt;.
+My mission is straightforward yet critical: &lt;strong&gt;protect what matters most&lt;/strong&gt; so businesses can grow without security concerns holding them back.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="my-experience"&gt;My Experience
+&lt;/h2&gt;&lt;p&gt;Currently, I work as a &lt;strong&gt;Cloud Security Engineer at CoreView&lt;/strong&gt;, where I immerse myself in:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Cloud Threat Detection &amp;amp; Incident Response&lt;/strong&gt; leveraging &lt;strong&gt;Microsoft Sentinel&lt;/strong&gt; and &lt;strong&gt;Defender XDR&lt;/strong&gt; to monitor and respond to threats across hybrid environments&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Azure Security Posture Management&lt;/strong&gt; identifying and remediating vulnerabilities in cloud infrastructure, identity systems, and workloads&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Microsoft 365 &amp;amp; Hybrid Defense Enhancement&lt;/strong&gt; strengthening defenses through &lt;strong&gt;Defender for Office 365&lt;/strong&gt;, &lt;strong&gt;Defender for Identity&lt;/strong&gt;, and &lt;strong&gt;Defender for Cloud Apps&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;SOC Optimization &amp;amp; Cloud Security Operations&lt;/strong&gt; building scalable detection and response capabilities for modern cloud and hybrid architectures&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="what-i-do-every-day"&gt;What I Do Every Day
+&lt;/h2&gt;&lt;p&gt;My work revolves around three core pillars:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;🔍 Identify Hidden Risks&lt;/strong&gt;&lt;br&gt;
+I continuously scan cloud environments to spot vulnerabilities before they become real problems.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;🛡️ Prevent Attacks&lt;/strong&gt;&lt;br&gt;
+I don&amp;rsquo;t wait for cyber attacks to happen - I act proactively to stop them before they start.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;⚙️ Ensure Secure Operations&lt;/strong&gt;&lt;br&gt;
+I make sure cloud systems run smoothly and securely, without compromise.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;If you&amp;rsquo;re looking for someone who combines &lt;strong&gt;advanced technical expertise&lt;/strong&gt; with a &lt;strong&gt;proactive cybersecurity mindset&lt;/strong&gt;, I&amp;rsquo;m your person!
+I believe security shouldn&amp;rsquo;t be complicated - it should be &lt;strong&gt;approachable, scalable, and always one step ahead&lt;/strong&gt;.&lt;/p&gt;</description></item></channel></rss>

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Teams on Roberto D'Andrea</title><link>https://robertodandrea.com/tags/teams/</link><description>Recent content in Teams on Roberto D'Andrea</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 04 Oct 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://robertodandrea.com/tags/teams/index.xml" rel="self" type="application/rss+xml"/><item><title>Microsoft Teams B2B Guest Chat - Prepare Your Organization Now</title><link>https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/</link><pubDate>Sat, 04 Oct 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/</guid><description>&lt;h2 id="the-new-microsoft-teams-vulnerability"&gt;&lt;strong&gt;The New Microsoft Teams Vulnerability&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;Microsoft is introducing a powerful new feature in Microsoft Teams that enables users to start chats directly with &lt;strong&gt;ANYONE who has an email address&lt;/strong&gt;, regardless of whether they use Teams or not. The recipient will receive an email invitation to join the chat session as a guest, enabling seamless communication and collaboration without friction.&lt;/p&gt;
+&lt;p&gt;While this feature clearly offers usability benefits for external collaboration, it also introduces &lt;strong&gt;significant attack vectors&lt;/strong&gt; if not properly managed with appropriate security controls.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/image.png"
+width="1114"
+height="404"
+srcset="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/image_hu_b7e0a3e6a9558742.png 480w, https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/image_hu_48412999917ffd83.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="275"
+data-flex-basis="661px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;When It Arrives:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Targeted Release:&lt;/strong&gt; Early November 2025 → Mid-November 2025&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;General Availability Worldwide:&lt;/strong&gt; January 2026&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The feature will be &lt;strong&gt;enabled by default&lt;/strong&gt; on all tenants, which means you need to act proactively if you want to limit or disable it.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="why-should-you-worry"&gt;Why Should You Worry?
+&lt;/h2&gt;&lt;p&gt;I&amp;rsquo;m not trying to be alarmist here, but I&amp;rsquo;ve seen what happens when access controls aren&amp;rsquo;t thought through.&lt;/p&gt;
+&lt;p&gt;Here are the real risks:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Phishing gets a lot easier&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Your team members are going to start getting chat invitations from people who look legitimate but aren&amp;rsquo;t. An attacker can impersonate your CFO, a trusted vendor, a partner organization. Once they&amp;rsquo;re in as a guest, they have access to your tenant. They can gather intelligence, pressure people into sharing confidential information, exfiltrate data through chat, or scout your infrastructure for weaknesses.&lt;/p&gt;
+&lt;ol start="2"&gt;
+&lt;li&gt;&lt;strong&gt;Governance goes out the window&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If any member of your organization can invite guests, you lose control. Shadow collaboration happens. Unauthorized partners start accessing your systems. Audit trails become useless because you can&amp;rsquo;t track who created which guest. And if you&amp;rsquo;re in a regulated industry-finance, healthcare, legal-you&amp;rsquo;ve got compliance violations waiting to happen.&lt;/p&gt;
+&lt;ol start="3"&gt;
+&lt;li&gt;&lt;strong&gt;Insiders become a bigger threat&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;A disgruntled employee or a compromised account can suddenly create multiple guest accounts from external domains they control, then coordinate attacks from both inside and outside your organization. They can share credentials, API keys, entire databases. They can set up persistent access for later exploitation.&lt;/p&gt;
+&lt;ol start="4"&gt;
+&lt;li&gt;&lt;strong&gt;Dead guest accounts pile up&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Without proper cleanup, your tenant fills with dormant guest accounts that nobody&amp;rsquo;s using anymore. They&amp;rsquo;re still there. Still have access. Still represent a security risk. All it takes is one of them to be reactivated by an attacker, and you have a breach.&lt;/p&gt;
+&lt;h2 id="how-can-i-protect-my-tenant"&gt;How can I protect my Tenant?
+&lt;/h2&gt;&lt;p&gt;Here&amp;rsquo;s exactly how:&lt;/p&gt;
+&lt;h2 id="1-only-admins-can-invite-guests-guest-invite-restriction----high-priority"&gt;&lt;strong&gt;1️⃣ Only Admins Can Invite Guests (Guest Invite Restriction) - 🔴 HIGH PRIORITY&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;By default, anyone in your organization can invite a guest. Change that!&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Why it matters:&lt;/strong&gt; If a regular user&amp;rsquo;s account gets compromised, an attacker can create malicious guests. By limiting this to admins only, you reduce the attack surface dramatically. 3-5 security admins are way easier to protect than 100+ employees.&lt;/p&gt;
+&lt;h2 id="how-to-do-it"&gt;How to do it?
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;Access &lt;strong&gt;Microsoft Entra Admin Center&lt;/strong&gt; (&lt;a class="link" href="https://entra.microsoft.com/" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://entra.microsoft.com&lt;/strong&gt;&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Go to &lt;strong&gt;External Identities&lt;/strong&gt; → &lt;strong&gt;External collaboration settings&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Scroll to &lt;strong&gt;&amp;ldquo;Guest invite restrictions&amp;rdquo;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;&lt;em&gt;Only users assigned to specific admin roles can invite guest users&lt;/em&gt;&amp;rdquo;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Guest_invite_restrictions.jpg"
+width="1160"
+height="264"
+srcset="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Guest_invite_restrictions_hu_cbf110abd2657458.jpg 480w, https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Guest_invite_restrictions_hu_5db9c135e83a2a13.jpg 1024w"
+loading="lazy"
+alt="Guest invite restrictions"
+class="gallery-image"
+data-flex-grow="439"
+data-flex-basis="1054px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Pro tip:&lt;/strong&gt; Create a custom admin role with just the &amp;ldquo;Invite external users&amp;rdquo; permission and assign it to your security team. This keeps things centralized and gives you a clean audit trail.&lt;/p&gt;
+&lt;h2 id="powershell-implementation-optional"&gt;&lt;strong&gt;PowerShell Implementation (Optional)&lt;/strong&gt;
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;powershellConnect-MgGraph&lt;/span&gt; &lt;span class="n"&gt;-Scopes&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Policy.ReadWrite.Authorization&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;*&lt;/span&gt;&lt;span class="c"&gt;# Verify current state*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$policy&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;Get-MgPolicyAuthorizationPolicy&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$policy&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;GuestInviteRestrictions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;*&lt;/span&gt;&lt;span class="c"&gt;# Update to limit to admins*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;Update-MgPolicyAuthorizationPolicy&lt;/span&gt; &lt;span class="n"&gt;-GuestInviteRestrictions&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;adminsAndGuestInviters&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="2-whitelist-of-partners-domains-collaboration-restriction----high-priority"&gt;&lt;strong&gt;2️⃣ Whitelist of Partners’ Domains (Collaboration Restriction) - 🔴 HIGH PRIORITY&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;Don&amp;rsquo;t allow guests from anywhere. Specify exactly which domains can be invited.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Why it matters:&lt;/strong&gt; An attacker can easily register a domain that looks like your partner&amp;rsquo;s or create a Gmail account. Without a whitelist, they could be invited as a guest. With a whitelist, they&amp;rsquo;re automatically blocked.&lt;/p&gt;
+&lt;h2 id="how-to-do-it-1"&gt;How to do it?
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Access &lt;strong&gt;Microsoft Entra Admin Center&lt;/strong&gt; → &lt;strong&gt;External Identities&lt;/strong&gt; → &lt;strong&gt;External collaboration settings&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Scroll down to &lt;strong&gt;&amp;ldquo;Collaboration restrictions&amp;rdquo;&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;ldquo;&lt;em&gt;Allow invitations only to the specified domains (most restrictive)&lt;/em&gt;&amp;rdquo;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In the field, enter the domains of your trusted partners and clients, one per line&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Collaboration_restrictions.jpg"
+width="1280"
+height="243"
+srcset="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Collaboration_restrictions_hu_1658a680123aa01.jpg 480w, https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Collaboration_restrictions_hu_bb9779f5be60f959.jpg 1024w"
+loading="lazy"
+alt="Collaboration restrictions"
+class="gallery-image"
+data-flex-grow="526"
+data-flex-basis="1264px"
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;What happens:&lt;/strong&gt; If someone tries to invite a guest from Gmail or any domain not on your list, the system automatically blocks it. No exceptions.&lt;/p&gt;
+&lt;h2 id="powershell-implementation-optional-1"&gt;&lt;strong&gt;PowerShell Implementation (Optional)&lt;/strong&gt;
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;powershellConnect-MgGraph&lt;/span&gt; &lt;span class="n"&gt;-Scopes&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Policy.ReadWrite.Authorization&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;*&lt;/span&gt;&lt;span class="c"&gt;# View current configuration*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$policy&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;Get-MgPolicyAuthorizationPolicy&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$policy&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;AllowedToSignUpEmailBasedSubscriptions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="3-limit-guest-access-guest-user-access-restrictions----medium-priority"&gt;&lt;strong&gt;3️⃣ Limit Guest Access (Guest User Access Restrictions) - 🟡 MEDIUM PRIORITY&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;Even with access controls, a guest shouldn&amp;rsquo;t be able to see your entire directory.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Why it matters:&lt;/strong&gt; If a guest account gets compromised, the attacker can use it to map your organization, find high-value targets, and launch phishing attacks. If they can only see themselves, the damage is limited.&lt;/p&gt;
+&lt;h2 id="how-to-do-it-2"&gt;&lt;strong&gt;How to do it?&lt;/strong&gt;
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;Access &lt;strong&gt;Microsoft Entra Admin Center&lt;/strong&gt; → &lt;strong&gt;External Identities&lt;/strong&gt; → &lt;strong&gt;External collaboration settings&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Scroll to &lt;strong&gt;&amp;ldquo;Guest user access restrictions&amp;rdquo;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;&lt;em&gt;Guest user access is restricted to properties and memberships of their own directory objects (most restrictive)&lt;/em&gt;&amp;rdquo;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Guest_User_Access.jpg"
+width="1041"
+height="249"
+srcset="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Guest_User_Access_hu_6e261b374d2f2729.jpg 480w, https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Guest_User_Access_hu_46af61ce5f144356.jpg 1024w"
+loading="lazy"
+alt="Guest User Access"
+class="gallery-image"
+data-flex-grow="418"
+data-flex-basis="1003px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What changes:&lt;/strong&gt; Guests can still access the specific Teams chats and SharePoint sites you&amp;rsquo;ve shared with them. But if they try to browse &amp;ldquo;People&amp;rdquo; or look at the organizational chart, they get nothing. If they&amp;rsquo;re compromised, they can&amp;rsquo;t reconnaissance your infrastructure.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Practical example:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Guest invited to Teams chat: ✅ Can access chat and specific attachments&lt;/li&gt;
+&lt;li&gt;Guest tries to go to &amp;ldquo;People&amp;rdquo; and search users: ❌ Sees empty list&lt;/li&gt;
+&lt;li&gt;Guest attempts to access shared SharePoint: ✅ Access allowed only to specific resources&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="4-disable-b2b-guest-chat-in-teams----high-priority"&gt;&lt;strong&gt;4️⃣ Disable B2B Guest Chat in Teams - 🔴 HIGH PRIORITY&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;This is the most direct control. Just turn it off.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Why it matters:&lt;/strong&gt; Even with all the other controls, the feature itself is enabled by default. By disabling it, you&amp;rsquo;re saying &amp;ldquo;this chat-with-anyone feature doesn&amp;rsquo;t exist in my environment&amp;rdquo; until you explicitly enable it.&lt;/p&gt;
+&lt;h2 id="how-to-do-it-3"&gt;How to do it?
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;Access &lt;strong&gt;Teams Admin Center&lt;/strong&gt; (&lt;a class="link" href="https://admin.teams.microsoft.com/" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://admin.teams.microsoft.com&lt;/strong&gt;&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;In the left menu, go to &lt;strong&gt;Users&lt;/strong&gt; → &lt;strong&gt;External Access&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Select the &lt;strong&gt;Global (Org-wide default)&lt;/strong&gt; policy&lt;/li&gt;
+&lt;li&gt;Scroll down to find &lt;strong&gt;&amp;ldquo;Use B2B invites to add external users&amp;rdquo;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Save&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;What happens:&lt;/strong&gt; Your users won&amp;rsquo;t even see the option to start a chat with an external email address. If an admin tries to do it, it fails silently. When Microsoft rolls out the feature in November, your environment stays protected because it&amp;rsquo;s already disabled.&lt;/p&gt;
+&lt;h2 id="important-note-custom-policies"&gt;&lt;strong&gt;Important Note: Custom Policies&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;If you&amp;rsquo;ve created &lt;strong&gt;custom messaging policies&lt;/strong&gt; for specific users, you must disable the feature in those policies as well:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;powershellConnect-MicrosoftTeams&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;*&lt;/span&gt;&lt;span class="c"&gt;# View all custom policies*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;Get-CsTeamsMessagingPolicy&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nb"&gt;Where-Object&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nv"&gt;$_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;Identity&lt;/span&gt; &lt;span class="o"&gt;-ne&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Global&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;*&lt;/span&gt;&lt;span class="c"&gt;# Disable for all policies*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;Get-CsTeamsMessagingPolicy&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nb"&gt;Set-CsTeamsMessagingPolicy&lt;/span&gt; &lt;span class="n"&gt;-UseB2BInvitesToAddExternalUsers&lt;/span&gt; &lt;span class="vm"&gt;$false&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="5-conditional-access-policy-with-mfa----high-priority"&gt;&lt;strong&gt;5️⃣ Conditional Access Policy with MFA - 🔴 HIGH PRIORITY&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;This is your final line of defense: even if a guest account exists, they need both MFA and a compliant device to access anything.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Why it matters:&lt;/strong&gt; A compromised guest password alone isn&amp;rsquo;t enough to access your environment. An attacker would need to either have the MFA device or convince the guest to provide their second factor. And if the device isn&amp;rsquo;t compliant (not registered in your MDM, no antivirus, etc.), access is denied anyway.&lt;/p&gt;
+&lt;h1 id="how-to-do-it-4"&gt;&lt;strong&gt;How to do it?&lt;/strong&gt;
+&lt;/h1&gt;&lt;ol&gt;
+&lt;li&gt;Access &lt;strong&gt;Microsoft Entra Admin Center&lt;/strong&gt; (&lt;a class="link" href="https://entra.microsoft.com/" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://entra.microsoft.com&lt;/strong&gt;&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;In the left menu, go to &lt;strong&gt;Protection&lt;/strong&gt; → &lt;strong&gt;Conditional Access&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Open your existing MFA policy (or create a new one if you don&amp;rsquo;t have one)&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Assignments&lt;/strong&gt; → &lt;strong&gt;Users and groups&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Verify the following are included:
+&lt;ul&gt;
+&lt;li&gt;✅ &amp;ldquo;Guest or external users&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;✅ &amp;ldquo;B2B collaboration guest users&amp;rdquo;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Go to &lt;strong&gt;Grant conditions&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Ensure the following are checked:
+&lt;ul&gt;
+&lt;li&gt;✅ &amp;ldquo;Require multifactor authentication&amp;rdquo;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Save&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="conclusion"&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;The B2B Chat feature itself isn&amp;rsquo;t bad. It&amp;rsquo;s actually useful for collaborating with external partners. The problem is that &amp;ldquo;&lt;strong&gt;enabled by default&lt;/strong&gt;&amp;rdquo; nonsense. Microsoft should have made this opt-in, not opt-out.&lt;/p&gt;
+&lt;p&gt;This is your heads-up. &lt;strong&gt;Don&amp;rsquo;t wait for the January 2026 rollout&lt;/strong&gt;. Get these controls in place now, test them, make sure your legitimate workflows still work, and then you can sleep at night knowing this particular attack vector is sealed off.&lt;/p&gt;
+&lt;p&gt;If you have questions about implementing these controls in your specific environment, feel free to reach me out!&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Sources and References:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Microsoft Entra ID B2B Collaboration: &lt;a class="link" href="https://learn.microsoft.com/en-us/entra/external-id/" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://learn.microsoft.com/en-us/entra/external-id/&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Teams Messaging Policies: &lt;a class="link" href="https://learn.microsoft.com/en-us/microsoftteams/messaging-policies-in-teams" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://learn.microsoft.com/en-us/microsoftteams/messaging-policies-in-teams&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Conditional Access Documentation: &lt;a class="link" href="https://learn.microsoft.com/en-us/entra/identity/conditional-access/" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://learn.microsoft.com/en-us/entra/identity/conditional-access/&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;M365 Admin Blog: &lt;a class="link" href="https://m365admin.handsontek.net/microsoft-teams-chat-anyone-email-address-2/" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://m365admin.handsontek.net/microsoft-teams-chat-anyone-email-address-2/&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

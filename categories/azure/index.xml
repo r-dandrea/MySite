@@ -1,0 +1,1750 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Azure on Roberto D'Andrea</title><link>https://robertodandrea.com/categories/azure/</link><description>Recent content in Azure on Roberto D'Andrea</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 06 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://robertodandrea.com/categories/azure/index.xml" rel="self" type="application/rss+xml"/><item><title>Microsoft Teams B2B Guest Chat - Prepare Your Organization Now</title><link>https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/</link><pubDate>Sat, 04 Oct 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/</guid><description>&lt;h2 id="the-new-microsoft-teams-vulnerability"&gt;&lt;strong&gt;The New Microsoft Teams Vulnerability&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;Microsoft is introducing a powerful new feature in Microsoft Teams that enables users to start chats directly with &lt;strong&gt;ANYONE who has an email address&lt;/strong&gt;, regardless of whether they use Teams or not. The recipient will receive an email invitation to join the chat session as a guest, enabling seamless communication and collaboration without friction.&lt;/p&gt;
+&lt;p&gt;While this feature clearly offers usability benefits for external collaboration, it also introduces &lt;strong&gt;significant attack vectors&lt;/strong&gt; if not properly managed with appropriate security controls.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/image.png"
+width="1114"
+height="404"
+srcset="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/image_hu_b7e0a3e6a9558742.png 480w, https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/image_hu_48412999917ffd83.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="275"
+data-flex-basis="661px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;When It Arrives:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Targeted Release:&lt;/strong&gt; Early November 2025 → Mid-November 2025&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;General Availability Worldwide:&lt;/strong&gt; January 2026&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The feature will be &lt;strong&gt;enabled by default&lt;/strong&gt; on all tenants, which means you need to act proactively if you want to limit or disable it.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="why-should-you-worry"&gt;Why Should You Worry?
+&lt;/h2&gt;&lt;p&gt;I&amp;rsquo;m not trying to be alarmist here, but I&amp;rsquo;ve seen what happens when access controls aren&amp;rsquo;t thought through.&lt;/p&gt;
+&lt;p&gt;Here are the real risks:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Phishing gets a lot easier&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Your team members are going to start getting chat invitations from people who look legitimate but aren&amp;rsquo;t. An attacker can impersonate your CFO, a trusted vendor, a partner organization. Once they&amp;rsquo;re in as a guest, they have access to your tenant. They can gather intelligence, pressure people into sharing confidential information, exfiltrate data through chat, or scout your infrastructure for weaknesses.&lt;/p&gt;
+&lt;ol start="2"&gt;
+&lt;li&gt;&lt;strong&gt;Governance goes out the window&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If any member of your organization can invite guests, you lose control. Shadow collaboration happens. Unauthorized partners start accessing your systems. Audit trails become useless because you can&amp;rsquo;t track who created which guest. And if you&amp;rsquo;re in a regulated industry-finance, healthcare, legal-you&amp;rsquo;ve got compliance violations waiting to happen.&lt;/p&gt;
+&lt;ol start="3"&gt;
+&lt;li&gt;&lt;strong&gt;Insiders become a bigger threat&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;A disgruntled employee or a compromised account can suddenly create multiple guest accounts from external domains they control, then coordinate attacks from both inside and outside your organization. They can share credentials, API keys, entire databases. They can set up persistent access for later exploitation.&lt;/p&gt;
+&lt;ol start="4"&gt;
+&lt;li&gt;&lt;strong&gt;Dead guest accounts pile up&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Without proper cleanup, your tenant fills with dormant guest accounts that nobody&amp;rsquo;s using anymore. They&amp;rsquo;re still there. Still have access. Still represent a security risk. All it takes is one of them to be reactivated by an attacker, and you have a breach.&lt;/p&gt;
+&lt;h2 id="how-can-i-protect-my-tenant"&gt;How can I protect my Tenant?
+&lt;/h2&gt;&lt;p&gt;Here&amp;rsquo;s exactly how:&lt;/p&gt;
+&lt;h2 id="1-only-admins-can-invite-guests-guest-invite-restriction----high-priority"&gt;&lt;strong&gt;1️⃣ Only Admins Can Invite Guests (Guest Invite Restriction) - 🔴 HIGH PRIORITY&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;By default, anyone in your organization can invite a guest. Change that!&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Why it matters:&lt;/strong&gt; If a regular user&amp;rsquo;s account gets compromised, an attacker can create malicious guests. By limiting this to admins only, you reduce the attack surface dramatically. 3-5 security admins are way easier to protect than 100+ employees.&lt;/p&gt;
+&lt;h2 id="how-to-do-it"&gt;How to do it?
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;Access &lt;strong&gt;Microsoft Entra Admin Center&lt;/strong&gt; (&lt;a class="link" href="https://entra.microsoft.com/" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://entra.microsoft.com&lt;/strong&gt;&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Go to &lt;strong&gt;External Identities&lt;/strong&gt; → &lt;strong&gt;External collaboration settings&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Scroll to &lt;strong&gt;&amp;ldquo;Guest invite restrictions&amp;rdquo;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;&lt;em&gt;Only users assigned to specific admin roles can invite guest users&lt;/em&gt;&amp;rdquo;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Guest_invite_restrictions.jpg"
+width="1160"
+height="264"
+srcset="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Guest_invite_restrictions_hu_cbf110abd2657458.jpg 480w, https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Guest_invite_restrictions_hu_5db9c135e83a2a13.jpg 1024w"
+loading="lazy"
+alt="Guest invite restrictions"
+class="gallery-image"
+data-flex-grow="439"
+data-flex-basis="1054px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Pro tip:&lt;/strong&gt; Create a custom admin role with just the &amp;ldquo;Invite external users&amp;rdquo; permission and assign it to your security team. This keeps things centralized and gives you a clean audit trail.&lt;/p&gt;
+&lt;h2 id="powershell-implementation-optional"&gt;&lt;strong&gt;PowerShell Implementation (Optional)&lt;/strong&gt;
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;powershellConnect-MgGraph&lt;/span&gt; &lt;span class="n"&gt;-Scopes&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Policy.ReadWrite.Authorization&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;*&lt;/span&gt;&lt;span class="c"&gt;# Verify current state*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$policy&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;Get-MgPolicyAuthorizationPolicy&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$policy&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;GuestInviteRestrictions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;*&lt;/span&gt;&lt;span class="c"&gt;# Update to limit to admins*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;Update-MgPolicyAuthorizationPolicy&lt;/span&gt; &lt;span class="n"&gt;-GuestInviteRestrictions&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;adminsAndGuestInviters&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="2-whitelist-of-partners-domains-collaboration-restriction----high-priority"&gt;&lt;strong&gt;2️⃣ Whitelist of Partners’ Domains (Collaboration Restriction) - 🔴 HIGH PRIORITY&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;Don&amp;rsquo;t allow guests from anywhere. Specify exactly which domains can be invited.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Why it matters:&lt;/strong&gt; An attacker can easily register a domain that looks like your partner&amp;rsquo;s or create a Gmail account. Without a whitelist, they could be invited as a guest. With a whitelist, they&amp;rsquo;re automatically blocked.&lt;/p&gt;
+&lt;h2 id="how-to-do-it-1"&gt;How to do it?
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Access &lt;strong&gt;Microsoft Entra Admin Center&lt;/strong&gt; → &lt;strong&gt;External Identities&lt;/strong&gt; → &lt;strong&gt;External collaboration settings&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Scroll down to &lt;strong&gt;&amp;ldquo;Collaboration restrictions&amp;rdquo;&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;ldquo;&lt;em&gt;Allow invitations only to the specified domains (most restrictive)&lt;/em&gt;&amp;rdquo;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In the field, enter the domains of your trusted partners and clients, one per line&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Collaboration_restrictions.jpg"
+width="1280"
+height="243"
+srcset="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Collaboration_restrictions_hu_1658a680123aa01.jpg 480w, https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Collaboration_restrictions_hu_bb9779f5be60f959.jpg 1024w"
+loading="lazy"
+alt="Collaboration restrictions"
+class="gallery-image"
+data-flex-grow="526"
+data-flex-basis="1264px"
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;What happens:&lt;/strong&gt; If someone tries to invite a guest from Gmail or any domain not on your list, the system automatically blocks it. No exceptions.&lt;/p&gt;
+&lt;h2 id="powershell-implementation-optional-1"&gt;&lt;strong&gt;PowerShell Implementation (Optional)&lt;/strong&gt;
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;powershellConnect-MgGraph&lt;/span&gt; &lt;span class="n"&gt;-Scopes&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Policy.ReadWrite.Authorization&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;*&lt;/span&gt;&lt;span class="c"&gt;# View current configuration*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$policy&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;Get-MgPolicyAuthorizationPolicy&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$policy&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;AllowedToSignUpEmailBasedSubscriptions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="3-limit-guest-access-guest-user-access-restrictions----medium-priority"&gt;&lt;strong&gt;3️⃣ Limit Guest Access (Guest User Access Restrictions) - 🟡 MEDIUM PRIORITY&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;Even with access controls, a guest shouldn&amp;rsquo;t be able to see your entire directory.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Why it matters:&lt;/strong&gt; If a guest account gets compromised, the attacker can use it to map your organization, find high-value targets, and launch phishing attacks. If they can only see themselves, the damage is limited.&lt;/p&gt;
+&lt;h2 id="how-to-do-it-2"&gt;&lt;strong&gt;How to do it?&lt;/strong&gt;
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;Access &lt;strong&gt;Microsoft Entra Admin Center&lt;/strong&gt; → &lt;strong&gt;External Identities&lt;/strong&gt; → &lt;strong&gt;External collaboration settings&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Scroll to &lt;strong&gt;&amp;ldquo;Guest user access restrictions&amp;rdquo;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;&lt;em&gt;Guest user access is restricted to properties and memberships of their own directory objects (most restrictive)&lt;/em&gt;&amp;rdquo;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Guest_User_Access.jpg"
+width="1041"
+height="249"
+srcset="https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Guest_User_Access_hu_6e261b374d2f2729.jpg 480w, https://robertodandrea.com/post/microsoft/microsoft-teams-b2b-guest-chat-prepare-your-organization-now/Guest_User_Access_hu_46af61ce5f144356.jpg 1024w"
+loading="lazy"
+alt="Guest User Access"
+class="gallery-image"
+data-flex-grow="418"
+data-flex-basis="1003px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What changes:&lt;/strong&gt; Guests can still access the specific Teams chats and SharePoint sites you&amp;rsquo;ve shared with them. But if they try to browse &amp;ldquo;People&amp;rdquo; or look at the organizational chart, they get nothing. If they&amp;rsquo;re compromised, they can&amp;rsquo;t reconnaissance your infrastructure.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Practical example:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Guest invited to Teams chat: ✅ Can access chat and specific attachments&lt;/li&gt;
+&lt;li&gt;Guest tries to go to &amp;ldquo;People&amp;rdquo; and search users: ❌ Sees empty list&lt;/li&gt;
+&lt;li&gt;Guest attempts to access shared SharePoint: ✅ Access allowed only to specific resources&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="4-disable-b2b-guest-chat-in-teams----high-priority"&gt;&lt;strong&gt;4️⃣ Disable B2B Guest Chat in Teams - 🔴 HIGH PRIORITY&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;This is the most direct control. Just turn it off.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Why it matters:&lt;/strong&gt; Even with all the other controls, the feature itself is enabled by default. By disabling it, you&amp;rsquo;re saying &amp;ldquo;this chat-with-anyone feature doesn&amp;rsquo;t exist in my environment&amp;rdquo; until you explicitly enable it.&lt;/p&gt;
+&lt;h2 id="how-to-do-it-3"&gt;How to do it?
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;Access &lt;strong&gt;Teams Admin Center&lt;/strong&gt; (&lt;a class="link" href="https://admin.teams.microsoft.com/" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://admin.teams.microsoft.com&lt;/strong&gt;&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;In the left menu, go to &lt;strong&gt;Users&lt;/strong&gt; → &lt;strong&gt;External Access&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Select the &lt;strong&gt;Global (Org-wide default)&lt;/strong&gt; policy&lt;/li&gt;
+&lt;li&gt;Scroll down to find &lt;strong&gt;&amp;ldquo;Use B2B invites to add external users&amp;rdquo;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Save&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;What happens:&lt;/strong&gt; Your users won&amp;rsquo;t even see the option to start a chat with an external email address. If an admin tries to do it, it fails silently. When Microsoft rolls out the feature in November, your environment stays protected because it&amp;rsquo;s already disabled.&lt;/p&gt;
+&lt;h2 id="important-note-custom-policies"&gt;&lt;strong&gt;Important Note: Custom Policies&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;If you&amp;rsquo;ve created &lt;strong&gt;custom messaging policies&lt;/strong&gt; for specific users, you must disable the feature in those policies as well:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;powershellConnect-MicrosoftTeams&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;*&lt;/span&gt;&lt;span class="c"&gt;# View all custom policies*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;Get-CsTeamsMessagingPolicy&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nb"&gt;Where-Object&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nv"&gt;$_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;Identity&lt;/span&gt; &lt;span class="o"&gt;-ne&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Global&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;*&lt;/span&gt;&lt;span class="c"&gt;# Disable for all policies*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;Get-CsTeamsMessagingPolicy&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nb"&gt;Set-CsTeamsMessagingPolicy&lt;/span&gt; &lt;span class="n"&gt;-UseB2BInvitesToAddExternalUsers&lt;/span&gt; &lt;span class="vm"&gt;$false&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="5-conditional-access-policy-with-mfa----high-priority"&gt;&lt;strong&gt;5️⃣ Conditional Access Policy with MFA - 🔴 HIGH PRIORITY&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;This is your final line of defense: even if a guest account exists, they need both MFA and a compliant device to access anything.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Why it matters:&lt;/strong&gt; A compromised guest password alone isn&amp;rsquo;t enough to access your environment. An attacker would need to either have the MFA device or convince the guest to provide their second factor. And if the device isn&amp;rsquo;t compliant (not registered in your MDM, no antivirus, etc.), access is denied anyway.&lt;/p&gt;
+&lt;h1 id="how-to-do-it-4"&gt;&lt;strong&gt;How to do it?&lt;/strong&gt;
+&lt;/h1&gt;&lt;ol&gt;
+&lt;li&gt;Access &lt;strong&gt;Microsoft Entra Admin Center&lt;/strong&gt; (&lt;a class="link" href="https://entra.microsoft.com/" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://entra.microsoft.com&lt;/strong&gt;&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;In the left menu, go to &lt;strong&gt;Protection&lt;/strong&gt; → &lt;strong&gt;Conditional Access&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Open your existing MFA policy (or create a new one if you don&amp;rsquo;t have one)&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Assignments&lt;/strong&gt; → &lt;strong&gt;Users and groups&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Verify the following are included:
+&lt;ul&gt;
+&lt;li&gt;✅ &amp;ldquo;Guest or external users&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;✅ &amp;ldquo;B2B collaboration guest users&amp;rdquo;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Go to &lt;strong&gt;Grant conditions&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Ensure the following are checked:
+&lt;ul&gt;
+&lt;li&gt;✅ &amp;ldquo;Require multifactor authentication&amp;rdquo;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Save&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="conclusion"&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;The B2B Chat feature itself isn&amp;rsquo;t bad. It&amp;rsquo;s actually useful for collaborating with external partners. The problem is that &amp;ldquo;&lt;strong&gt;enabled by default&lt;/strong&gt;&amp;rdquo; nonsense. Microsoft should have made this opt-in, not opt-out.&lt;/p&gt;
+&lt;p&gt;This is your heads-up. &lt;strong&gt;Don&amp;rsquo;t wait for the January 2026 rollout&lt;/strong&gt;. Get these controls in place now, test them, make sure your legitimate workflows still work, and then you can sleep at night knowing this particular attack vector is sealed off.&lt;/p&gt;
+&lt;p&gt;If you have questions about implementing these controls in your specific environment, feel free to reach me out!&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Sources and References:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Microsoft Entra ID B2B Collaboration: &lt;a class="link" href="https://learn.microsoft.com/en-us/entra/external-id/" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://learn.microsoft.com/en-us/entra/external-id/&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Teams Messaging Policies: &lt;a class="link" href="https://learn.microsoft.com/en-us/microsoftteams/messaging-policies-in-teams" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://learn.microsoft.com/en-us/microsoftteams/messaging-policies-in-teams&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Conditional Access Documentation: &lt;a class="link" href="https://learn.microsoft.com/en-us/entra/identity/conditional-access/" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://learn.microsoft.com/en-us/entra/identity/conditional-access/&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;M365 Admin Blog: &lt;a class="link" href="https://m365admin.handsontek.net/microsoft-teams-chat-anyone-email-address-2/" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://m365admin.handsontek.net/microsoft-teams-chat-anyone-email-address-2/&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>From Permission Audits to Automated Revocation - Fighting Ghost OAuth Grants in the Cloud</title><link>https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/</link><pubDate>Wed, 03 Sep 2025 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/</guid><description>&lt;h1 id="from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud"&gt;From Permission Audits to Automated Revocation: Fighting Ghost OAuth Grants in the Cloud
+&lt;/h1&gt;&lt;p&gt;🕑 &lt;em&gt;Reading time: 34 minutes&lt;/em&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+📢
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;em&gt;In this guide, you will learn why OAuth app permissions and access tokens can outlive deleted users in Microsoft 365, the security risks of residual grants, and the best practices for identifying and revoking them through monitoring and automation.&lt;/em&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;📚
+&lt;strong&gt;Skip the Theory?&lt;/strong&gt;
+If you want to jump straight to the practical steps and recommendations click [here](### &lt;strong&gt;👀 How Forgotten Permissions Create Security Blind Spots&lt;/strong&gt;)&lt;/p&gt;
+&lt;h3 id="the-risk-of-access-delegation-in-azure-ad-enterprise-applications"&gt;&lt;strong&gt;⚠️ The Risk of Access Delegation in Azure AD Enterprise Applications&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;From an advanced cybersecurity standpoint, the management of consent and permissions in Azure AD Enterprise Applications constitutes one of the most critical and frequently overlooked - attack surfaces within enterprise cloud environments.&lt;/p&gt;
+&lt;p&gt;Every granted consent, whether at the user or tenant level, potentially opens a backdoor through which data exfiltration and privilege escalation can occur. This risk is particularly acute with high-privilege permissions (such as &lt;em&gt;Mail.Read&lt;/em&gt;, &lt;em&gt;Directory.Read.All&lt;/em&gt;, etc.) commonly requested by third-party applications or internal developers.&lt;/p&gt;
+&lt;p&gt;Modern attacks &lt;strong&gt;no longer focus exclusively on credential theft&lt;/strong&gt;, instead, adversaries increasingly exploit previously granted consent grants to legitimize malicious access. This is often achieved through consent phishing (using social engineering to trick users into authorizing rogue apps), or through misconfigurations and a lack of ongoing permissions review.&lt;/p&gt;
+&lt;p&gt;Weak governance around consent and permissions can undermine even the strongest authentication and MFA controls, leaving organizations exposed to persistent and silent compromises.&lt;/p&gt;
+&lt;h3 id="recap-of-enterprise-applications--delegation-in-azure-ad"&gt;&lt;strong&gt;Recap of Enterprise Applications &amp;amp; Delegation in Azure AD&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;Before delving into the security concerns and mitigation strategies, it is essential to recap what Azure AD Enterprise Applications are, and what is meant by delegation in this context.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Enterprise Applications&lt;/strong&gt; in Azure Active Directory represent the actual instances of applications (both Microsoft and third-party) that have been registered or integrated to authenticate against your organization’s Azure AD tenant.
+These applications act as trust relationships, enabling seamless SSO, automated provisioning, and crucially access to enterprise resources.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Delegation&lt;/strong&gt; refers to the mechanism whereby these applications, once authorized, can act on behalf of users or the organization itself.
+This happens through the granting of specific permissions (consents), allowing the app to perform actions such as reading emails, accessing files, or querying directory information - not just as itself, but impersonating a user or the whole directory, depending on the grant type (delegated vs. application permissions).&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+👉
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Understanding the fundamentals of how applications integrate with Azure AD, and how delegation works, is necessary groundwork before assessing the security impact of consent and permissions management.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="user-consent-settings-on-azure-ad"&gt;User Consent Settings on Azure AD
+&lt;/h3&gt;&lt;p&gt;The “&lt;em&gt;&lt;strong&gt;User consent settings&lt;/strong&gt;&lt;/em&gt;” area in Azure AD is crucial for managing how and when users or group owners can grant applications the right to access your organization’s data - a pivotal control point for reducing lateral movement and data exfiltration risks.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/User_Consent_Settings.png"
+width="1231"
+height="533"
+srcset="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/User_Consent_Settings_hu_2575aa6478f539cf.png 480w, https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/User_Consent_Settings_hu_1b0a251f9f43b209.png 1024w"
+loading="lazy"
+alt="Home → Enterprise applications → Consent and permissions → User consent settings"
+class="gallery-image"
+data-flex-grow="230"
+data-flex-basis="554px"
+&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Do not allow user consent&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Security Perspective:&lt;/strong&gt; Strictest. All application permission requests must be reviewed and approved by an administrator. This setting greatly reduces the attack surface for consent phishing and for inadvertent exposure through unvetted apps.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Operational Impact:&lt;/strong&gt; Can slow down user productivity and app onboarding because every app integration request is bottlenecked through IT/security.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Allow user consent for apps from verified publishers, for selected permissions (Recommended)&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Security Perspective:&lt;/strong&gt; Balanced. Users can only grant consent for apps published by a verified source (Microsoft-certified or tenant-registered) and only for permissions classified as “low impact.” This setting allows flexibility for productivity with significantly reduced risk.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Operational Impact:&lt;/strong&gt; Minimizes friction for adopting trusted, low-risk apps while keeping potentially harmful requests under admin control.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Allow user consent for apps&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Security Perspective:&lt;/strong&gt; High risk. Any user can grant any app access to organizational data, regardless of publisher or permission scope. This opens the door for abuse via malicious apps, consent phishing, and unintentional data leaks.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Operational Impact:&lt;/strong&gt; Fastest for end-users, but at the expense of opening broad attack vectors.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+👉
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+It’s important to emphasize that there’s no single “best” configuration for user consent settings that applies to every organization. The optimal choice depends greatly on the specific context of your tenant, your organizational risk appetite, use cases, and operational realities.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="microsoft-recommends-the-verified-publishers--low-permission-model"&gt;&lt;strong&gt;Microsoft Recommends the “Verified Publishers &amp;amp; Low Permission” Model&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Microsoft&lt;/strong&gt; strongly recommends configuring the second option, “&lt;em&gt;Allow user consent for apps from verified publishers, for selected permissions (Recommended)&lt;/em&gt;”&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;real advantage&lt;/strong&gt; of this setting is that it gives security teams precise control without blocking productivity. Using permission classification, you can define exactly which permissions are considered “low risk” in your environment. Whenever a user or group owner wants to consent to an app, they can do so instantly - but only if the app comes from a trusted, verified publisher and only if it’s requesting one of the &lt;strong&gt;low-impact&lt;/strong&gt; permissions you’ve approved.&lt;/p&gt;
+&lt;p&gt;This approach shrinks your attack surface considerably. Users can adopt helpful, safe apps on their own, with no need to wait for admin approval or get slowed down by bureaucracy.
+At the same time, high-risk permission requests or apps from unknown publishers are automatically flagged for administrator review - so your critical data never gets exposed by accident or through a phishing attempt.&lt;/p&gt;
+&lt;p&gt;In short, you empower your users to work efficiently with the tools they need, but you keep tight control over anything that could cause harm.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;This isn’t just Microsoft’s recommendation - it’s one of the most effective ways to enforce security results without putting up unnecessary roadblocks.&lt;/em&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+⚙
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;strong&gt;Where to set permission classifications?&lt;/strong&gt;
+Navigate to &lt;em&gt;Permission classifications&lt;/em&gt; to add or edit which permissions are “&lt;strong&gt;low&lt;/strong&gt;”, “&lt;strong&gt;medium&lt;/strong&gt;”, or “&lt;strong&gt;high&lt;/strong&gt;” risk for your organization.
+&lt;img src="https://robertodandrea.com/images/Consent_Permission.png"
+loading="lazy"
+alt="Consent and Permissions"
+&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="how-forgotten-permissions-create-security-blind-spots"&gt;&lt;strong&gt;👀 How Forgotten Permissions Create Security Blind Spots&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;After outlining clear policies for how user consent and permissions are managed, it’s essential from a security standpoint to implement continuous monitoring and strong governance of app permissions within your Azure AD environment.
+Without oversight, seemingly “harmless” permissions can become &lt;strong&gt;“ghost permissions” -&lt;/strong&gt; lingering, forgotten access rights that often lead to serious security blind spots.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Real-world security risks include&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Decommissioned apps&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;Old or abandoned applications can retain high levels of privilege. If compromised, these apps provide attackers with a stealthy way to move laterally or exfiltrate sensitive data, since no one is actively watching those access paths&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Disabled user accounts&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;If an employee leaves and their account is disabled, but the consents they granted aren’t revoked, certain applications could still retain privileged access through those now-orphaned permissions&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Privilege creep&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;When users or owners grant access independently and no one reviews it, over time the environment accumulates unnecessary or excessive permissions that are rarely tracked or audited&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;🚨 From a security expert’s point of view&lt;/strong&gt;, these “ghost permissions” are prime targets for advanced threats such as &lt;strong&gt;phishing, privilege escalation, or data leakage&lt;/strong&gt;.
+Attackers often look for forgotten apps with excessive rights - they are less likely to be detected and more likely to offer high-reward access.&lt;/p&gt;
+&lt;h3 id="minimizing-exposure-with-continuous-governance"&gt;&lt;strong&gt;Minimizing Exposure with Continuous Governance&lt;/strong&gt;
+&lt;/h3&gt;&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+😬
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;em&gt;Worried about minimizing the impact of “ghost” permissions in your environment?
+A proven solution is to implement regular governance and monitoring!&lt;/em&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;Regular governance and monitoring enable organizations to quickly identify and remove permissions that are no longer needed, reducing unnecessary exposure. They also make it possible to detect “ghost” applications - those that remain authorized even though they are not actively used - allowing security teams to revoke outdated access.&lt;/p&gt;
+&lt;p&gt;By continuously reviewing and managing privileges, you ensure that only truly necessary permissions remain in place.
+This approach effectively shrinks the attack surface and minimizes the risk of unauthorized access within your environment.&lt;/p&gt;
+&lt;h3 id="what-microsoft-doesnt-provide-your-practical-guide-to-removing-ghost-permissions"&gt;&lt;strong&gt;🚨 What Microsoft Doesn’t Provide: Your Practical Guide to Removing Ghost Permissions&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;Unfortunately, Microsoft does not provide a built-in way to automatically remove these unused or “ghost” permissions simply by accessing the Enterprise Applications section in the Azure portal. Even if you manually review your list of applications, there is no out-of-the-box feature that detects and revokes outdated or orphaned permissions for you.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;For example&lt;/strong&gt;, even if you have full admin rights, accessing a specific application in the Azure portal and navigating to its permissions reveals a major limitation: you are simply &lt;strong&gt;unable to directly modify or remove certain permissions&lt;/strong&gt;. There is &lt;strong&gt;no button, no menu, and no feature&lt;/strong&gt; available in the standard Enterprise Applications interface to clean up or revoke these &amp;ldquo;ghost&amp;rdquo; permissions.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;As shown in the screenshot below, if you go to Enterprise applications → &amp;lt;Your_application&amp;gt; → Permissions [Security], there is no obvious way to revoke or modify these permissions!!&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/App_permissions.png"
+width="1668"
+height="907"
+srcset="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/App_permissions_hu_38991d8024e58257.png 480w, https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/App_permissions_hu_d93e462ee43c5d58.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="183"
+data-flex-basis="441px"
+&gt;&lt;/p&gt;
+&lt;p&gt;By clicking on &lt;strong&gt;“&lt;em&gt;1 Total user(s)&lt;/em&gt;”&lt;/strong&gt; you’ll quickly see that there are &lt;strong&gt;no actionable options&lt;/strong&gt; available—such as deleting or revoking permissions for that user.&lt;/p&gt;
+&lt;p&gt;The interface only displays assignment details without giving you any way to address or remediate unused or excessive privileges.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/User_permissions.png"
+width="1675"
+height="631"
+srcset="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/User_permissions_hu_9a8c91ac68153cc6.png 480w, https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/User_permissions_hu_8b0164a3a39b58f6.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="265"
+data-flex-basis="637px"
+&gt;&lt;/p&gt;
+&lt;p&gt;This lack of native options leaves you with little control and can create lingering security risks, as unused or outdated access often remains active far longer than it should.&lt;/p&gt;
+&lt;p&gt;Ultimately, Microsoft’s tools stop short - forcing you to look for alternative methods just to maintain a secure, well-governed environment.&lt;/p&gt;
+&lt;h3 id="whats-the-solution-take-control-with-microsoft-graph-explorer"&gt;&lt;strong&gt;✅ What’s the Solution? Take Control with Microsoft Graph Explorer&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;The answer is simple: use &lt;a class="link" href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank" rel="noopener"
+&gt;Microsoft Graph Explorer&lt;/a&gt;. This powerful tool offered by Microsoft, designed specifically to let you interact directly with the &lt;em&gt;Microsoft Graph API&lt;/em&gt;.
+Unlike the Azure portal, which can be limited or restrictive in managing certain permissions, Graph Explorer allows you to access the full breadth of your Azure AD environment at a programmatic level.&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank" rel="noopener"
+&gt;Graph Explorer | Try Microsoft Graph APIs - Microsoft Graph&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;How to use Microsoft Graph Explorer for oauth2Permission?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Using Microsoft Graph Explorer is simple and doesn’t require any advanced setup.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Go to &lt;a class="link" href="https://aka.ms/ge" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;Microsoft Graph Explorer&lt;/strong&gt;&lt;/a&gt; website&lt;/li&gt;
+&lt;li&gt;Sign-in with your account&lt;/li&gt;
+&lt;li&gt;Run query with &lt;strong&gt;GET&lt;/strong&gt; method&lt;/li&gt;
+&lt;li&gt;Enter the endpoint&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="p"&gt;//&lt;/span&gt;&lt;span class="n"&gt;graph&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;microsoft&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;v1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;0&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;oauth2PermissionGrants&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="p"&gt;//&lt;/span&gt;&lt;span class="n"&gt;graph&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;microsoft&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;v1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;0&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;oauth2PermissionGrants&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol&gt;
+&lt;li&gt;Click “Run query” button&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Microsoft_Graph_Explorer.png"
+width="1629"
+height="878"
+srcset="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Microsoft_Graph_Explorer_hu_4531496d3fa1f8b2.png 480w, https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Microsoft_Graph_Explorer_hu_23dc5caa5daa4fc9.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="185"
+data-flex-basis="445px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;🧐 What those this JSON mean?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;When you run the query in Microsoft Graph Explorer, you get a JSON response like the one shown in the screenshot above. It’s easy to get lost in all these IDs and fields, but understanding the key properties is straightforward with the right mapping:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Field&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Meaning&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;clientId&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Object ID of the application&lt;/strong&gt; that received the permission (the app’s unique identifier in Azure AD)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;consentType&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Type of consent granted: &lt;br&gt;-&lt;/strong&gt; &lt;strong&gt;&lt;code&gt;AllPrincipals&lt;/code&gt;&lt;/strong&gt;: consent granted for the entire organization &lt;br&gt;-&lt;strong&gt;&lt;code&gt;Principal&lt;/code&gt;&lt;/strong&gt;: consent granted to a specific user&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;id&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Unique ID for this specific permission grant&lt;/strong&gt; (needed if you want to revoke it via DELETE request)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;principalId&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Object ID of the user&lt;/strong&gt; the consent was granted for (if consentType is &lt;strong&gt;&lt;code&gt;Principal&lt;/code&gt;&lt;/strong&gt;); &lt;strong&gt;&lt;code&gt;null&lt;/code&gt;&lt;/strong&gt; if for everyone&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;resourceId&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Object ID of the resource/API being accessed&lt;/strong&gt; (for example, Microsoft Graph’s unique ID here)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;scope&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Permissions granted&lt;/strong&gt; (what the app or user can actually do — e.g., read user profile, access mailbox, etc.)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="step-by-step-how-to-mitigate-highmedium-risk-permissions"&gt;&lt;strong&gt;🕸️ Step-by-Step: How to Mitigate High/Medium-Risk Permissions&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;Now that you know how to read the JSON output, it’s time to actively mitigate possible risks by following these steps:&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+📎
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Here you can find the list of all permission
+&lt;a class="link" href="https://learn.microsoft.com/en-us/graph/permissions-reference" target="_blank" rel="noopener"
+&gt;Microsoft Graph permissions reference - Microsoft Graph&lt;/a&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;What I strongly suggest is:&lt;/p&gt;
+&lt;h3 id="1-review-permissions-already-granted"&gt;&lt;strong&gt;1. Review Permissions Already Granted&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;Before changing anything, check what permissions are already assigned to users and applications.&lt;/p&gt;
+&lt;p&gt;Use the &lt;em&gt;&lt;strong&gt;GET&lt;/strong&gt;&lt;/em&gt; request shown previously to list all existing permission grants.&lt;/p&gt;
+&lt;h3 id="2-adjust-consent-and-permissions-settings"&gt;&lt;strong&gt;2. Adjust Consent and Permissions Settings&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;S&lt;/strong&gt;et the user Consent &amp;amp; permissions settings to &lt;strong&gt;Recommended&lt;/strong&gt; (&lt;em&gt;Allow user consent only for verified publishers and selected low-impact permissions&lt;/em&gt;)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Go to &lt;strong&gt;Azure Active Directory → Enterprise applications → Consent and permissions&lt;/strong&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Under &lt;strong&gt;User consent settings&lt;/strong&gt;, set it to:&lt;em&gt;“Allow user consent for apps from verified publishers, for selected permissions (Recommended)”&lt;/em&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;This means only low-impact permissions (like those Microsoft classifies as “low”) can be self-approved, and only for trusted apps (verified publishers or registered in your tenant).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="adjust-permission-classifications"&gt;&lt;strong&gt;Adjust Permission Classifications&lt;/strong&gt;
+&lt;/h3&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In &lt;strong&gt;Permission classifications&lt;/strong&gt;, add more &amp;ldquo;Low&amp;rdquo; permissions as suggested by Microsoft.Common low permissions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;User.Read&lt;/code&gt;&lt;/strong&gt; (read basic user profile)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;offline_access&lt;/code&gt;&lt;/strong&gt; (refresh token, can operate offline)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;openid&lt;/code&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;code&gt;profile&lt;/code&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;code&gt;email&lt;/code&gt;&lt;/strong&gt; (basic identity/auth info)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Impact and Mitigation Summary:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;User.Read&lt;/code&gt;&lt;/strong&gt;: Safe for most apps, limit to verified publishers.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;openid/profile/email&lt;/code&gt;&lt;/strong&gt;: Low impact, needed for login, safe with verified apps.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;offline_access&lt;/code&gt;&lt;/strong&gt;: Medium risk. Only approve for apps you trust, and periodically review/remove unnecessary grants.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Consent_and_permission_setup.png"
+width="994"
+height="649"
+srcset="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Consent_and_permission_setup_hu_b49b9e315ae5496b.png 480w, https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Consent_and_permission_setup_hu_e5f99db36d9570fe.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="153"
+data-flex-basis="367px"
+&gt;&lt;/p&gt;
+&lt;h3 id="3-identify--document-high-and-medium-risk-scopes"&gt;&lt;strong&gt;3. Identify &amp;amp; Document High and Medium-Risk Scopes&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;When reviewing OAuth2 permission grants, it’s critical to classify the scope of permissions - some are far more sensitive and represent a genuine risk to data and tenant security.
+Here’s a breakdown, with concrete examples and security reasoning:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;📕 HIGH-RISK PERMISSIONS&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;These permissions grant broad or deep access, usually across the whole tenant, and can enable exfiltration or tampering of sensitive data.&lt;/p&gt;
+&lt;div style="
+background: #fffbe5;
+border-left: 7px solid #e9c46a;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;⚠️ ⚠️&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;strong&gt;These should be very closely audited and, wherever possible, not granted unless strictly necessary to a highly trusted application.&lt;/strong&gt;
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fffbe5'] {
+background: #322911 !important;
+color: #f3e7be !important;
+border-left: 7px solid #e9c46a !important;
+}
+div[style*='background: #fffbe5'] strong {
+color: #ffe066 !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Permission&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Why High Risk / What to Watch For&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Directory.ReadWrite.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Grants full read/write over all Azure AD. Attacker can create, modify, or delete users, groups, and directory objects.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Directory.AccessAsUser.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Lets an app act as ANY user. Can impersonate users across the entire org - full lateral movement risk.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;User.ReadWrite.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Allows editing all user profiles. Can change properties, reset MFA, etc.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Files.ReadWrite.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Grants access to all files in OneDrive/SharePoint. Possible mass data exfiltration or deletion.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Mail.ReadWrite&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Full access to read and modify all user mailboxes. Can be used for bulk mailbox compromise or data loss.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Mail.Send&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Send mail as any user. Attackers can launch convincing phishing campaigns internally or externally.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Calendars.ReadWrite&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Full modification rights over all calendars- potential business disruption.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Contacts.ReadWrite&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Exfiltrate or tamper with the whole org&amp;rsquo;s contact book - can aid phishing/social engineering.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;full_access_as_user&lt;/code&gt;&lt;/strong&gt; / &lt;strong&gt;&lt;code&gt;user_impersonation&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;App can act as the signed-in user for all actions - potentially bypasses all normal role-based controls.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;📙 &lt;strong&gt;MEDIUM-RISK PERMISSIONS&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Still sensitive, but less dangerous than &amp;ldquo;write&amp;rdquo; or &amp;ldquo;impersonate all&amp;rdquo; scopes. These typically allow read access to org-wide resource&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Permission&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Why Medium Risk / What to Watch For&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;User.Read.All&lt;/code&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;code&gt;User.ReadBasic.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Read the details (sometimes PII) of all users. Useful for reconnaissance in a breach.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Files.Read.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;App can read all files in OneDrive/SharePoint, but cannot modify. Still a risk for data leak.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Mail.Read&lt;/code&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;code&gt;Calendars.Read&lt;/code&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;code&gt;Contacts.Read&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Read access to sensitive comms/calendar/org structure. Still significant privacy/data loss risk.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Group.Read.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;View membership and info of all Azure AD groups - could help in privilege escalation attempts.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;Sites.Read.All&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Read all SharePoint sites; sensitive info exposure possible.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Actions for High/Medium Privilege Grants&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Review&lt;/strong&gt; which users and applications have these permissions. If access is not strictly needed, revoke it immediately.
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Once identify the id of the permission granted, use DELETE method on Graph Explorer to delete only this specific permission.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="p"&gt;//&lt;/span&gt;&lt;span class="n"&gt;graph&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;microsoft&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;v1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;0&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;oauth2PermissionGrants&lt;/span&gt;&lt;span class="p"&gt;?&lt;/span&gt;&lt;span class="nv"&gt;$filter&lt;/span&gt;&lt;span class="p"&gt;=&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="n"&gt;eq&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;id_string&amp;gt;&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Delete_graph_explorer.png"
+width="1646"
+height="220"
+srcset="https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Delete_graph_explorer_hu_76e84d4ba57c0dab.png 480w, https://robertodandrea.com/post/microsoft/from-permission-audits-to-automated-revocation-fighting-ghost-oauth-grants-in-the-cloud/Delete_graph_explorer_hu_5540c9bbb0a51349.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="748"
+data-flex-basis="1795px"
+&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Method&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Output&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;GET&lt;/td&gt;
+&lt;td&gt;Retrieves a list of OAuth 2.0 permission grants, or details for a specific one&lt;/td&gt;
+&lt;td&gt;See all granted app consents in a tenant&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;POST&lt;/td&gt;
+&lt;td&gt;Creates a new OAuth 2.0 permission grant&lt;/td&gt;
+&lt;td&gt;Grant permissions programmatically&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;PATCH&lt;/td&gt;
+&lt;td&gt;Updates specific properties of an existing permission grant (e.g., scope)&lt;/td&gt;
+&lt;td&gt;Change the permissions granted to an app&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DELETE&lt;/td&gt;
+&lt;td&gt;Deletes (revokes) a permission grant, removing app consent&lt;/td&gt;
+&lt;td&gt;Remove OAuth consent for an app from the tenant&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Grant permissions&lt;/strong&gt; only to trusted, verified apps and users that have a clear and essential business need.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Repeat this process regularly&lt;/strong&gt; to ensure permissions stay up to date.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="4-create-an-automation-workflow-for-permission-requests"&gt;&lt;strong&gt;4. Create an Automation Workflow For Permission Requests&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;Instead of granting permissions manually, you can:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Build a request form, email, or approval flow.&lt;/li&gt;
+&lt;li&gt;When a user/app needs permission, they submit a request through this workflow.&lt;/li&gt;
+&lt;li&gt;You run automation (for instance, with Power Automate, Logic App, Azure Function, or PowerShell) to evaluate and POST the required grant to &lt;code&gt;https://graph.microsoft.com/v1.0/oauth2PermissionGrants&lt;/code&gt; - with proper admin oversight.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+💡
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;strong&gt;Using an automation workflow for permission requests helps you avoid the common scenario where a single user request results in permissions being granted to the entire company.&lt;/strong&gt;
+&lt;img src="https://robertodandrea.com/images/Permission_requested.png"
+loading="lazy"
+&gt;
+Every request is reviewed and assigned only to the specific user or app that needs it - no more accidental tenant-wide assignments.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;h3 id="sentinel-kql-detection-query"&gt;Sentinel KQL Detection Query
+&lt;/h3&gt;&lt;p&gt;This KQL query identifies when users or apps are granted consent and permissions in Azure AD&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-c" data-lang="c"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;//KQL query to monitor consent and permission granted to users
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;AuditLogs&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="n"&gt;Category&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;ApplicationManagement&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="n"&gt;OperationName&lt;/span&gt; &lt;span class="n"&gt;contains&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;Consent&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;or&lt;/span&gt; &lt;span class="n"&gt;OperationName&lt;/span&gt; &lt;span class="n"&gt;contains&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;Add app role assignment&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;Permission_granted&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;extract&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="err"&gt;@&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Scope:\s*([^,\]]+)&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse_json&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse_json&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TargetResources&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="n"&gt;modifiedProperties&lt;/span&gt;&lt;span class="p"&gt;))[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="n"&gt;newValue&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;AppName&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TargetResources&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="n"&gt;displayName&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;AppId&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TargetResources&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;UserPrincipalName&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse_json&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;InitiatedBy&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;)).&lt;/span&gt;&lt;span class="n"&gt;userPrincipalName&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;Permissions&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse_json&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;AdditionalDetails&lt;/span&gt;&lt;span class="p"&gt;)[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;project&lt;/span&gt; &lt;span class="n"&gt;TimeGenerated&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;AppName&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;AppId&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;OperationName&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UserPrincipalName&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Permission_granted&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;sort&lt;/span&gt; &lt;span class="n"&gt;by&lt;/span&gt; &lt;span class="n"&gt;TimeGenerated&lt;/span&gt; &lt;span class="n"&gt;desc&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This KQL query focuses on detecting &lt;strong&gt;high-risk&lt;/strong&gt; permissions granted to applications, filtering out &lt;strong&gt;low-risk&lt;/strong&gt; or default user permissions.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;span class="lnt"&gt;36
+&lt;/span&gt;&lt;span class="lnt"&gt;37
+&lt;/span&gt;&lt;span class="lnt"&gt;38
+&lt;/span&gt;&lt;span class="lnt"&gt;39
+&lt;/span&gt;&lt;span class="lnt"&gt;40
+&lt;/span&gt;&lt;span class="lnt"&gt;41
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-c" data-lang="c"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;//KQL query focused on high-risk permission
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;//Filter out low-risk permissions
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;let&lt;/span&gt; &lt;span class="n"&gt;highRiskPermissions&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;dynamic&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Mail.ReadWrite&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Mail.Send&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;MailboxSettings.ReadWrite&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Calendars.ReadWrite&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Contacts.ReadWrite&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Files.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Directory.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;User.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Group.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Application.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;DelegatedPermissionGrant.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;AppRoleAssignment.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;Policy.ReadWrite.All&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;RoleManagement.ReadWrite.Directory&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// FP Mitigation: Add the display names of legitimate applications that require high-risk permissions to this list.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;let&lt;/span&gt; &lt;span class="n"&gt;approvedApps&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;dynamic&lt;/span&gt;&lt;span class="p"&gt;([]);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;AuditLogs&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Filter for successful application consent events in Azure AD.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="n"&gt;Category&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;ApplicationManagement&amp;#34;&lt;/span&gt; &lt;span class="n"&gt;and&lt;/span&gt; &lt;span class="n"&gt;OperationName&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;Consent to application&amp;#34;&lt;/span&gt; &lt;span class="n"&gt;and&lt;/span&gt; &lt;span class="n"&gt;Result&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;success&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Parse the TargetResources to extract application and permission details.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;TargetResource&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;TargetResources&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;AppDisplayName&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TargetResource&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;displayName&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;ModifiedProperties&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;TargetResource&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;modifiedProperties&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;mv&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;expand&lt;/span&gt; &lt;span class="n"&gt;ModifiedProperties&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="n"&gt;ModifiedProperties&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;displayName&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;ConsentAction.Permissions&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Extract the granted permissions string.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;GrantedPermissions&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse_json&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ModifiedProperties&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;newValue&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Exclude known and approved applications to reduce false positives.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="nf"&gt;not&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;AppDisplayName&lt;/span&gt; &lt;span class="nf"&gt;in&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;approvedApps&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Check if any of the granted permissions are in our high-risk list.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt; &lt;span class="n"&gt;GrantedPermissions&lt;/span&gt; &lt;span class="nf"&gt;has_any&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;highRiskPermissions&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Extract user details.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;UserPrincipalName&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;InitiatedBy&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;userPrincipalName&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;IpAddress&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;tostring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;InitiatedBy&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ipAddress&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Summarize the findings for alerting.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;summarize&lt;/span&gt; &lt;span class="n"&gt;StartTime&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;min&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TimeGenerated&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;EndTime&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TimeGenerated&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;GrantedPermissions&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;make_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;GrantedPermissions&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;by&lt;/span&gt; &lt;span class="n"&gt;AppDisplayName&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UserPrincipalName&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;IpAddress&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;OperationName&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;extend&lt;/span&gt; &lt;span class="n"&gt;timestamp&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;StartTime&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="final-consideration"&gt;Final Consideration
+&lt;/h3&gt;&lt;p&gt;By integrating &lt;strong&gt;Graph Explorer&lt;/strong&gt; into your security and governance practices, your IT or security team can move beyond the limitations of the portal. You not only track down and remediate excessive privileges swiftly and precisely, but also ensure continuous compliance and lower the risk of unauthorized access. Ultimately, Microsoft Graph Explorer empowers you to maintain a safer, more manageable Azure AD environment- enabling true granular management and responding proactively to security concerns that would otherwise be hard or impossible to tackle with native tools alone.&lt;/p&gt;
+&lt;p&gt;Continual vigilance and automated, well-governed processes are essential for defending your enterprise against modern consent-based threats. Make regular reviews of permissions part of your security posture, and prioritize using approval workflows and automation to ensure permissions are granted only on a strict need-to-have basis - never by default or to “all users.”&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+✅
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;strong&gt;The risks around consent and permissions in Azure AD are real - but with the right tools and disciplined governance, they can be tackled head on.
+By combining clear processes, practical automation, and advanced tools like Graph Explorer, you close the gaps that attackers seek and ensure your organization’s productivity and protection can go hand in hand.&lt;/strong&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;</description></item><item><title>No Account, No Problem - Ingesting Azure DevOps Audit Logs into Sentinel with a Service Principal</title><link>https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/</link><pubDate>Mon, 06 Jul 2026 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/</guid><description>&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/pipeline.png" alt="Featured image of post No Account, No Problem - Ingesting Azure DevOps Audit Logs into Sentinel with a Service Principal" /&gt;&lt;h1 id="no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal"&gt;No Account, No Problem: Ingesting Azure DevOps Audit Logs into Sentinel with a Service Principal
+&lt;/h1&gt;&lt;p&gt;🕑 &lt;em&gt;Reading time: ~10 minutes&lt;/em&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+📢
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;em&gt;Short version: the native Azure DevOps Audit Logs connector for Microsoft Sentinel is a governance headache waiting to happen. Here&amp;rsquo;s how I tossed it out and rolled my own pipeline that runs entirely on a service principal - no user sign-in, no sketchy service account, and by the end, no secrets sitting around in clear text either.&lt;/em&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;📚 &lt;strong&gt;Not here for the theory?&lt;/strong&gt; Skip to &lt;a class="link" href="#the-build-step-by-step" &gt;The Build&lt;/a&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="-why-i-refused-to-use-the-connectors-account"&gt;⚠️ Why I Refused to Use the Connector&amp;rsquo;s Account
+&lt;/h2&gt;&lt;p&gt;Microsoft Sentinel ships with a codeless connector called &lt;strong&gt;Azure DevOps Audit Logs (via Codeless Connector Platform)&lt;/strong&gt;.
+&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/azuredevops_connector.jpg"
+width="1753"
+height="736"
+srcset="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/azuredevops_connector_hu_c19c56dd21646b47.jpg 480w, https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/azuredevops_connector_hu_fab5d352a557b0eb.jpg 1024w"
+loading="lazy"
+alt="AzureDevOps Audit Logs connector"
+class="gallery-image"
+data-flex-grow="238"
+data-flex-basis="571px"
+&gt;
+Looks handy on paper. But the second you hit &lt;strong&gt;Connect&lt;/strong&gt;, it drags you through an &lt;strong&gt;OAuth authorization-code&lt;/strong&gt; flow and makes you &lt;strong&gt;sign in with an account&lt;/strong&gt;. Whatever account you pick becomes the identity that reads your audit logs. Forever.&lt;/p&gt;
+&lt;p&gt;And here&amp;rsquo;s the thing - every option Microsoft leaves on the table is bad news from a security and ops point of view:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Why it&amp;rsquo;s a problem&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;My own user account&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;The day I revoke my sessions, rotate my password, or walk out the door, that refresh token dies and &lt;strong&gt;your logs silently dry up&lt;/strong&gt;. Pinning an org-wide security feed to one human being is a single point of failure, full stop.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;A shared service account&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Congrats, now you own a licensed user with a password, an MFA exclusion (because automation breaks otherwise), and a long-lived refresh token. That&amp;rsquo;s exactly the kind of standing credential attackers dream about. Service accounts are &lt;strong&gt;not&lt;/strong&gt; the move in 2026.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;App Client ID only&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Not happening - the authorization-code flow &lt;strong&gt;demands&lt;/strong&gt; an interactive user login. You can&amp;rsquo;t just hand it a client ID and call it a day.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;So I ditched the connector entirely and built the whole pipeline &lt;strong&gt;from scratch on a Service Principal (App Registration)&lt;/strong&gt;. It authenticates non-interactively, its permissions are spelled out and tightly scoped, and in the final step I shove its secret into &lt;strong&gt;Key Vault&lt;/strong&gt; so nothing sensitive ever lives in plain sight.&lt;/p&gt;
+&lt;p&gt;{{}}Azure DevOps audit events still land in Sentinel through the &lt;strong&gt;exact same custom table&lt;/strong&gt; the connector would&amp;rsquo;ve used (&lt;code&gt;ADOAuditLogs_CL&lt;/code&gt;) - but the identity behind the wheel is a service principal I fully own. No human, no service account, no nasty revocation surprises down the road. {{}}&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="how-the-pipeline-works"&gt;How the Pipeline Works
+&lt;/h2&gt;&lt;p&gt;Before we get our hands dirty, here&amp;rsquo;s the mental model. The Logic App is just the orchestrator - it doesn&amp;rsquo;t write anything itself. The data actually lands in Log Analytics through a &lt;strong&gt;Data Collection Rule (DCR)&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;Azure DevOps to Microsoft Sentinel ingestion pipeline built on a service principal: a Logic App reads audit logs via HTTP GET, checks whether events exist, then POSTs them through a Data Collection Endpoint and Data Collection Rule into the ADOAuditLogs_CL table in Microsoft Sentinel, with the secret stored in Key Vault
+&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/pipeline.svg"
+loading="lazy"
+alt="Azure DevOps to Microsoft Sentinel ingestion pipeline"
+&gt;&lt;/p&gt;
+&lt;p&gt;Two different tokens, one service principal:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the &lt;strong&gt;GET&lt;/strong&gt; grabs a token for &lt;strong&gt;Azure DevOps&lt;/strong&gt; (resource ID &lt;code&gt;499b84ac-1321-427f-aa17-267ca6975798&lt;/code&gt;),&lt;/li&gt;
+&lt;li&gt;the &lt;strong&gt;POST&lt;/strong&gt; grabs a token for &lt;code&gt;https://monitor.azure.com&lt;/code&gt; to write through the DCR.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;🚨 The DCR is &lt;strong&gt;not optional&lt;/strong&gt; - don&amp;rsquo;t skip it. You can&amp;rsquo;t POST straight into a custom table if you do not have a DCR.&lt;br&gt;
+The Logs Ingestion API always writes &lt;em&gt;through&lt;/em&gt; a DCR, which checks the incoming schema, runs an optional KQL transform, and routes the rows into the destination table.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="the-build-step-by-step"&gt;The Build (Step by Step)
+&lt;/h2&gt;&lt;h3 id="prerequisites"&gt;Prerequisites
+&lt;/h3&gt;&lt;p&gt;Before starting building the process we need:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Azure DevOps organization sits on the &lt;strong&gt;same Entra ID tenant&lt;/strong&gt; as your Azure subscription.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Auditing is turned on&lt;/strong&gt; on AzureDevOps site (&lt;code&gt;Organization Settings → Policies → Log audit events&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Log Analytics workspace&lt;/strong&gt; on Microsoft Sentinel.&lt;/li&gt;
+&lt;li&gt;Permissions:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Owner/Contributor&lt;/strong&gt; on the resource grou&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Project Collection Administrator&lt;/strong&gt; on Azure DevOps.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="create-the-app-registration"&gt;Create the App Registration
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Entra ID → App registrations → New registration&lt;/strong&gt;.
+Name it something obvious like &lt;code&gt;AzureDevOpsAuditLog&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Copy the &lt;strong&gt;Application (client) ID&lt;/strong&gt; and the &lt;strong&gt;Directory (tenant) ID&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Head to &lt;strong&gt;Certificates &amp;amp; secrets → New client secret&lt;/strong&gt;, and copy the &lt;strong&gt;Value&lt;/strong&gt; (the value, &lt;em&gt;not&lt;/em&gt; the Secret ID - and copy it now, because you only get to see it once).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;💡 Stash that secret somewhere safe for the moment. In &lt;strong&gt;Step 6&lt;/strong&gt; we&amp;rsquo;ll tuck it into Key Vault so it never lives inside the workflow.
+&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/service_principal.jpg"
+width="1630"
+height="833"
+srcset="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/service_principal_hu_1a03b8f747784080.jpg 480w, https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/service_principal_hu_531524d4da367d10.jpg 1024w"
+loading="lazy"
+alt="AzureDevOps - App Registration"
+class="gallery-image"
+data-flex-grow="195"
+data-flex-basis="469px"
+&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="add-the-service-principal-to-azure-devops"&gt;Add the Service Principal to Azure DevOps
+&lt;/h3&gt;&lt;p&gt;Azure DevOps treats service principals and managed identities as first-class members of an organization, so we hand it access exactly like we would a regular user.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+⚠️
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Before you start, a heads-up on permissions: this step is &lt;strong&gt;admin territory&lt;/strong&gt;. To add a member to the organization, set its access level, and manage group membership, you need to be a &lt;strong&gt;Project Collection Administrator (PCA)&lt;/strong&gt; - or the &lt;strong&gt;Organization Owner&lt;/strong&gt; - on the Azure DevOps org.
+A regular user account can&amp;rsquo;t do any of this. If you&amp;rsquo;re not a PCA, you&amp;rsquo;ll need someone who is to run these steps for you (or to grant you the role first).
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;ol&gt;
+&lt;li&gt;Navigate over &lt;code&gt;dev.azure.com/&amp;lt;your-org&amp;gt;&lt;/code&gt; → &lt;strong&gt;Organization Settings → Users → Add users&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Search for the app by &lt;strong&gt;name&lt;/strong&gt; (&lt;code&gt;AzureDevOpsAuditLog&lt;/code&gt;) or by &lt;strong&gt;Client ID&lt;/strong&gt;, and set &lt;strong&gt;Access level = Basic&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Give it the right to &lt;strong&gt;read the audit log&lt;/strong&gt;.
+Auditing lives at the organization level, so drop the service principal into a group that can read it (for example &lt;strong&gt;Project Collection Administrators&lt;/strong&gt;).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h3 id="find-the-dcr--copy-the-log-ingestion-endpoint"&gt;Find the DCR &amp;amp; Copy the Log Ingestion Endpoint
+&lt;/h3&gt;&lt;p&gt;If you&amp;rsquo;d already given the native connector a shot, Sentinel has quietly created a DCR for you (mine was tagged &lt;code&gt;createdBy: Sentinel&lt;/code&gt;) that points to &lt;code&gt;ADOAuditLogs_CL&lt;/code&gt;.
+You can &lt;strong&gt;reuse that one&lt;/strong&gt; or build your own dedicated DCR - either way, you need three values out of it.
+&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/DCR.jpg"
+width="1677"
+height="473"
+srcset="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/DCR_hu_5aee031afabefe78.jpg 480w, https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/DCR_hu_34413cbc9ed15054.jpg 1024w"
+loading="lazy"
+alt="DCR_AzureDevOps"
+class="gallery-image"
+data-flex-grow="354"
+data-flex-basis="850px"
+&gt;
+The DCR declares its input stream as &lt;code&gt;Custom-ADOAuditLogs&lt;/code&gt; and handles the field mapping itself inside its &lt;code&gt;transformKql&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;source
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| extend TimeGenerated = todatetime(timestamp)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| project TimeGenerated, ActionId = actionId, ActivityId = activityId, ActorUPN = actorUPN,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Area = area, Category = category, Data = data, Details = details, Id = id,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; IpAddress = ipAddress, ProjectName = projectName, ScopeType = scopeType /* ...etc... */
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This is a sweet shortcut: since the transform expects the &lt;strong&gt;raw lowercase fields&lt;/strong&gt; exactly the way the Azure DevOps API spits them out (&lt;code&gt;actionId&lt;/code&gt;, &lt;code&gt;timestamp&lt;/code&gt;, &lt;code&gt;data&lt;/code&gt;&amp;hellip;), you just forward the API payload &lt;strong&gt;as-is&lt;/strong&gt; - zero reshaping in the Logic App.&lt;/p&gt;
+&lt;p&gt;Pull these three values (portal or CLI, your call):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;RG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&amp;lt;dcr-resource-group&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;DCR&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&amp;lt;your-dcr-name&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Immutable ID (goes in the POST URL)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;az monitor data-collection rule show -g &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$RG&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$DCR&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; --query &lt;span class="s2"&gt;&amp;#34;immutableId&amp;#34;&lt;/span&gt; -o tsv
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# The input stream name&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;az monitor data-collection rule show -g &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$RG&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$DCR&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; --query &lt;span class="s2"&gt;&amp;#34;streamDeclarations&amp;#34;&lt;/span&gt; -o json
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# The DCE this DCR uses -&amp;gt; its Logs Ingestion endpoint&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;DCE_ID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;az monitor data-collection rule show -g &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$RG&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$DCR&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; --query &lt;span class="s2"&gt;&amp;#34;dataCollectionEndpointId&amp;#34;&lt;/span&gt; -o tsv&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;az monitor data-collection endpoint show --ids &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$DCE_ID&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; --query &lt;span class="s2"&gt;&amp;#34;logsIngestion.endpoint&amp;#34;&lt;/span&gt; -o tsv
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+👉
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+At this point you&amp;rsquo;re holding: the &lt;strong&gt;DCE ingestion endpoint&lt;/strong&gt;, the &lt;strong&gt;DCR immutable ID&lt;/strong&gt;, and the &lt;strong&gt;stream name&lt;/strong&gt; (&lt;code&gt;Custom-ADOAuditLogs&lt;/code&gt;).
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h3 id="assign-the-dcr-permission-to-the-service-principal"&gt;Assign the DCR Permission to the Service Principal
+&lt;/h3&gt;&lt;p&gt;The service principal has to be allowed to write through the DCR, and the role that unlocks that is &lt;strong&gt;Monitoring Metrics Publisher&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Open the DCR → &lt;strong&gt;Access control (IAM) → Add role assignment → Monitoring Metrics Publisher →&lt;/strong&gt; pick your app → &lt;strong&gt;Review + assign&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Or, if you&amp;rsquo;d rather stay in the terminal:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;DCR_ID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;az monitor data-collection rule show -g &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$RG&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$DCR&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; --query id -o tsv&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;az role assignment create &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --assignee &lt;span class="s2"&gt;&amp;#34;&amp;lt;client-id&amp;gt;&amp;#34;&lt;/span&gt; &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --role &lt;span class="s2"&gt;&amp;#34;Monitoring Metrics Publisher&amp;#34;&lt;/span&gt; &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --scope &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$DCR_ID&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+👉
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Role propagation can drag on for &lt;strong&gt;5-10 minutes&lt;/strong&gt;. If your first POST comes back &lt;strong&gt;403&lt;/strong&gt;, nine times out of ten this is the culprit - grab a coffee and try again.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h3 id="build-the-logic-app"&gt;Build the Logic App
+&lt;/h3&gt;&lt;p&gt;Create a &lt;strong&gt;Logic App&lt;/strong&gt;, then wire up this sequence in the designer.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Trigger - Recurrence:&lt;/strong&gt; every &lt;code&gt;5&lt;/code&gt; minutes.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Compose -&lt;/strong&gt; &lt;code&gt;startTime&lt;/code&gt;&lt;strong&gt;:&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;addMinutes(utcNow(), -5)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="3"&gt;
+&lt;li&gt;&lt;strong&gt;Compose -&lt;/strong&gt; &lt;code&gt;endTime&lt;/code&gt;&lt;strong&gt;:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;utcNow()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="4"&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Get Secret&lt;/strong&gt; from Key Vault (next section)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;HTTP - GET (read the audit log):&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Method:&lt;/strong&gt; &lt;code&gt;GET&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;URI:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://auditservice.dev.azure.com/&amp;lt;your-org&amp;gt;/_apis/audit/auditlog?startTime=@{outputs(&amp;#39;startTime&amp;#39;)}&amp;amp;endTime=@{outputs(&amp;#39;endTime&amp;#39;)}&amp;amp;api-version=7.2-preview.1
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Authentication → Active Directory OAuth:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Field&lt;/th&gt;
+&lt;th&gt;Value&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Authority&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;https://login.microsoftonline.com&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Tenant&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;&amp;lt;tenant-id&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Audience&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;499b84ac-1321-427f-aa17-267ca6975798&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Client ID&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;&amp;lt;client-id&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Credential type&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;Secret&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Secret&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;(the client secret - we swap this for Key Vault in Step 6)&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;6.&lt;strong&gt;Condition - only keep going if there are actually events:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;length(body(&amp;#39;HTTP_GET&amp;#39;)?[&amp;#39;decoratedAuditLogEntries&amp;#39;]) is greater than 0
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="7"&gt;
+&lt;li&gt;&lt;strong&gt;HTTP - POST (ship it to Sentinel), inside the True branch:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Method:&lt;/strong&gt; &lt;code&gt;POST&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;URI:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;lt;DCE-ingestion-endpoint&amp;gt;/dataCollectionRules/&amp;lt;dcr-immutable-id&amp;gt;/streams/Custom-ADOAuditLogs?api-version=2023-01-01
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Headers:&lt;/strong&gt; &lt;code&gt;Content-Type: application/json&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Body:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;@body(&amp;#39;HTTP_GET&amp;#39;)?[&amp;#39;decoratedAuditLogEntries&amp;#39;]
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Authentication → Active Directory OAuth:&lt;/strong&gt; same setup as the GET, just switch the &lt;strong&gt;Audience&lt;/strong&gt; to &lt;code&gt;https://monitor.azure.com&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/logic_app.jpg"
+width="529"
+height="1050"
+srcset="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/logic_app_hu_902146c8a32da752.jpg 480w, https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/logic_app_hu_e77bdad572f92a2f.jpg 1024w"
+loading="lazy"
+alt="LogicApp"
+class="gallery-image"
+data-flex-grow="50"
+data-flex-basis="120px"
+&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="move-the-secret-into-key-vault"&gt;Move the Secret into Key Vault
+&lt;/h3&gt;&lt;p&gt;Now let&amp;rsquo;s kill that clear-text secret for good.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Store the client secret in &lt;strong&gt;Key Vault&lt;/strong&gt; as a secret (e.g. &lt;code&gt;ADOSentinel-LogicApp-Secret&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Add a &lt;strong&gt;Key Vault → Get secret&lt;/strong&gt; action right at the top of the workflow.&lt;/li&gt;
+&lt;li&gt;In &lt;strong&gt;both&lt;/strong&gt; HTTP actions, replace the &lt;code&gt;Secret&lt;/code&gt; value with a reference to that action:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;@{body(&amp;#39;Get_secret&amp;#39;)?[&amp;#39;value&amp;#39;]}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;⚠️ Give the Logic App&amp;rsquo;s connection &lt;strong&gt;Get&lt;/strong&gt; permission on the vault&amp;rsquo;s secrets (Key Vault &lt;strong&gt;Access policies&lt;/strong&gt; → the &lt;em&gt;Azure Logic Apps&lt;/em&gt; connection → &lt;code&gt;Get&lt;/code&gt;).
+&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/key_vault.jpg"
+width="2343"
+height="432"
+srcset="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/key_vault_hu_e684ad55d8eae0e7.jpg 480w, https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/key_vault_hu_7710f848e1ed8e5.jpg 1024w"
+loading="lazy"
+alt="Key Vault access policy"
+class="gallery-image"
+data-flex-grow="542"
+data-flex-basis="1301px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+👉
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+From this point on there&amp;rsquo;s &lt;strong&gt;no secret anywhere in the workflow definition&lt;/strong&gt; - the Logic App fetches it at runtime, and Logic Apps flags that action&amp;rsquo;s inputs/outputs as secured.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h3 id="verify-events-land-in-the-siem"&gt;Verify Events Land in the SIEM
+&lt;/h3&gt;&lt;p&gt;Kick off the workflow. The POST should hand you back a &lt;strong&gt;204 No Content&lt;/strong&gt;. Then jump into &lt;strong&gt;Sentinel → Logs&lt;/strong&gt; - just remember &lt;code&gt;TimeGenerated&lt;/code&gt; equals the &lt;em&gt;original event time&lt;/em&gt;, so query by ingestion time unless you enjoy chasing your own tail:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ADOAuditLogs_CL
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| where ingestion_time() &amp;gt; ago(30m)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| sort by TimeGenerated desc
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;And because of that intentional window overlap, dedupe on the unique event &lt;code&gt;Id&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ADOAuditLogs_CL
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| summarize arg_max(TimeGenerated, *) by Id
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Within a minute of a clean POST (give it a touch longer the very first time a custom table gets written to), your Azure DevOps audit events pop up in Sentinel - pulled in by a service principal, with exactly zero standing user credentials behind them.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="final-considerations"&gt;Final Considerations
+&lt;/h2&gt;&lt;p&gt;The native connector isn&amp;rsquo;t &lt;em&gt;broken&lt;/em&gt; - it&amp;rsquo;s just built around an authentication model that has no business being in a security-conscious environment.
+Chaining an org-wide audit feed to a &lt;strong&gt;human&amp;rsquo;s refresh token&lt;/strong&gt; or a &lt;strong&gt;standing service account&lt;/strong&gt; is trading long-term risk for short-term convenience, and that&amp;rsquo;s a deal I&amp;rsquo;m not taking.&lt;/p&gt;
+&lt;p&gt;Rebuild the pipeline around a &lt;strong&gt;service principal&lt;/strong&gt;, an explicit &lt;strong&gt;DCR&lt;/strong&gt;, and a &lt;strong&gt;Key Vault&lt;/strong&gt;-backed secret, and here&amp;rsquo;s what you walk away with:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;No interactive login&lt;/strong&gt; and no dependency on any single person sticking around.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Explicit, scoped permissions&lt;/strong&gt; (audit-read on Azure DevOps, &lt;code&gt;Monitoring Metrics Publisher&lt;/code&gt; on the DCR) that are dead simple to audit and revoke.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;No secrets in clear text&lt;/strong&gt; once the value lives in Key Vault - plus a clean runway to swap it for a certificate or a managed identity later on.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Same destination table, same Sentinel experience - but an identity you actually control.
+That&amp;rsquo;s the whole point!&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+🤝
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;strong&gt;Running into trouble swapping the native connector for this pipeline?&lt;/strong&gt;
+Don&amp;rsquo;t bang your head against it on your own - reach out to me on &lt;strong&gt;&lt;a class="link" href="https://www.linkedin.com/in/roberto-d-andrea/" target="_blank" rel="noopener"
+&gt;LinkedIn&lt;/a&gt;&lt;/strong&gt; and I&amp;rsquo;ll gladly give you a hand getting it wired up.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Sources and References:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Azure DevOps Audit Log API: &lt;a class="link" href="https://learn.microsoft.com/en-us/rest/api/azure/devops/audit/audit-log" target="_blank" rel="noopener"
+&gt;https://learn.microsoft.com/en-us/rest/api/azure/devops/audit/audit-log&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Logs Ingestion API in Azure Monitor: &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/azure-monitor/logs/logs-ingestion-api-overview" target="_blank" rel="noopener"
+&gt;https://learn.microsoft.com/en-us/azure/azure-monitor/logs/logs-ingestion-api-overview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Data collection rules (DCR) overview: &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-collection-rule-overview" target="_blank" rel="noopener"
+&gt;https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-collection-rule-overview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Service principals &amp;amp; managed identities in Azure DevOps: &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity" target="_blank" rel="noopener"
+&gt;https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Authenticate Logic Apps with managed identity / OAuth: &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/logic-apps/authenticate-with-managed-identity" target="_blank" rel="noopener"
+&gt;https://learn.microsoft.com/en-us/azure/logic-apps/authenticate-with-managed-identity&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>
