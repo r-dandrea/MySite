@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Microsoft Sentinel on Roberto D'Andrea</title><link>https://robertodandrea.com/tags/microsoft-sentinel/</link><description>Recent content in Microsoft Sentinel on Roberto D'Andrea</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 06 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://robertodandrea.com/tags/microsoft-sentinel/index.xml" rel="self" type="application/rss+xml"/><item><title>No Account, No Problem - Ingesting Azure DevOps Audit Logs into Sentinel with a Service Principal</title><link>https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/</link><pubDate>Mon, 06 Jul 2026 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/</guid><description>&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/pipeline.png" alt="Featured image of post No Account, No Problem - Ingesting Azure DevOps Audit Logs into Sentinel with a Service Principal" /&gt;&lt;h1 id="no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal"&gt;No Account, No Problem: Ingesting Azure DevOps Audit Logs into Sentinel with a Service Principal
+&lt;/h1&gt;&lt;p&gt;🕑 &lt;em&gt;Reading time: ~10 minutes&lt;/em&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+📢
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;em&gt;Short version: the native Azure DevOps Audit Logs connector for Microsoft Sentinel is a governance headache waiting to happen. Here&amp;rsquo;s how I tossed it out and rolled my own pipeline that runs entirely on a service principal - no user sign-in, no sketchy service account, and by the end, no secrets sitting around in clear text either.&lt;/em&gt;
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;📚 &lt;strong&gt;Not here for the theory?&lt;/strong&gt; Skip to &lt;a class="link" href="#the-build-step-by-step" &gt;The Build&lt;/a&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="-why-i-refused-to-use-the-connectors-account"&gt;⚠️ Why I Refused to Use the Connector&amp;rsquo;s Account
+&lt;/h2&gt;&lt;p&gt;Microsoft Sentinel ships with a codeless connector called &lt;strong&gt;Azure DevOps Audit Logs (via Codeless Connector Platform)&lt;/strong&gt;.
+&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/azuredevops_connector.jpg"
+width="1753"
+height="736"
+srcset="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/azuredevops_connector_hu_c19c56dd21646b47.jpg 480w, https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/azuredevops_connector_hu_fab5d352a557b0eb.jpg 1024w"
+loading="lazy"
+alt="AzureDevOps Audit Logs connector"
+class="gallery-image"
+data-flex-grow="238"
+data-flex-basis="571px"
+&gt;
+Looks handy on paper. But the second you hit &lt;strong&gt;Connect&lt;/strong&gt;, it drags you through an &lt;strong&gt;OAuth authorization-code&lt;/strong&gt; flow and makes you &lt;strong&gt;sign in with an account&lt;/strong&gt;. Whatever account you pick becomes the identity that reads your audit logs. Forever.&lt;/p&gt;
+&lt;p&gt;And here&amp;rsquo;s the thing - every option Microsoft leaves on the table is bad news from a security and ops point of view:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Why it&amp;rsquo;s a problem&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;My own user account&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;The day I revoke my sessions, rotate my password, or walk out the door, that refresh token dies and &lt;strong&gt;your logs silently dry up&lt;/strong&gt;. Pinning an org-wide security feed to one human being is a single point of failure, full stop.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;A shared service account&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Congrats, now you own a licensed user with a password, an MFA exclusion (because automation breaks otherwise), and a long-lived refresh token. That&amp;rsquo;s exactly the kind of standing credential attackers dream about. Service accounts are &lt;strong&gt;not&lt;/strong&gt; the move in 2026.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;App Client ID only&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Not happening - the authorization-code flow &lt;strong&gt;demands&lt;/strong&gt; an interactive user login. You can&amp;rsquo;t just hand it a client ID and call it a day.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;So I ditched the connector entirely and built the whole pipeline &lt;strong&gt;from scratch on a Service Principal (App Registration)&lt;/strong&gt;. It authenticates non-interactively, its permissions are spelled out and tightly scoped, and in the final step I shove its secret into &lt;strong&gt;Key Vault&lt;/strong&gt; so nothing sensitive ever lives in plain sight.&lt;/p&gt;
+&lt;p&gt;{{}}Azure DevOps audit events still land in Sentinel through the &lt;strong&gt;exact same custom table&lt;/strong&gt; the connector would&amp;rsquo;ve used (&lt;code&gt;ADOAuditLogs_CL&lt;/code&gt;) - but the identity behind the wheel is a service principal I fully own. No human, no service account, no nasty revocation surprises down the road. {{}}&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="how-the-pipeline-works"&gt;How the Pipeline Works
+&lt;/h2&gt;&lt;p&gt;Before we get our hands dirty, here&amp;rsquo;s the mental model. The Logic App is just the orchestrator - it doesn&amp;rsquo;t write anything itself. The data actually lands in Log Analytics through a &lt;strong&gt;Data Collection Rule (DCR)&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;Azure DevOps to Microsoft Sentinel ingestion pipeline built on a service principal: a Logic App reads audit logs via HTTP GET, checks whether events exist, then POSTs them through a Data Collection Endpoint and Data Collection Rule into the ADOAuditLogs_CL table in Microsoft Sentinel, with the secret stored in Key Vault
+&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/pipeline.svg"
+loading="lazy"
+alt="Azure DevOps to Microsoft Sentinel ingestion pipeline"
+&gt;&lt;/p&gt;
+&lt;p&gt;Two different tokens, one service principal:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the &lt;strong&gt;GET&lt;/strong&gt; grabs a token for &lt;strong&gt;Azure DevOps&lt;/strong&gt; (resource ID &lt;code&gt;499b84ac-1321-427f-aa17-267ca6975798&lt;/code&gt;),&lt;/li&gt;
+&lt;li&gt;the &lt;strong&gt;POST&lt;/strong&gt; grabs a token for &lt;code&gt;https://monitor.azure.com&lt;/code&gt; to write through the DCR.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;🚨 The DCR is &lt;strong&gt;not optional&lt;/strong&gt; - don&amp;rsquo;t skip it. You can&amp;rsquo;t POST straight into a custom table if you do not have a DCR.&lt;br&gt;
+The Logs Ingestion API always writes &lt;em&gt;through&lt;/em&gt; a DCR, which checks the incoming schema, runs an optional KQL transform, and routes the rows into the destination table.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="the-build-step-by-step"&gt;The Build (Step by Step)
+&lt;/h2&gt;&lt;h3 id="prerequisites"&gt;Prerequisites
+&lt;/h3&gt;&lt;p&gt;Before starting building the process we need:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Azure DevOps organization sits on the &lt;strong&gt;same Entra ID tenant&lt;/strong&gt; as your Azure subscription.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Auditing is turned on&lt;/strong&gt; on AzureDevOps site (&lt;code&gt;Organization Settings → Policies → Log audit events&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Log Analytics workspace&lt;/strong&gt; on Microsoft Sentinel.&lt;/li&gt;
+&lt;li&gt;Permissions:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Owner/Contributor&lt;/strong&gt; on the resource grou&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Project Collection Administrator&lt;/strong&gt; on Azure DevOps.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="create-the-app-registration"&gt;Create the App Registration
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Entra ID → App registrations → New registration&lt;/strong&gt;.
+Name it something obvious like &lt;code&gt;AzureDevOpsAuditLog&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Copy the &lt;strong&gt;Application (client) ID&lt;/strong&gt; and the &lt;strong&gt;Directory (tenant) ID&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Head to &lt;strong&gt;Certificates &amp;amp; secrets → New client secret&lt;/strong&gt;, and copy the &lt;strong&gt;Value&lt;/strong&gt; (the value, &lt;em&gt;not&lt;/em&gt; the Secret ID - and copy it now, because you only get to see it once).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;💡 Stash that secret somewhere safe for the moment. In &lt;strong&gt;Step 6&lt;/strong&gt; we&amp;rsquo;ll tuck it into Key Vault so it never lives inside the workflow.
+&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/service_principal.jpg"
+width="1630"
+height="833"
+srcset="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/service_principal_hu_1a03b8f747784080.jpg 480w, https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/service_principal_hu_531524d4da367d10.jpg 1024w"
+loading="lazy"
+alt="AzureDevOps - App Registration"
+class="gallery-image"
+data-flex-grow="195"
+data-flex-basis="469px"
+&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="add-the-service-principal-to-azure-devops"&gt;Add the Service Principal to Azure DevOps
+&lt;/h3&gt;&lt;p&gt;Azure DevOps treats service principals and managed identities as first-class members of an organization, so we hand it access exactly like we would a regular user.&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+⚠️
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Before you start, a heads-up on permissions: this step is &lt;strong&gt;admin territory&lt;/strong&gt;. To add a member to the organization, set its access level, and manage group membership, you need to be a &lt;strong&gt;Project Collection Administrator (PCA)&lt;/strong&gt; - or the &lt;strong&gt;Organization Owner&lt;/strong&gt; - on the Azure DevOps org.
+A regular user account can&amp;rsquo;t do any of this. If you&amp;rsquo;re not a PCA, you&amp;rsquo;ll need someone who is to run these steps for you (or to grant you the role first).
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;ol&gt;
+&lt;li&gt;Navigate over &lt;code&gt;dev.azure.com/&amp;lt;your-org&amp;gt;&lt;/code&gt; → &lt;strong&gt;Organization Settings → Users → Add users&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Search for the app by &lt;strong&gt;name&lt;/strong&gt; (&lt;code&gt;AzureDevOpsAuditLog&lt;/code&gt;) or by &lt;strong&gt;Client ID&lt;/strong&gt;, and set &lt;strong&gt;Access level = Basic&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Give it the right to &lt;strong&gt;read the audit log&lt;/strong&gt;.
+Auditing lives at the organization level, so drop the service principal into a group that can read it (for example &lt;strong&gt;Project Collection Administrators&lt;/strong&gt;).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h3 id="find-the-dcr--copy-the-log-ingestion-endpoint"&gt;Find the DCR &amp;amp; Copy the Log Ingestion Endpoint
+&lt;/h3&gt;&lt;p&gt;If you&amp;rsquo;d already given the native connector a shot, Sentinel has quietly created a DCR for you (mine was tagged &lt;code&gt;createdBy: Sentinel&lt;/code&gt;) that points to &lt;code&gt;ADOAuditLogs_CL&lt;/code&gt;.
+You can &lt;strong&gt;reuse that one&lt;/strong&gt; or build your own dedicated DCR - either way, you need three values out of it.
+&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/DCR.jpg"
+width="1677"
+height="473"
+srcset="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/DCR_hu_5aee031afabefe78.jpg 480w, https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/DCR_hu_34413cbc9ed15054.jpg 1024w"
+loading="lazy"
+alt="DCR_AzureDevOps"
+class="gallery-image"
+data-flex-grow="354"
+data-flex-basis="850px"
+&gt;
+The DCR declares its input stream as &lt;code&gt;Custom-ADOAuditLogs&lt;/code&gt; and handles the field mapping itself inside its &lt;code&gt;transformKql&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;source
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| extend TimeGenerated = todatetime(timestamp)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| project TimeGenerated, ActionId = actionId, ActivityId = activityId, ActorUPN = actorUPN,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Area = area, Category = category, Data = data, Details = details, Id = id,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; IpAddress = ipAddress, ProjectName = projectName, ScopeType = scopeType /* ...etc... */
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This is a sweet shortcut: since the transform expects the &lt;strong&gt;raw lowercase fields&lt;/strong&gt; exactly the way the Azure DevOps API spits them out (&lt;code&gt;actionId&lt;/code&gt;, &lt;code&gt;timestamp&lt;/code&gt;, &lt;code&gt;data&lt;/code&gt;&amp;hellip;), you just forward the API payload &lt;strong&gt;as-is&lt;/strong&gt; - zero reshaping in the Logic App.&lt;/p&gt;
+&lt;p&gt;Pull these three values (portal or CLI, your call):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;RG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&amp;lt;dcr-resource-group&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;DCR&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&amp;lt;your-dcr-name&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Immutable ID (goes in the POST URL)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;az monitor data-collection rule show -g &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$RG&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$DCR&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; --query &lt;span class="s2"&gt;&amp;#34;immutableId&amp;#34;&lt;/span&gt; -o tsv
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# The input stream name&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;az monitor data-collection rule show -g &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$RG&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$DCR&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; --query &lt;span class="s2"&gt;&amp;#34;streamDeclarations&amp;#34;&lt;/span&gt; -o json
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# The DCE this DCR uses -&amp;gt; its Logs Ingestion endpoint&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;DCE_ID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;az monitor data-collection rule show -g &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$RG&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$DCR&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; --query &lt;span class="s2"&gt;&amp;#34;dataCollectionEndpointId&amp;#34;&lt;/span&gt; -o tsv&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;az monitor data-collection endpoint show --ids &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$DCE_ID&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; --query &lt;span class="s2"&gt;&amp;#34;logsIngestion.endpoint&amp;#34;&lt;/span&gt; -o tsv
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+👉
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+At this point you&amp;rsquo;re holding: the &lt;strong&gt;DCE ingestion endpoint&lt;/strong&gt;, the &lt;strong&gt;DCR immutable ID&lt;/strong&gt;, and the &lt;strong&gt;stream name&lt;/strong&gt; (&lt;code&gt;Custom-ADOAuditLogs&lt;/code&gt;).
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h3 id="assign-the-dcr-permission-to-the-service-principal"&gt;Assign the DCR Permission to the Service Principal
+&lt;/h3&gt;&lt;p&gt;The service principal has to be allowed to write through the DCR, and the role that unlocks that is &lt;strong&gt;Monitoring Metrics Publisher&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Open the DCR → &lt;strong&gt;Access control (IAM) → Add role assignment → Monitoring Metrics Publisher →&lt;/strong&gt; pick your app → &lt;strong&gt;Review + assign&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Or, if you&amp;rsquo;d rather stay in the terminal:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;DCR_ID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;az monitor data-collection rule show -g &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$RG&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$DCR&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; --query id -o tsv&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;az role assignment create &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --assignee &lt;span class="s2"&gt;&amp;#34;&amp;lt;client-id&amp;gt;&amp;#34;&lt;/span&gt; &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --role &lt;span class="s2"&gt;&amp;#34;Monitoring Metrics Publisher&amp;#34;&lt;/span&gt; &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --scope &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$DCR_ID&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+👉
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+Role propagation can drag on for &lt;strong&gt;5-10 minutes&lt;/strong&gt;. If your first POST comes back &lt;strong&gt;403&lt;/strong&gt;, nine times out of ten this is the culprit - grab a coffee and try again.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h3 id="build-the-logic-app"&gt;Build the Logic App
+&lt;/h3&gt;&lt;p&gt;Create a &lt;strong&gt;Logic App&lt;/strong&gt;, then wire up this sequence in the designer.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Trigger - Recurrence:&lt;/strong&gt; every &lt;code&gt;5&lt;/code&gt; minutes.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Compose -&lt;/strong&gt; &lt;code&gt;startTime&lt;/code&gt;&lt;strong&gt;:&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;addMinutes(utcNow(), -5)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="3"&gt;
+&lt;li&gt;&lt;strong&gt;Compose -&lt;/strong&gt; &lt;code&gt;endTime&lt;/code&gt;&lt;strong&gt;:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;utcNow()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="4"&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Get Secret&lt;/strong&gt; from Key Vault (next section)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;HTTP - GET (read the audit log):&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Method:&lt;/strong&gt; &lt;code&gt;GET&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;URI:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://auditservice.dev.azure.com/&amp;lt;your-org&amp;gt;/_apis/audit/auditlog?startTime=@{outputs(&amp;#39;startTime&amp;#39;)}&amp;amp;endTime=@{outputs(&amp;#39;endTime&amp;#39;)}&amp;amp;api-version=7.2-preview.1
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Authentication → Active Directory OAuth:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Field&lt;/th&gt;
+&lt;th&gt;Value&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Authority&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;https://login.microsoftonline.com&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Tenant&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;&amp;lt;tenant-id&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Audience&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;499b84ac-1321-427f-aa17-267ca6975798&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Client ID&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;&amp;lt;client-id&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Credential type&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;Secret&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Secret&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;(the client secret - we swap this for Key Vault in Step 6)&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;6.&lt;strong&gt;Condition - only keep going if there are actually events:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;length(body(&amp;#39;HTTP_GET&amp;#39;)?[&amp;#39;decoratedAuditLogEntries&amp;#39;]) is greater than 0
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="7"&gt;
+&lt;li&gt;&lt;strong&gt;HTTP - POST (ship it to Sentinel), inside the True branch:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Method:&lt;/strong&gt; &lt;code&gt;POST&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;URI:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;lt;DCE-ingestion-endpoint&amp;gt;/dataCollectionRules/&amp;lt;dcr-immutable-id&amp;gt;/streams/Custom-ADOAuditLogs?api-version=2023-01-01
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Headers:&lt;/strong&gt; &lt;code&gt;Content-Type: application/json&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Body:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;@body(&amp;#39;HTTP_GET&amp;#39;)?[&amp;#39;decoratedAuditLogEntries&amp;#39;]
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Authentication → Active Directory OAuth:&lt;/strong&gt; same setup as the GET, just switch the &lt;strong&gt;Audience&lt;/strong&gt; to &lt;code&gt;https://monitor.azure.com&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/logic_app.jpg"
+width="529"
+height="1050"
+srcset="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/logic_app_hu_902146c8a32da752.jpg 480w, https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/logic_app_hu_e77bdad572f92a2f.jpg 1024w"
+loading="lazy"
+alt="LogicApp"
+class="gallery-image"
+data-flex-grow="50"
+data-flex-basis="120px"
+&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="move-the-secret-into-key-vault"&gt;Move the Secret into Key Vault
+&lt;/h3&gt;&lt;p&gt;Now let&amp;rsquo;s kill that clear-text secret for good.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Store the client secret in &lt;strong&gt;Key Vault&lt;/strong&gt; as a secret (e.g. &lt;code&gt;ADOSentinel-LogicApp-Secret&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Add a &lt;strong&gt;Key Vault → Get secret&lt;/strong&gt; action right at the top of the workflow.&lt;/li&gt;
+&lt;li&gt;In &lt;strong&gt;both&lt;/strong&gt; HTTP actions, replace the &lt;code&gt;Secret&lt;/code&gt; value with a reference to that action:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;@{body(&amp;#39;Get_secret&amp;#39;)?[&amp;#39;value&amp;#39;]}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;⚠️ Give the Logic App&amp;rsquo;s connection &lt;strong&gt;Get&lt;/strong&gt; permission on the vault&amp;rsquo;s secrets (Key Vault &lt;strong&gt;Access policies&lt;/strong&gt; → the &lt;em&gt;Azure Logic Apps&lt;/em&gt; connection → &lt;code&gt;Get&lt;/code&gt;).
+&lt;img src="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/key_vault.jpg"
+width="2343"
+height="432"
+srcset="https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/key_vault_hu_e684ad55d8eae0e7.jpg 480w, https://robertodandrea.com/post/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/no-account-no-problem-ingesting-azure-devops-audit-logs-into-sentinel-with-a-service-principal/key_vault_hu_7710f848e1ed8e5.jpg 1024w"
+loading="lazy"
+alt="Key Vault access policy"
+class="gallery-image"
+data-flex-grow="542"
+data-flex-basis="1301px"
+&gt;&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+👉
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+From this point on there&amp;rsquo;s &lt;strong&gt;no secret anywhere in the workflow definition&lt;/strong&gt; - the Logic App fetches it at runtime, and Logic Apps flags that action&amp;rsquo;s inputs/outputs as secured.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h3 id="verify-events-land-in-the-siem"&gt;Verify Events Land in the SIEM
+&lt;/h3&gt;&lt;p&gt;Kick off the workflow. The POST should hand you back a &lt;strong&gt;204 No Content&lt;/strong&gt;. Then jump into &lt;strong&gt;Sentinel → Logs&lt;/strong&gt; - just remember &lt;code&gt;TimeGenerated&lt;/code&gt; equals the &lt;em&gt;original event time&lt;/em&gt;, so query by ingestion time unless you enjoy chasing your own tail:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ADOAuditLogs_CL
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| where ingestion_time() &amp;gt; ago(30m)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| sort by TimeGenerated desc
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;And because of that intentional window overlap, dedupe on the unique event &lt;code&gt;Id&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ADOAuditLogs_CL
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| summarize arg_max(TimeGenerated, *) by Id
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Within a minute of a clean POST (give it a touch longer the very first time a custom table gets written to), your Azure DevOps audit events pop up in Sentinel - pulled in by a service principal, with exactly zero standing user credentials behind them.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="final-considerations"&gt;Final Considerations
+&lt;/h2&gt;&lt;p&gt;The native connector isn&amp;rsquo;t &lt;em&gt;broken&lt;/em&gt; - it&amp;rsquo;s just built around an authentication model that has no business being in a security-conscious environment.
+Chaining an org-wide audit feed to a &lt;strong&gt;human&amp;rsquo;s refresh token&lt;/strong&gt; or a &lt;strong&gt;standing service account&lt;/strong&gt; is trading long-term risk for short-term convenience, and that&amp;rsquo;s a deal I&amp;rsquo;m not taking.&lt;/p&gt;
+&lt;p&gt;Rebuild the pipeline around a &lt;strong&gt;service principal&lt;/strong&gt;, an explicit &lt;strong&gt;DCR&lt;/strong&gt;, and a &lt;strong&gt;Key Vault&lt;/strong&gt;-backed secret, and here&amp;rsquo;s what you walk away with:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;No interactive login&lt;/strong&gt; and no dependency on any single person sticking around.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Explicit, scoped permissions&lt;/strong&gt; (audit-read on Azure DevOps, &lt;code&gt;Monitoring Metrics Publisher&lt;/code&gt; on the DCR) that are dead simple to audit and revoke.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;No secrets in clear text&lt;/strong&gt; once the value lives in Key Vault - plus a clean runway to swap it for a certificate or a managed identity later on.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Same destination table, same Sentinel experience - but an identity you actually control.
+That&amp;rsquo;s the whole point!&lt;/p&gt;
+&lt;div style="
+background: #fff;
+border-left: 7px solid #d1d5db;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;
+🤝
+&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;strong&gt;Running into trouble swapping the native connector for this pipeline?&lt;/strong&gt;
+Don&amp;rsquo;t bang your head against it on your own - reach out to me on &lt;strong&gt;&lt;a class="link" href="https://www.linkedin.com/in/roberto-d-andrea/" target="_blank" rel="noopener"
+&gt;LinkedIn&lt;/a&gt;&lt;/strong&gt; and I&amp;rsquo;ll gladly give you a hand getting it wired up.
+&lt;/div&gt;
+&lt;style&gt;
+div[style*='border-left: 7px'][style*='background'] a {
+color: #2563eb !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #1d4ed8 !important;
+}
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] {
+background: #232323 !important;
+color: #eee !important;
+border-left: 7px solid #6b7280 !important;
+}
+div[style*='background: #fff'][style*='border-left: 7px solid #d1d5db'] strong {
+color: #eee !important;
+}
+div[style*='border-left: 7px'][style*='background'] a {
+color: #86b7fd !important;
+text-decoration: underline;
+}
+div[style*='border-left: 7px'][style*='background'] a:hover {
+color: #f9fafb !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Sources and References:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Azure DevOps Audit Log API: &lt;a class="link" href="https://learn.microsoft.com/en-us/rest/api/azure/devops/audit/audit-log" target="_blank" rel="noopener"
+&gt;https://learn.microsoft.com/en-us/rest/api/azure/devops/audit/audit-log&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Logs Ingestion API in Azure Monitor: &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/azure-monitor/logs/logs-ingestion-api-overview" target="_blank" rel="noopener"
+&gt;https://learn.microsoft.com/en-us/azure/azure-monitor/logs/logs-ingestion-api-overview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Data collection rules (DCR) overview: &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-collection-rule-overview" target="_blank" rel="noopener"
+&gt;https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-collection-rule-overview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Service principals &amp;amp; managed identities in Azure DevOps: &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity" target="_blank" rel="noopener"
+&gt;https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Authenticate Logic Apps with managed identity / OAuth: &lt;a class="link" href="https://learn.microsoft.com/en-us/azure/logic-apps/authenticate-with-managed-identity" target="_blank" rel="noopener"
+&gt;https://learn.microsoft.com/en-us/azure/logic-apps/authenticate-with-managed-identity&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

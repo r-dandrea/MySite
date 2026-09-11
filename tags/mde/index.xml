@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>MDE on Roberto D'Andrea</title><link>https://robertodandrea.com/tags/mde/</link><description>Recent content in MDE on Roberto D'Andrea</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 23 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://robertodandrea.com/tags/mde/index.xml" rel="self" type="application/rss+xml"/><item><title>Mac Secured? Not Really—When Defender for Endpoint Fails to Upgrade from Version 2506</title><link>https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/</link><pubDate>Fri, 23 Jan 2026 00:00:00 +0000</pubDate><guid>https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/</guid><description>&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/banner_update_error.jpeg"
+width="1536"
+height="1024"
+srcset="https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/banner_update_error_hu_4a95c0c70294b4a6.jpeg 480w, https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/banner_update_error_hu_9739dd84defde4ab.jpeg 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="150"
+data-flex-basis="360px"
+&gt;&lt;/p&gt;
+&lt;h2 id="defender-for-endpoint-upgrade-failure-on-macos--what-you-need-to-know"&gt;&lt;strong&gt;Defender for Endpoint Upgrade Failure on macOS — What You Need to Know&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Are your Intune giving you a false sense of security?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;During my experience leading endpoint security operations, I have directly encountered the widespread challenge of upgrading Microsoft Defender for Endpoint on macOS devices managed via Intune.&lt;br&gt;
+This issue which the transition from version 2506 fails silently — poses a concrete threat to an organization’s operational resilience and compliance.&lt;br&gt;
+This guide outlines not only the documented solution, but also the investigative steps and operational safeguards I&amp;rsquo;ve found essential to detect and remediate devices that are not up to date with Microsoft Defender for Endpoint (MDE).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Problem Overview and Technical Root Cause&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The upgrade process from version 2506 of Defender for Endpoint on macOS, when orchestrated through Intune, can fail silently. This leaves legacy files or partial installations which prevent successful deployment of newer versions. Endpoints may look healthy in Intune dashboards, but lack the latest security and threat protection—creating a false sense of compliance and a genuine exposure to advanced threats.&lt;/p&gt;
+&lt;p&gt;This false sense of security is not only a compliance issue but also a genuine risk for exposure to advanced threats.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Defender_issue.jpg"
+width="1108"
+height="562"
+srcset="https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Defender_issue_hu_a844c6c7a326513f.jpg 480w, https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Defender_issue_hu_7108bf5e27872386.jpg 1024w"
+loading="lazy"
+alt="Microsoft Defender for Endpoint error"
+class="gallery-image"
+data-flex-grow="197"
+data-flex-basis="473px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Through targeted audits, I confirmed that relying solely on Intune compliance indicators can overlook entire device populations that aren’t truly up to date.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="detect---how-i-identified-the-issue"&gt;Detect - How I Identified the Issue
+&lt;/h2&gt;&lt;p&gt;My detection process started when users reported the Defender app icon showing a warning state.&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Defender_icon_error.jpg"
+width="293"
+height="74"
+srcset="https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Defender_icon_error_hu_beb5a37514e1c968.jpg 480w, https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Defender_icon_error_hu_3a84b14a3a3f3122.jpg 1024w"
+loading="lazy"
+alt="MDE warning state"
+class="gallery-image"
+data-flex-grow="395"
+data-flex-basis="950px"
+&gt;&lt;/p&gt;
+&lt;p&gt;So, I decide to established a structured detection phase to identify machines not up to date with Microsoft Defender for Endpoint.&lt;/p&gt;
+&lt;p&gt;To systematically assess the environment, I exported device inventory data from Intune and compared the Defender versions deployed across the macOS fleet. &lt;br&gt;
+This promptly revealed a subset of endpoints still running version 2506, even though Intune was reporting them as compliant.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Intune_MDE_version.jpg"
+width="966"
+height="822"
+srcset="https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Intune_MDE_version_hu_95ad884b70261a41.jpg 480w, https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Intune_MDE_version_hu_25129adaf6cc293d.jpg 1024w"
+loading="lazy"
+alt="MDE version on Intune"
+class="gallery-image"
+data-flex-grow="117"
+data-flex-basis="282px"
+&gt;&lt;/p&gt;
+&lt;p&gt;To ensure comprehensive coverage and pinpoint any machines missed by Intune’s reporting, I complemented this analysis with a KQL query in the Defender portal. &lt;br&gt;
+This allowed for a direct inventory of Defender versions on all macOS devices—crucial for detecting discrepancies and ensuring accuracy.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Here the KQL Query:&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;DeviceTvmInfoGathering
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| where OSPlatform == @&amp;#34;macOS&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| extend mde_version = parse_json(AdditionalFields)[&amp;#34;AvPlatformVersion&amp;#34;]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;//if you want to identify all version comment next row
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| where mde_version == &amp;#34;101.25062.0005&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;| project DeviceName, mde_version
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Combining visual dashboard evidence (Intune screenshot), inventory exports, and Defender KQL queries gives me a reliable and actionable overview of all macOS endpoints’ Defender status.&lt;/p&gt;
+&lt;h2 id="mitigate---structured-remediation-approach"&gt;Mitigate - Structured Remediation Approach
+&lt;/h2&gt;&lt;p&gt;After identifying non-compliant macOS devices, I manually remediated my own Mac first to validate and document an effective upgrade path.&lt;br&gt;
+Here a link of the suggestion coming from Microsoft documentation: &lt;a class="link" href="https://learn.microsoft.com/en-us/defender-endpoint/mac-whatsnew#known-issues" target="_blank" rel="noopener"
+&gt;Microsoft Known-issues&lt;/a&gt;, where I was redirect to GitHub repository that explain all &lt;a class="link" href="https://github.com/microsoft/mdatp-xplat/tree/master/macos/upgrade_from_2506_helper" target="_blank" rel="noopener"
+&gt;GitHub_upgrade_v2506_macOS&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;On my device, I carefully went through each step of the upgrade process—removing legacy Defender files, running the official installer, and personally reviewing system logs and application status.&lt;/p&gt;
+&lt;p&gt;I first ran the command&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mdatp health&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;to inspect the installed Defender for Endpoint version and to confirm that Tamper Protection was enabled—which is the default configuration for managed devices. &lt;br&gt;
+Tamper Protection prevents unauthorized changes to Defender’s security settings, so I needed to temporarily adjust it before proceeding with the upgrade.&lt;/p&gt;
+&lt;p&gt;In order to install the updated package from Microsoft’s GitHub repository, I disabled Tamper Protection on my device by executing:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo mdatp config tamper_protection enforcement-level --value audit&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Tamper_protection_audit_mode.jpg"
+width="990"
+height="779"
+srcset="https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Tamper_protection_audit_mode_hu_87eadf4c2fb9ab5a.jpg 480w, https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Tamper_protection_audit_mode_hu_aa9b9cc1fea3cf4.jpg 1024w"
+loading="lazy"
+alt="Tamper Protection status"
+class="gallery-image"
+data-flex-grow="127"
+data-flex-basis="305px"
+&gt;&lt;/p&gt;
+&lt;p&gt;This action, allowed because I am the device owner, switches tamper protection to audit mode (alternatively, admins can change this setting via the Defender portal). With tamper protection set to audit, I was able to install the .pkg upgrade program as recommended by Microsoft, ensuring a clean transition from the legacy installation.&lt;/p&gt;
+&lt;div style="
+background: #fffbe5;
+border-left: 7px solid #e9c46a;
+padding: 1em;
+margin: 1em 0;
+border-radius: 6px;
+color: #222;
+"&gt;
+&lt;strong&gt;⚠️ Warning&lt;/strong&gt;
+&lt;div style="margin-top:6px;"&gt;
+&lt;p&gt;If you have the appropriate permissions, you can disable Tamper Protection centrally for your devices via the Microsoft Defender security portal:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Go to &lt;strong&gt;Defender portal&lt;/strong&gt; -&amp;gt; &lt;a class="link" href="https://security.microsoft.com" target="_blank" rel="noopener"
+&gt;https://security.microsoft.com&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Go to &lt;strong&gt;Settings&lt;/strong&gt; and select &lt;strong&gt;Endpoint&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Find the &lt;strong&gt;Tamper Protection&lt;/strong&gt; settings and toggle it &lt;strong&gt;Off&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;img src="Tamper_protection_defender.jpg" alt="Tamper Protection settings on Defender" style="max-width: 700px; margin: 18px auto;"/&gt;
+&lt;p&gt;⚠️ &lt;em&gt;Disabling Tamper Protection for all endpoints will reduce the security posture of your organization and can expose all devices to risks such as unauthorized changes to security features, including threat and virus protection.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;This action should be performed only when strictly necessary, for the shortest possible duration, and only by authorized personnel.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Always remember to re-enable Tamper Protection immediately after completing the required maintenance or upgrade operation.&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;style&gt;
+@media (prefers-color-scheme: dark) {
+div[style*='background: #fffbe5'] {
+background: #322911 !important;
+color: #f3e7be !important;
+border-left: 7px solid #e9c46a !important;
+}
+div[style*='background: #fffbe5'] strong {
+color: #ffe066 !important;
+}
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;img src="https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Installation_completed.jpg"
+width="813"
+height="641"
+srcset="https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Installation_completed_hu_3bb1b851d69c7524.jpg 480w, https://robertodandrea.com/post/microsoft/mac-secured-not-reallywhen-defender-for-endpoint-fails-to-upgrade-from-version-2506/Installation_completed_hu_32bf0486fd50a83f.jpg 1024w"
+loading="lazy"
+alt="MDE Updated"
+class="gallery-image"
+data-flex-grow="126"
+data-flex-basis="304px"
+&gt;&lt;/p&gt;
+&lt;p&gt;After completing the process on my own device and confirming that I was able to successfully update Microsoft Defender for Endpoint, I moved on to addressing all remaining devices in the organization. &lt;br&gt;
+At this stage, manual remediation was not feasible, so I followed Microsoft’s official guidance for Intune, as referenced in their &lt;a class="link" href="https://github.com/microsoft/mdatp-xplat/blob/master/macos/upgrade_from_2506_helper/Intune09122025.pdf" target="_blank" rel="noopener"
+&gt;GitHub documentation&lt;/a&gt;.&lt;br&gt;
+This allowed me to automate the deployment of the upgrade helper script across all affected endpoints. The script efficiently removed legacy Defender installations, cleaned up any obsolete components, and ensured each device was ready for the latest Defender version.&lt;/p&gt;
+&lt;p&gt;After the deployment, I validated the overall success by checking Intune reports, re-running the Defender KQL query, and visually inspecting the Defender dashboards to confirm there were no remaining alerts and protection had been fully restored everywhere.&lt;/p&gt;
+&lt;p&gt;After the deployment, I validated the overall success by checking Intune reports, re-running the Defender KQL query, and visually inspecting the Defender dashboards to confirm there were no remaining alerts and that protection had been fully restored everywhere.&lt;br&gt;
+It’s important to note that this validation phase requires time and is by no means instantaneous—reporting data, KQL query results may take hours to reflect the latest changes across all devices in the environment.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;For this reason, patience and repeated verification are necessary to be sure that the remediation has been successfully applied organization-wide.&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Sources and References:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Microsoft Documentation - Known Issues &lt;a class="link" href="https://learn.microsoft.com/en-us/defender-endpoint/mac-whatsnew#known-issues" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://learn.microsoft.com/en-us/defender-endpoint/mac-whatsnew#known-issues&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Defender for Endpoint - MacOS updates &lt;a class="link" href="https://learn.microsoft.com/en-us/defender-endpoint/mac-updates" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://learn.microsoft.com/en-us/defender-endpoint/mac-updates&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;GitHub Helper MacOS version 2506 &lt;a class="link" href="https://github.com/microsoft/mdatp-xplat/blob/master/macos/upgrade_from_2506_helper" target="_blank" rel="noopener"
+&gt;&lt;strong&gt;https://github.com/microsoft/mdatp-xplat/blob/master/macos/upgrade_from_2506_helper&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

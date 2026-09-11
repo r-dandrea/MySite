@@ -1,0 +1,5 @@
+{
+  "clientId": "",
+  "tenantId": "",
+  "_comment": "Copy to config.json after Register-CAAnalyzerApp.ps1 or set clientId manually for production hosting"
+}
