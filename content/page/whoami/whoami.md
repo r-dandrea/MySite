@@ -25,7 +25,7 @@ My mission is straightforward yet critical: **protect what matters most** so bus
 
 ## My Experience
 
-Currently, I work as a **Cloud Security Engineer at CoreView**, where I immerse myself in:
+Currently, I work as a **Sr. Cloud Security Engineer at CoreView**, where I immerse myself in:
 
 - **Cloud Threat Detection & Incident Response** leveraging **Microsoft Sentinel** and **Defender XDR** to monitor and respond to threats across hybrid environments
 - **Azure Security Posture Management** identifying and remediating vulnerabilities in cloud infrastructure, identity systems, and workloads
